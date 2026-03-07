@@ -1,0 +1,74 @@
+---
+const navItems = [
+  { label: "HOME",         href: "/",         key: "home"        },
+  { label: "BLOGCITO",     href: "/blog",      key: "blogcito"    },
+  { label: "ALIADOS",      href: "/aliados",   key: "aliados"     },
+  { label: "CONTACTANOS!", href: "#contacto",  key: "contactanos" },
+];
+---
+
+<nav
+  x-data="{ active: window.location.pathname === '/' ? 'home' : window.location.pathname.replace('/', '') }"
+  class="navbar-root md:sticky md:top-0 static"
+>
+  {navItems.map((item) => (
+    <a
+      href={item.href}
+      class="nav-tab"
+      :class={`active === '${item.key}' ? 'tab-active' : 'tab-inactive'`}
+      @click={`active = '${item.key}'`}
+    >
+      {item.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .navbar-root {
+    background-color: #2D2A29;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    height: 56px;
+    padding: 0 6px;
+    z-index: 50;
+    box-sizing: border-box;
+  }
+
+  .nav-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    margin: 0 3px;
+    border-radius: 18px 18px 0 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.07em;
+    text-decoration: none !important;
+    color: #2D2A29;
+    background-color: #F0C14B;
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .tab-active {
+    background-color: #F9F4EA !important;
+    color: #2D2A29 !important;
+  }
+
+  .tab-inactive {
+    background-color: #F0C14B !important;
+    color: #2D2A29 !important;
+  }
+
+  @media (max-width: 768px) {
+    .nav-tab {
+      font-size: 1rem;
+      margin: 0 2px;
+      letter-spacing: 0.03em;
+    }
+  }
+</style>
