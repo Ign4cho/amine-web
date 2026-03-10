@@ -30,23 +30,28 @@ const navItems = [
     display: flex;
     align-items: flex-end;
     height: 56px;
-    padding: 0 6px;
+    padding: 0 14px;
     z-index: 50;
     box-sizing: border-box;
   }
 
   .nav-tab {
-    flex: 1;
+    padding: 0 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     height: 46px;
-    margin: 0 3px;
+    margin: 0 14px;
     border-radius: 18px 18px 0 0;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.6rem;
     letter-spacing: 0.07em;
     text-decoration: none !important;
+    text-decoration-line: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
     color: #2D2A29;
     background-color: #F0C14B;
     transition: background-color 0.15s ease;
@@ -54,21 +59,61 @@ const navItems = [
     white-space: nowrap;
   }
 
+  .nav-tab::before,
+  .nav-tab::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+  }
+
+  .nav-tab::before {
+    left: -12px;
+    background-image: radial-gradient(circle at 0 0, transparent 11.5px, var(--tab-bg, #F0C14B) 12px);
+  }
+
+  .nav-tab::after {
+    right: -12px;
+    background-image: radial-gradient(circle at 100% 0, transparent 11.5px, var(--tab-bg, #F0C14B) 12px);
+  }
+
   .tab-active {
-    background-color: #F9F4EA !important;
+    --tab-bg: #F9F4EA;
+    background-color: var(--tab-bg) !important;
     color: #2D2A29 !important;
   }
 
   .tab-inactive {
-    background-color: #F0C14B !important;
+    --tab-bg: #F0C14B;
+    background-color: var(--tab-bg) !important;
     color: #2D2A29 !important;
   }
 
   @media (max-width: 768px) {
+    .navbar-root {
+        padding: 0 6px;
+    }
     .nav-tab {
       font-size: 1rem;
-      margin: 0 2px;
+      margin: 0 6px;
+      padding: 0 16px;
       letter-spacing: 0.03em;
+      border-radius: 12px 12px 0 0;
+    }
+    .nav-tab::before,
+    .nav-tab::after {
+      width: 6px;
+      height: 6px;
+    }
+    .nav-tab::before {
+      left: -6px;
+      background-image: radial-gradient(circle at 0 0, transparent 5.5px, var(--tab-bg, #F0C14B) 6px);
+    }
+    .nav-tab::after {
+      right: -6px;
+      background-image: radial-gradient(circle at 100% 0, transparent 5.5px, var(--tab-bg, #F0C14B) 6px);
     }
   }
 </style>
