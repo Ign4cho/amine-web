@@ -1,0 +1,230 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const slug = post.id.split('/')[0];
+const { Content } = await render(post);
+---
+
+<article
+  x-data="{ expanded: false }"
+  class="post-card"
+>
+  <!-- Cover image links to full post -->
+  <a href={`/blogcito/${slug}`} class="block overflow-hidden">
+    <Image
+      src={post.data.image}
+      alt={post.data.title}
+      width={470}
+      height={470}
+      class="post-cover"
+    />
+  </a>
+
+  <div class="post-body">
+    <!-- Author row -->
+    <div class="post-author">
+      <Image
+        src={post.data.author.avatar}
+        alt={post.data.author.name}
+        width={36}
+        height={36}
+        class="author-avatar"
+      />
+      <span class="author-name">{post.data.author.name}</span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="post-title">
+      <a href={`/blogcito/${slug}`}>{post.data.title}</a>
+    </h2>
+
+    <!-- Alpine toggle: description ↔ full content -->
+    <div x-show="!expanded" class="post-description line-clamp-3">
+      {post.data.description}
+    </div>
+    <div x-show="expanded" class="post-full-content prose-blog">
+      <Content />
+    </div>
+
+    <!-- Toggle button -->
+    <button
+      @click="expanded = !expanded"
+      x-text="expanded ? 'ver menos' : 'ver más'"
+      class="btn-toggle"
+    ></button>
+
+    <!-- Link to full page -->
+    <a href={`/blogcito/${slug}`} class="btn-full-post">
+      Ver post completo →
+    </a>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(45, 42, 41, 0.08);
+    margin-bottom: 2rem;
+  }
+
+  .post-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .post-card:hover .post-cover {
+    transform: scale(1.02);
+  }
+
+  .post-body {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #F0C14B;
+  }
+
+  .author-name {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+  }
+
+  .post-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.04em;
+    color: #2D2A29;
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+
+  .post-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .post-title a:hover {
+    color: #F0C14B;
+  }
+
+  .post-description {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.92rem;
+    color: #5C5753;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-full-content {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.92rem;
+    color: #2D2A29;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-full-content :global(h2) {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: #2D2A29;
+    margin: 1.2rem 0 0.4rem;
+    letter-spacing: 0.04em;
+  }
+
+  .post-full-content :global(h3) {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: #F0C14B;
+    margin: 1rem 0 0.3rem;
+    letter-spacing: 0.04em;
+  }
+
+  .post-full-content :global(p) {
+    margin-bottom: 0.8rem;
+  }
+
+  .post-full-content :global(ul),
+  .post-full-content :global(ol) {
+    padding-left: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .post-full-content :global(li) {
+    margin-bottom: 0.3rem;
+  }
+
+  .post-full-content :global(strong) {
+    font-weight: 600;
+    color: #2D2A29;
+  }
+
+  .btn-toggle {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    color: #F0C14B;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-right: 1rem;
+    text-transform: lowercase;
+  }
+
+  .btn-toggle:hover {
+    text-decoration: underline;
+  }
+
+  .btn-full-post {
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+    text-decoration: none;
+    border-bottom: 1px solid #5C5753;
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-full-post:hover {
+    color: #2D2A29;
+    border-color: #2D2A29;
+  }
+</style>

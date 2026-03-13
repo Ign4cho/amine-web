@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import BlogLayout from '../../../layouts/BlogLayout.astro';
+import PostFeed from '../../../components/blog/PostFeed.astro';
+import Pagination from '../../../components/blog/Pagination.astro';
+
+export async function getStaticPaths() {
+  const POSTS_PER_PAGE = 6;
+  const allPosts = await getCollection('blog');
+  const sortedPosts = allPosts.sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  );
+  const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
+
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2;
+    const start = (page - 1) * POSTS_PER_PAGE;
+    return {
+      params: { page: String(page) },
+      props: {
+        posts: sortedPosts.slice(start, start + POSTS_PER_PAGE),
+        currentPage: page,
+        totalPages,
+      },
+    };
+  });
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+const prevUrl = currentPage === 2 ? '/blogcito' : `/blogcito/page/${currentPage - 1}`;
+const nextUrl = currentPage < totalPages ? `/blogcito/page/${currentPage + 1}` : undefined;
+---
+
+<BlogLayout
+  title={`Blogcito — Página ${currentPage}`}
+  description="Artículos sobre marketing digital, redes sociales y crecimiento de marca."
+>
+  <main class="blog-main">
+    <header class="blog-header">
+      <h1 class="blog-title">Blogcito</h1>
+      <p class="blog-subtitle">Página {currentPage} de {totalPages}</p>
+    </header>
+
+    <PostFeed posts={posts} />
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      prevUrl={prevUrl}
+      nextUrl={nextUrl}
+    />
+  </main>
+</BlogLayout>
+
+<style>
+  .blog-main {
+    min-height: 100vh;
+    background-color: #F9F4EA;
+  }
+
+  .blog-header {
+    background-color: #2D2A29;
+    padding: 3rem 1rem 2.5rem;
+    text-align: center;
+  }
+
+  .blog-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: #F0C14B;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.5rem;
+  }
+
+  .blog-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    color: #F9F4EA;
+    opacity: 0.8;
+    margin: 0;
+  }
+</style>

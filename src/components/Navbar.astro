@@ -1,15 +1,15 @@
 ---
 const navItems = [
   { label: "HOME",         href: "/",         key: "home"        },
-  { label: "BLOGCITO",     href: "/blog",      key: "blogcito"    },
+  { label: "BLOGCITO",     href: "/blogcito",  key: "blogcito"    },
   { label: "ALIADOS",      href: "/aliados",   key: "aliados"     },
-  { label: "CONTACTANOS!", href: "#contacto",  key: "contactanos" },
+  { label: "CONTACTANOS!", href: "/contactanos", key: "contactanos" },
 ];
 ---
 
 <nav
   x-data="{ active: window.location.pathname === '/' ? 'home' : window.location.pathname.replace('/', '') }"
-  class="navbar-root md:sticky md:top-0 static"
+  class="navbar-root"
 >
   {navItems.map((item) => (
     <a
@@ -31,7 +31,9 @@ const navItems = [
     align-items: flex-end;
     height: 56px;
     padding: 0 14px;
-    z-index: 50;
+    position: sticky;
+    top: 0;
+    z-index: 100;
     box-sizing: border-box;
   }
 

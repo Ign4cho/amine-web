@@ -23,5 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# local context
+# local planning files
 context.md
+Prompt.md

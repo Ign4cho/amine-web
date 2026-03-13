@@ -1,8 +1,566 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { WHATSAPP_URL } from '../constants';
+import amineLogo from '../assets/Amine - Logo.png';
+
+const allPosts = await getCollection('blog');
+const latestPosts = allPosts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const allAliados = await getCollection('aliados');
+const featuredAliados = allAliados
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const services = [
+  {
+    number: '01',
+    name: 'Community Management',
+    desc: 'Gestionamos tus redes con estrategia, creatividad y consistencia para que tu marca esté siempre presente.',
+  },
+  {
+    number: '02',
+    name: 'Diseño Gráfico',
+    desc: 'Piezas visuales que comunican quién sos y detienen el scroll. Identidad, posts, stories y más.',
+  },
+  {
+    number: '03',
+    name: 'Meta Ads',
+    desc: 'Campañas de publicidad paga en Facebook e Instagram optimizadas para generar resultados reales.',
+  },
+  {
+    number: '04',
+    name: 'Estrategia de Contenidos',
+    desc: 'Planificación mensual con propósito: qué publicar, cuándo y por qué para hacer crecer tu comunidad.',
+  },
+  {
+    number: '05',
+    name: 'Branding',
+    desc: 'Construimos o fortalecemos la identidad visual de tu marca para que sea memorable y coherente.',
+  },
+  {
+    number: '06',
+    name: 'Creación de Contenido',
+    desc: 'Producción de textos, imágenes y video adaptados a cada plataforma y al tono de tu marca.',
+  },
+];
 ---
 
-<Layout>
+<Layout title="Amine Social Media — Agencia de marketing digital">
   <Navbar />
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-greeting-wrap">
+        <span class="hero-greeting">hola, somos</span>
+      </div>
+      <Image src={amineLogo} alt="Amine Social Media" class="hero-logo" loading="eager" />
+      <p class="hero-text">
+        Somos una agencia de marketing digital con estructura freelancer profesional.<br />
+        En Amine impulsamos marcas desde una estructura colaborativa, donde el trabajo en equipo potencia cada talento para generar impacto real.<br />
+        Impulsamos marcas con creatividad, orden y visión de crecimiento.
+      </p>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="servicios" class="services-section">
+    <div class="section-inner">
+      <h2 class="section-title">Lo que hacemos</h2>
+      <p class="section-subtitle">Servicios diseñados para hacer crecer tu presencia digital.</p>
+
+      <div class="services-grid">
+        {services.map((s) => (
+          <div class="service-card">
+            <span class="service-number">{s.number}</span>
+            <h3 class="service-name">{s.name}</h3>
+            <p class="service-desc">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG PREVIEW -->
+  <section class="preview-section preview-section--dark">
+    <div class="section-inner">
+      <div class="section-row">
+        <div>
+          <h2 class="section-title section-title--light">Blogcito</h2>
+          <p class="section-subtitle section-subtitle--light">Estrategias y reflexiones sobre el mundo digital.</p>
+        </div>
+        <a href="/blogcito" class="btn-ver-todos">Ver todos →</a>
+      </div>
+
+      <div class="preview-grid">
+        {latestPosts.map((post) => {
+          const slug = post.id.split('/')[0];
+          return (
+            <a href={`/blogcito/${slug}`} class="blog-preview-card">
+              <div class="preview-img-wrap">
+                <Image
+                  src={post.data.image}
+                  alt={post.data.title}
+                  width={400}
+                  height={260}
+                  class="preview-img"
+                />
+              </div>
+              <div class="preview-body">
+                <h3 class="preview-title">{post.data.title}</h3>
+                <p class="preview-desc">{post.data.description}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ALIADOS PREVIEW -->
+  <section class="preview-section">
+    <div class="section-inner">
+      <div class="section-row">
+        <div>
+          <h2 class="section-title">Aliados</h2>
+          <p class="section-subtitle">Profesionales con quienes trabajamos.</p>
+        </div>
+        <a href="/aliados" class="btn-ver-todos btn-ver-todos--dark">Ver todos →</a>
+      </div>
+
+      <div class="aliados-preview-grid">
+        {featuredAliados.map((aliado) => (
+          <div class="aliado-preview-card">
+            <Image
+              src={aliado.data.avatar}
+              alt={aliado.data.name}
+              width={72}
+              height={72}
+              class="aliado-preview-avatar"
+            />
+            <div class="aliado-preview-info">
+              <h3 class="aliado-preview-name">{aliado.data.name}</h3>
+              <ul class="aliado-preview-services">
+                {aliado.data.services.slice(0, 2).map((s) => (
+                  <li class="aliado-preview-tag">{s}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contacto" class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-title">¿Listo para empezar?</h2>
+      <p class="cta-text">
+        Hablemos sobre tu marca y cómo podemos hacer crecer tu presencia digital.
+      </p>
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cta-btn"
+      >
+        Escribinos por WhatsApp
+      </a>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  /* HERO */
+  .hero {
+    background-color: #F9F4EA;
+    min-height: calc(100vh - 56px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 0 auto;
+  }
+
+  .hero-greeting-wrap {
+    margin-bottom: -1.75rem;
+    margin-left: 0.5rem;
+    z-index: 2;
+  }
+
+  .hero-greeting {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1.4rem;
+    color: #2D2A29;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-logo {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .hero-text {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1.25rem;
+    color: #5C5753;
+    line-height: 1.6;
+    margin: 1.5rem 0 0 0;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 3rem 1.5rem;
+      min-height: auto;
+      align-items: flex-start;
+    }
+    .hero-greeting-wrap {
+      margin-bottom: -1.25rem;
+      margin-left: 0.25rem;
+    }
+    .hero-greeting {
+      font-size: 1.1rem;
+    }
+    .hero-logo {
+      max-width: 320px;
+    }
+    .hero-text {
+      font-size: 1.05rem;
+      margin-top: 1rem;
+    }
+  }
+
+  /* SECTIONS SHARED */
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.4rem;
+  }
+
+  .section-title--light {
+    color: #F9F4EA;
+  }
+
+  .section-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #5C5753;
+    margin: 0 0 2.5rem;
+  }
+
+  .section-subtitle--light {
+    color: rgba(249, 244, 234, 0.7);
+    margin-bottom: 0;
+  }
+
+  .section-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* SERVICES */
+  .services-section {
+    padding: 5rem 0;
+    background-color: #F9F4EA;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .service-card {
+    background: #2D2A29;
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .service-number {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: #F0C14B;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .service-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: #F9F4EA;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.5rem;
+  }
+
+  .service-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: rgba(249, 244, 234, 0.65);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* BLOG PREVIEW */
+  .preview-section {
+    padding: 5rem 0;
+    background-color: #F9F4EA;
+  }
+
+  .preview-section--dark {
+    background-color: #2D2A29;
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .preview-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .blog-preview-card {
+    background: rgba(249, 244, 234, 0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s ease;
+    border: 1px solid rgba(240, 193, 75, 0.15);
+  }
+
+  .blog-preview-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .preview-img-wrap {
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+
+  .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .blog-preview-card:hover .preview-img {
+    transform: scale(1.04);
+  }
+
+  .preview-body {
+    padding: 1rem 1rem 1.25rem;
+  }
+
+  .preview-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: #F9F4EA;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.4rem;
+    line-height: 1.2;
+  }
+
+  .preview-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: rgba(249, 244, 234, 0.6);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .btn-ver-todos {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: #F0C14B;
+    text-decoration: none;
+    border-bottom: 1px solid #F0C14B;
+    padding-bottom: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-ver-todos--dark {
+    color: #2D2A29;
+    border-color: #2D2A29;
+  }
+
+  .btn-ver-todos:hover {
+    opacity: 0.7;
+  }
+
+  /* ALIADOS PREVIEW */
+  .aliados-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .aliados-preview-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .aliado-preview-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(45, 42, 41, 0.07);
+  }
+
+  .aliado-preview-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #F0C14B;
+    flex-shrink: 0;
+  }
+
+  .aliado-preview-info {
+    min-width: 0;
+  }
+
+  .aliado-preview-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.4rem;
+  }
+
+  .aliado-preview-services {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .aliado-preview-tag {
+    background: #F9F4EA;
+    border: 1px solid #F0C14B;
+    color: #2D2A29;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.7rem;
+    border-radius: 20px;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: #F0C14B;
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+
+  .cta-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.75rem;
+  }
+
+  .cta-text {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    color: #2D2A29;
+    opacity: 0.8;
+    line-height: 1.6;
+    margin: 0 0 2rem;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    color: #F0C14B;
+    background: #2D2A29;
+    border-radius: 12px;
+    padding: 0.85rem 2.5rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-btn:hover {
+    background: #F9F4EA;
+    color: #2D2A29;
+  }
+</style>

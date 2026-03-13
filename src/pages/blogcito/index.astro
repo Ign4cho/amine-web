@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import PostFeed from '../../components/blog/PostFeed.astro';
+import Pagination from '../../components/blog/Pagination.astro';
+
+const POSTS_PER_PAGE = 6;
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
+const pagePosts = sortedPosts.slice(0, POSTS_PER_PAGE);
+const nextUrl = totalPages > 1 ? '/blogcito/page/2' : undefined;
+---
+
+<BlogLayout title="Blogcito" description="Artículos sobre marketing digital, redes sociales y crecimiento de marca.">
+  <main class="blog-main">
+    <header class="blog-header">
+      <h1 class="blog-title">Blogcito</h1>
+      <p class="blog-subtitle">Estrategias, consejos y reflexiones sobre el mundo digital.</p>
+    </header>
+
+    <PostFeed posts={pagePosts} />
+
+    <Pagination
+      currentPage={1}
+      totalPages={totalPages}
+      nextUrl={nextUrl}
+    />
+  </main>
+</BlogLayout>
+
+<style>
+  .blog-main {
+    min-height: 100vh;
+    background-color: #F9F4EA;
+  }
+
+  .blog-header {
+    background-color: #2D2A29;
+    padding: 3rem 1rem 2.5rem;
+    text-align: center;
+  }
+
+  .blog-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: #F0C14B;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.5rem;
+  }
+
+  .blog-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    color: #F9F4EA;
+    opacity: 0.8;
+    margin: 0;
+  }
+</style>

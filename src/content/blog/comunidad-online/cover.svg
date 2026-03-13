@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#F9F4EA"/>
+  <circle cx="400" cy="350" r="150" fill="#F0C14B" opacity="0.5"/>
+  <circle cx="800" cy="350" r="150" fill="#2D2A29" opacity="0.3"/>
+  <circle cx="600" cy="500" r="150" fill="#5C5753" opacity="0.4"/>
+  <text x="600" y="370" font-family="sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#2D2A29">🤝</text>
+</svg>

@@ -1,0 +1,203 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL } from '../constants';
+---
+
+<Layout title="Contactanos — Amine Social Media">
+  <Navbar />
+
+  <main class="contact-main">
+    <header class="contact-header">
+      <h1 class="contact-title">Contactanos</h1>
+      <p class="contact-subtitle">Estamos para ayudarte a crecer en el mundo digital.</p>
+    </header>
+
+    <section class="contact-section">
+      <!-- WhatsApp CTA -->
+      <div class="contact-card whatsapp-card">
+        <div class="contact-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.557 4.117 1.532 5.845L.057 23.492a.5.5 0 0 0 .614.644l5.77-1.508A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.523-5.158-1.433l-.36-.215-3.726.974.999-3.629-.236-.374A9.945 9.945 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+        </div>
+        <h2 class="contact-card-title">WhatsApp</h2>
+        <p class="contact-card-text">La forma más rápida de hablar con nosotros. Respondemos en el día.</p>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="contact-btn contact-btn--primary"
+        >
+          Escribinos por WhatsApp
+        </a>
+      </div>
+
+      <!-- Email -->
+      <div class="contact-card email-card">
+        <div class="contact-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <h2 class="contact-card-title">Email</h2>
+        <p class="contact-card-text">Para consultas más detalladas o presupuestos personalizados.</p>
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          class="contact-btn contact-btn--secondary"
+        >
+          Mandanos un mail
+        </a>
+      </div>
+
+      <!-- Instagram -->
+      <div class="contact-card instagram-card">
+        <div class="contact-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <h2 class="contact-card-title">Instagram</h2>
+        <p class="contact-card-text">Seguinos para contenido diario sobre marketing y redes sociales.</p>
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="contact-btn contact-btn--instagram"
+        >
+          Seguinos en Instagram
+        </a>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .contact-main {
+    min-height: 100vh;
+    background-color: #F9F4EA;
+  }
+
+  .contact-header {
+    background-color: #2D2A29;
+    padding: 3rem 1rem 2.5rem;
+    text-align: center;
+  }
+
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: #F0C14B;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.5rem;
+  }
+
+  .contact-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    color: #F9F4EA;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .contact-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .contact-section {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .contact-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(45, 42, 41, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .contact-icon {
+    color: #F0C14B;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+
+  .contact-card-text {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  .contact-btn {
+    display: inline-block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    margin-top: 0.5rem;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .contact-btn--primary {
+    background: #F0C14B;
+    color: #2D2A29;
+  }
+
+  .contact-btn--primary:hover {
+    background: #2D2A29;
+    color: #F0C14B;
+  }
+
+  .contact-btn--secondary {
+    background: #2D2A29;
+    color: #F9F4EA;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0;
+  }
+
+  .contact-btn--secondary:hover {
+    background: #F0C14B;
+    color: #2D2A29;
+  }
+
+  .contact-btn--instagram {
+    background: #F0C14B;
+    color: #2D2A29;
+  }
+
+  .contact-btn--instagram:hover {
+    background: #2D2A29;
+    color: #F0C14B;
+  }
+</style>

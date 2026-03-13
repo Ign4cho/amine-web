@@ -1,0 +1,10 @@
+name: Agustina Albarracin
+services:
+  - Diseño Gráfico
+  - Diseño Web
+avatar: ./avatar.svg
+description: Especialista en diseño gráfico y UI/UX para potenciar el mundo digital.
+contact:
+  type: email
+  value: agustina@espacioamine.com
+order: 1

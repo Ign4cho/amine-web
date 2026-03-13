@@ -1,0 +1,555 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import { ADMIN_PASSWORD } from '../constants';
+---
+
+<Layout title="Admin — Amine Social Media">
+  <Navbar />
+
+  <main class="admin-main">
+    <!--
+      IMPORTANT: This password is frontend-only and is NOT cryptographically secure.
+      It is intended as a lightweight barrier for internal team use only.
+    -->
+    <div
+      x-data={`{
+        password: '',
+        authenticated: false,
+        wrongPassword: false,
+        adminPassword: '${ADMIN_PASSWORD}',
+        login() {
+          if (this.password === this.adminPassword) {
+            this.authenticated = true;
+            this.wrongPassword = false;
+          } else {
+            this.wrongPassword = true;
+            this.password = '';
+          }
+        },
+        title: '',
+        slug: '',
+        date: new Date().toISOString().split('T')[0],
+        authorName: '',
+        description: '',
+        body: '',
+        generatedContent: '',
+        copied: false,
+        generateSlug() {
+          this.slug = this.title
+            .toLowerCase()
+            .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+            .replace(/[^a-z0-9\\s-]/g, '')
+            .trim()
+            .replace(/\\s+/g, '-');
+        },
+        generatePost() {
+          this.generatedContent =
+            '---\\n' +
+            'title: "' + this.title + '"\\n' +
+            'date: ' + this.date + '\\n' +
+            'image: ./cover.jpg\\n' +
+            'description: "' + this.description + '"\\n' +
+            'author:\\n' +
+            '  name: "' + this.authorName + '"\\n' +
+            '  avatar: ./avatar.jpg\\n' +
+            '---\\n\\n' +
+            this.body;
+        },
+        async copyToClipboard() {
+          await navigator.clipboard.writeText(this.generatedContent);
+          this.copied = true;
+          setTimeout(() => { this.copied = false; }, 2000);
+        }
+      }`}
+      class="admin-container"
+    >
+      <!-- PASSWORD GATE -->
+      <div x-show="!authenticated" class="login-card">
+        <div class="login-logo">
+          <span class="login-logo-text">AMINE</span>
+          <span class="login-logo-sub">Social Media</span>
+        </div>
+
+        <h1 class="login-title">Panel de administración</h1>
+
+        <form @submit.prevent="login()" class="login-form">
+          <label class="form-label" for="admin-password">Contraseña</label>
+          <input
+            id="admin-password"
+            type="password"
+            x-model="password"
+            placeholder="••••••••"
+            class="form-input"
+            autocomplete="current-password"
+          />
+          <p x-show="wrongPassword" class="error-msg" x-cloak>
+            Contraseña incorrecta
+          </p>
+          <button type="submit" class="btn-login">Ingresar</button>
+        </form>
+      </div>
+
+      <!-- ADMIN PANEL -->
+      <div x-show="authenticated" x-cloak class="admin-panel">
+        <header class="panel-header">
+          <h1 class="panel-title">Nuevo post</h1>
+          <p class="panel-subtitle">Completá el formulario para generar el archivo del post.</p>
+        </header>
+
+        <div class="panel-body">
+          <!-- FORM -->
+          <form @submit.prevent="generatePost()" class="post-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Título *</label>
+                <input
+                  type="text"
+                  x-model="title"
+                  @input="generateSlug()"
+                  placeholder="Título del post"
+                  class="form-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row form-row--two">
+              <div class="form-group">
+                <label class="form-label">Slug (URL)</label>
+                <input
+                  type="text"
+                  x-model="slug"
+                  placeholder="slug-del-post"
+                  class="form-input"
+                />
+                <small class="form-hint">Generado automáticamente desde el título. Podés editarlo.</small>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fecha</label>
+                <input
+                  type="date"
+                  x-model="date"
+                  class="form-input"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nombre del autor *</label>
+              <input
+                type="text"
+                x-model="authorName"
+                placeholder="Ej: Guada Sanchez"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descripción corta *</label>
+              <textarea
+                x-model="description"
+                placeholder="Descripción breve que aparece en la vista previa (2-3 oraciones)"
+                class="form-input form-textarea"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Cuerpo del post (Markdown) *</label>
+              <textarea
+                x-model="body"
+                placeholder="Escribí el contenido del post en Markdown..."
+                class="form-input form-textarea form-textarea--lg"
+                rows="14"
+                required
+              ></textarea>
+              <small class="form-hint">Podés usar Markdown: **negrita**, ## títulos, - listas, etc.</small>
+            </div>
+
+            <button type="submit" class="btn-generate">
+              Generar archivo
+            </button>
+          </form>
+
+          <!-- GENERATED OUTPUT -->
+          <div x-show="generatedContent" x-cloak class="output-section">
+            <div class="output-header">
+              <h2 class="output-title">Archivo generado</h2>
+              <button
+                @click="copyToClipboard()"
+                class="btn-copy"
+                x-text="copied ? '¡Copiado!' : 'Copiar al portapapeles'"
+              ></button>
+            </div>
+
+            <pre class="output-code" x-text="generatedContent"></pre>
+
+            <!-- Instructions -->
+            <div class="instructions">
+              <h3 class="instructions-title">¿Cómo publicar este post?</h3>
+
+              <div class="instructions-block">
+                <h4>Si no sos admin:</h4>
+                <p>Enviá este contenido generado + la foto de portada a un administrador para que lo suba.</p>
+              </div>
+
+              <div class="instructions-block">
+                <h4>Si sos admin:</h4>
+                <ol>
+                  <li>Copiá el contenido generado arriba</li>
+                  <li>
+                    Creá la carpeta:
+                    <code x-text="`src/content/blog/${slug || 'nombre-del-post'}/`"></code>
+                  </li>
+                  <li>Guardá el contenido como <code>index.md</code> dentro de esa carpeta</li>
+                  <li>Agregá la imagen de portada como <code>cover.jpg</code> en la misma carpeta</li>
+                  <li>Agregá el avatar del autor como <code>avatar.jpg</code> en la misma carpeta</li>
+                  <li>Hacé <code>git push</code> para disparar el deploy automático</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .admin-main {
+    min-height: 100vh;
+    background-color: #F9F4EA;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+
+  .admin-container {
+    width: 100%;
+  }
+
+  /* LOGIN CARD */
+  .login-card {
+    max-width: 400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 24px rgba(45, 42, 41, 0.12);
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-logo-text {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: #F0C14B;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+
+  .login-logo-sub {
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    color: #5C5753;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  .login-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: #2D2A29;
+    text-align: center;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* SHARED FORM STYLES */
+  .form-label {
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: #5C5753;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .form-input {
+    width: 100%;
+    background: #F9F4EA;
+    border: 1px solid #e0dbd2;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #2D2A29;
+    outline: none;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+  }
+
+  .form-input:focus {
+    border-color: #F0C14B;
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .form-textarea--lg {
+    min-height: 260px;
+  }
+
+  .form-hint {
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    color: #9e9891;
+    margin-top: 0.3rem;
+  }
+
+  .error-msg {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #c0392b;
+    text-align: center;
+    margin: 0;
+  }
+
+  .btn-login {
+    background: #F0C14B;
+    color: #2D2A29;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    margin-top: 0.5rem;
+  }
+
+  .btn-login:hover {
+    background: #2D2A29;
+    color: #F0C14B;
+  }
+
+  /* ADMIN PANEL */
+  .admin-panel {
+    max-width: 780px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .panel-header {
+    background: #2D2A29;
+    border-radius: 16px 16px 0 0;
+    padding: 2rem 2rem 1.5rem;
+  }
+
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #F0C14B;
+    letter-spacing: 0.06em;
+    margin: 0 0 0.25rem;
+  }
+
+  .panel-subtitle {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #F9F4EA;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .panel-body {
+    background: #ffffff;
+    border-radius: 0 0 16px 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(45, 42, 41, 0.10);
+  }
+
+  .post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 600px) {
+    .form-row--two {
+      flex-direction: row;
+    }
+
+    .form-row--two .form-group {
+      flex: 1;
+    }
+  }
+
+  .btn-generate {
+    background: #F0C14B;
+    color: #2D2A29;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .btn-generate:hover {
+    background: #2D2A29;
+    color: #F0C14B;
+  }
+
+  /* OUTPUT */
+  .output-section {
+    margin-top: 2.5rem;
+    border-top: 2px solid #F0C14B;
+    padding-top: 2rem;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .output-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+
+  .btn-copy {
+    background: #2D2A29;
+    color: #F9F4EA;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .btn-copy:hover {
+    background: #F0C14B;
+    color: #2D2A29;
+  }
+
+  .output-code {
+    background: #2D2A29;
+    color: #F0C14B;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* INSTRUCTIONS */
+  .instructions {
+    background: #F9F4EA;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .instructions-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    margin: 0 0 1rem;
+  }
+
+  .instructions-block {
+    margin-bottom: 1rem;
+  }
+
+  .instructions-block h4 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2D2A29;
+    margin: 0 0 0.4rem;
+  }
+
+  .instructions-block p,
+  .instructions-block ol {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .instructions-block li {
+    margin-bottom: 0.3rem;
+  }
+
+  .instructions-block code {
+    background: #2D2A29;
+    color: #F0C14B;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+</style>

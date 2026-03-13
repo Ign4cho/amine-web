@@ -1,0 +1,235 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import { Image } from 'astro:assets';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id.split('/')[0] },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.date.toLocaleDateString('es-AR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BlogLayout
+  title={post.data.title}
+  description={post.data.description}
+>
+  <main class="post-main">
+    <!-- Hero image -->
+    <div class="post-hero">
+      <Image
+        src={post.data.image}
+        alt={post.data.title}
+        width={1200}
+        height={630}
+        class="hero-image"
+      />
+    </div>
+
+    <article class="post-article">
+      <!-- Back link -->
+      <a href="/blogcito" class="back-link">← Volver al blog</a>
+
+      <!-- Author + date -->
+      <div class="post-meta">
+        <Image
+          src={post.data.author.avatar}
+          alt={post.data.author.name}
+          width={48}
+          height={48}
+          class="meta-avatar"
+        />
+        <div>
+          <span class="meta-author">{post.data.author.name}</span>
+          <time class="meta-date" datetime={post.data.date.toISOString()}>
+            {formattedDate}
+          </time>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h1 class="post-title">{post.data.title}</h1>
+
+      <!-- Description lead -->
+      <p class="post-lead">{post.data.description}</p>
+
+      <!-- Full content -->
+      <div class="post-content">
+        <Content />
+      </div>
+
+      <!-- Bottom back link -->
+      <a href="/blogcito" class="back-link back-bottom">← Volver al blog</a>
+    </article>
+  </main>
+</BlogLayout>
+
+<style>
+  .post-main {
+    min-height: 100vh;
+    background-color: #F9F4EA;
+  }
+
+  .post-hero {
+    width: 100%;
+    max-height: 480px;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .post-article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+    text-decoration: none;
+    border-bottom: 1px solid #5C5753;
+    padding-bottom: 1px;
+    margin-bottom: 1.5rem;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: #2D2A29;
+  }
+
+  .back-bottom {
+    margin-top: 3rem;
+    margin-bottom: 0;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #F0C14B;
+    flex-shrink: 0;
+  }
+
+  .meta-author {
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2D2A29;
+  }
+
+  .meta-date {
+    display: block;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: #5C5753;
+    text-transform: capitalize;
+  }
+
+  .post-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #2D2A29;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .post-lead {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    color: #5C5753;
+    font-style: italic;
+    border-left: 3px solid #F0C14B;
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .post-content {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    color: #2D2A29;
+    line-height: 1.8;
+  }
+
+  .post-content :global(h2) {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: #2D2A29;
+    margin: 2rem 0 0.75rem;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #F0C14B;
+    padding-bottom: 0.25rem;
+  }
+
+  .post-content :global(h3) {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: #F0C14B;
+    margin: 1.5rem 0 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-content :global(li) {
+    margin-bottom: 0.4rem;
+  }
+
+  .post-content :global(strong) {
+    font-weight: 600;
+  }
+
+  .post-content :global(em) {
+    font-style: italic;
+    color: #5C5753;
+  }
+
+  .post-content :global(blockquote) {
+    border-left: 3px solid #F0C14B;
+    padding-left: 1rem;
+    color: #5C5753;
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+</style>

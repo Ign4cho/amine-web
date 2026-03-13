@@ -1,0 +1,98 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  prevUrl?: string;
+  nextUrl?: string;
+}
+
+const { currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" aria-label="Paginación">
+    {prevUrl ? (
+      <a href={prevUrl} class="page-btn" aria-label="Página anterior">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        <span>Anterior</span>
+      </a>
+    ) : (
+      <span class="page-btn disabled" aria-disabled="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        <span>Anterior</span>
+      </span>
+    )}
+
+    <span class="page-info">
+      {currentPage} / {totalPages}
+    </span>
+
+    {nextUrl ? (
+      <a href={nextUrl} class="page-btn" aria-label="Página siguiente">
+        <span>Siguiente</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </a>
+    ) : (
+      <span class="page-btn disabled" aria-disabled="true">
+        <span>Siguiente</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </span>
+    )}
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem 0 3rem;
+    max-width: 470px;
+    margin: 0 auto;
+  }
+
+  .page-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: #2D2A29;
+    background: #F0C14B;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .page-btn:hover {
+    background: #2D2A29;
+    color: #F0C14B;
+  }
+
+  .page-btn.disabled {
+    background: #e0dbd2;
+    color: #9e9891;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .page-info {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #5C5753;
+    min-width: 3rem;
+    text-align: center;
+  }
+</style>

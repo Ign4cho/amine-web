@@ -1,0 +1,10 @@
+name: Ignacio Colomé
+services:
+  - Desarrollo Web
+  - Soluciones de Datos
+avatar: ./avatar.svg
+description: Especialista técnico en programación web y soluciones orientadas a datos.
+contact:
+  type: email
+  value: ignacio@espacioamine.com
+order: 2
