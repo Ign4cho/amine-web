@@ -1,0 +1,162 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const slug = post.id.split('/')[0];
+---
+
+<article x-data="{ expanded: false }" class="grid-card">
+  <!-- Cover image -->
+  <a href={`/blogcito/${slug}`} class="grid-card-img-link">
+    <div class="grid-card-img-wrap">
+      <Image
+        src={post.data.image}
+        alt={post.data.title}
+        width={335}
+        height={407}
+        class="grid-card-img"
+      />
+    </div>
+  </a>
+
+  <!-- Text content -->
+  <div class="grid-card-body">
+    <h2 class="grid-card-title">
+      <a href={`/blogcito/${slug}`}>{post.data.title}</a>
+    </h2>
+
+    <div x-show="!expanded" class="grid-card-desc line-clamp">
+      {post.data.description}
+    </div>
+    <div x-show="expanded" class="grid-card-desc">
+      {post.data.description}
+    </div>
+
+    <div class="grid-card-actions">
+      <button
+        @click="expanded = !expanded"
+        x-text="expanded ? 'ver menos' : 'ver más'"
+        class="btn-toggle"
+      ></button>
+      <a href={`/blogcito/${slug}`} class="btn-full-post">Ver post completo →</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .grid-card {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .grid-card-img-link {
+    display: block;
+    overflow: hidden;
+  }
+
+  .grid-card-img-wrap {
+    width: 100%;
+    aspect-ratio: 335 / 407;
+    overflow: hidden;
+    background-color: #D9D9D9;
+  }
+
+  .grid-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .grid-card:hover .grid-card-img {
+    transform: scale(1.03);
+  }
+
+  .grid-card-body {
+    padding: 0.75rem 0 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .grid-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4.5vw, 4.0625rem);
+    color: #2C2527;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .grid-card-title a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s ease;
+  }
+
+  .grid-card-title a:hover {
+    color: #F0C14B;
+  }
+
+  .grid-card-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.875rem, 1.5vw, 1.25rem);
+    color: #2C2527;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .grid-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.25rem;
+  }
+
+  .btn-toggle {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    color: #F0C14B;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .btn-toggle:hover {
+    text-decoration: underline;
+  }
+
+  .btn-full-post {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: #5C5753;
+    text-decoration: none;
+    border-bottom: 1px solid #5C5753;
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-full-post:hover {
+    color: #2D2A29;
+    border-color: #2D2A29;
+  }
+</style>

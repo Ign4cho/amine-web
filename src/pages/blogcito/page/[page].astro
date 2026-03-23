@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BlogLayout from '../../../layouts/BlogLayout.astro';
-import PostFeed from '../../../components/blog/PostFeed.astro';
+import BlogGridCard from '../../../components/blog/BlogGridCard.astro';
 import Pagination from '../../../components/blog/Pagination.astro';
 
 export async function getStaticPaths() {
@@ -37,18 +37,24 @@ const nextUrl = currentPage < totalPages ? `/blogcito/page/${currentPage + 1}` :
 >
   <main class="blog-main">
     <header class="blog-header">
-      <h1 class="blog-title">Blogcito</h1>
-      <p class="blog-subtitle">Página {currentPage} de {totalPages}</p>
+      <h1 class="blog-header-title">Blogcito</h1>
+      <p class="blog-header-subtitle">Página {currentPage} de {totalPages}</p>
     </header>
 
-    <PostFeed posts={posts} />
+    <section class="blog-grid-section">
+      <div class="blog-grid">
+        {posts.map((post) => (
+          <BlogGridCard post={post} />
+        ))}
+      </div>
 
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      prevUrl={prevUrl}
-      nextUrl={nextUrl}
-    />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        prevUrl={prevUrl}
+        nextUrl={nextUrl}
+      />
+    </section>
   </main>
 </BlogLayout>
 
@@ -60,24 +66,56 @@ const nextUrl = currentPage < totalPages ? `/blogcito/page/${currentPage + 1}` :
 
   .blog-header {
     background-color: #2D2A29;
-    padding: 3rem 1rem 2.5rem;
-    text-align: center;
+    padding: 3rem 4rem 2.5rem;
   }
 
-  .blog-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3rem, 8vw, 5rem);
-    color: #F0C14B;
-    letter-spacing: 0.06em;
+  .blog-header-title {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: #F9F4EA;
+    letter-spacing: -0.02em;
     margin: 0 0 0.5rem;
   }
 
-  .blog-subtitle {
+  .blog-header-subtitle {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
     font-size: 0.95rem;
-    color: #F9F4EA;
-    opacity: 0.8;
+    color: rgba(249, 244, 234, 0.75);
     margin: 0;
+  }
+
+  .blog-grid-section {
+    padding: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 335px);
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  @media (max-width: 1100px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .blog-header {
+      padding: 2rem 1.5rem;
+    }
+
+    .blog-grid-section {
+      padding: 2rem 1.5rem;
+    }
+
+    .blog-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

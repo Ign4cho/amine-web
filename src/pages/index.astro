@@ -1,10 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import { WHATSAPP_URL } from '../constants';
-import amineLogo from '../assets/Amine - Logo.png';
 
 const allPosts = await getCollection('blog');
 const latestPosts = allPosts
@@ -14,209 +12,347 @@ const latestPosts = allPosts
 const allAliados = await getCollection('aliados');
 const featuredAliados = allAliados
   .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
-
-const services = [
-  {
-    number: '01',
-    name: 'Community Management',
-    desc: 'Gestionamos tus redes con estrategia, creatividad y consistencia para que tu marca esté siempre presente.',
-  },
-  {
-    number: '02',
-    name: 'Diseño Gráfico',
-    desc: 'Piezas visuales que comunican quién sos y detienen el scroll. Identidad, posts, stories y más.',
-  },
-  {
-    number: '03',
-    name: 'Meta Ads',
-    desc: 'Campañas de publicidad paga en Facebook e Instagram optimizadas para generar resultados reales.',
-  },
-  {
-    number: '04',
-    name: 'Estrategia de Contenidos',
-    desc: 'Planificación mensual con propósito: qué publicar, cuándo y por qué para hacer crecer tu comunidad.',
-  },
-  {
-    number: '05',
-    name: 'Branding',
-    desc: 'Construimos o fortalecemos la identidad visual de tu marca para que sea memorable y coherente.',
-  },
-  {
-    number: '06',
-    name: 'Creación de Contenido',
-    desc: 'Producción de textos, imágenes y video adaptados a cada plataforma y al tono de tu marca.',
-  },
-];
+  .slice(0, 2);
 ---
 
 <Layout title="Amine Social Media — Agencia de marketing digital">
-  <Navbar />
 
-  <!-- HERO -->
+  <!-- ═══════════════════════════════════════════════ HERO ═══ -->
   <section class="hero">
+    <!-- Decorative stars — triangular cluster, top-right -->
+    <div class="stars-cluster" aria-hidden="true">
+      <img src="/assets/star.png" alt="" class="star star-1" />
+      <img src="/assets/star.png" alt="" class="star star-2" />
+      <img src="/assets/star.png" alt="" class="star star-3" />
+    </div>
+
     <div class="hero-content">
-      <div class="logo-container">
-        <span class="hero-greeting">hola, somos</span>
-        <Image src={amineLogo} alt="Amine Social Media" class="hero-logo" loading="eager" />
+      <!-- Brand image -->
+      <div class="hero-logo-wrap">
+        <img
+          src="/assets/hero-brand.png"
+          alt="Amíne Social Media"
+          class="hero-logo"
+          loading="eager"
+        />
       </div>
-      <p class="hero-text">
-        Somos una agencia de marketing digital con estructura freelancer profesional.<br />
-        En Amine impulsamos marcas desde una estructura colaborativa, donde el trabajo en equipo potencia cada talento para generar impacto real.<br />
-        Impulsamos marcas con creatividad, orden y visión de crecimiento.
-      </p>
+
+      <!-- Descriptor text -->
+        <p class="hero-text">
+          Somos una <strong>agencia de marketing digital</strong> con estructura <strong>freelancer</strong> profesional.<br/>
+          Trabajamos con marcas desde una estructura colaborativa, donde el <strong>trabajo en equipo</strong> potencia cada talento para generar impacto real.<br/>
+          Impulsamos marcas con <strong>creatividad, orden y visión de crecimiento</strong>.
+        </p>
+        <img src="/assets/stroke-hero.png" alt="" class="stroke-hero" aria-hidden="true" />
     </div>
+
+    <!-- NOSOTROS section tab (bottom-left) -->
+    <a href="#nosotros" class="section-tab tab-nosotros">
+      <span class="section-tab-label">NOSOTROS</span>
+    </a>
   </section>
 
-  <!-- SERVICES -->
-  <section id="servicios" class="services-section">
-    <div class="section-inner">
-      <h2 class="section-title">Lo que hacemos</h2>
-      <p class="section-subtitle">Servicios diseñados para hacer crecer tu presencia digital.</p>
+  <!-- ═══════════════════════════════════════════ SERVICES ═══ -->
+  <section class="services-section">
+    <div class="services-texture" aria-hidden="true"></div>
 
-      <div class="services-grid">
-        {services.map((s) => (
-          <div class="service-card">
-            <span class="service-number">{s.number}</span>
-            <h3 class="service-name">{s.name}</h3>
-            <p class="service-desc">{s.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- BLOG PREVIEW -->
-  <section class="preview-section preview-section--dark">
-    <div class="section-inner">
-      <div class="section-row">
-        <div>
-          <h2 class="section-title section-title--light">Blogcito</h2>
-          <p class="section-subtitle section-subtitle--light">Estrategias y reflexiones sobre el mundo digital.</p>
+    <div class="services-inner">
+      <!-- Left: title + services list -->
+      <div class="services-left">
+        <div class="services-title-wrap">
+          <h2 class="services-title">Our service</h2>
+          <img src="/assets/stroke-services.png" alt="" class="stroke-services" aria-hidden="true" />
         </div>
-        <a href="/blogcito" class="btn-ver-todos">Ver todos →</a>
+
+        <ul class="services-list">
+          <li>
+            <span># SOCIAL MEDIA MANAGER</span>
+            <img src="/assets/icon-star.png" alt="" class="service-icon" aria-hidden="true" />
+          </li>
+          <li>
+            <span># SESIONES DE FOTOS Y VIDEOS</span>
+            <img src="/assets/icon-camera.png" alt="" class="service-icon" aria-hidden="true" />
+          </li>
+          <li>
+            <span># DIRECCIÓN CREATIVA</span>
+            <img src="/assets/icon-brush.png" alt="" class="service-icon" aria-hidden="true" />
+          </li>
+          <li>
+            <span># BRANDING</span>
+          </li>
+          <li>
+            <span># DESARROLLO WEB</span>
+            <img src="/assets/icon-arrow.png" alt="" class="service-icon" aria-hidden="true" />
+          </li>
+        </ul>
       </div>
 
-      <div class="preview-grid">
-        {latestPosts.map((post) => {
-          const slug = post.id.split('/')[0];
-          return (
-            <a href={`/blogcito/${slug}`} class="blog-preview-card">
-              <div class="preview-img-wrap">
-                <Image
-                  src={post.data.image}
-                  alt={post.data.title}
-                  width={400}
-                  height={260}
-                  class="preview-img"
-                />
-              </div>
-              <div class="preview-body">
-                <h3 class="preview-title">{post.data.title}</h3>
-                <p class="preview-desc">{post.data.description}</p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    </div>
-  </section>
-
-  <!-- ALIADOS PREVIEW -->
-  <section class="preview-section">
-    <div class="section-inner">
-      <div class="section-row">
-        <div>
-          <h2 class="section-title">Aliados</h2>
-          <p class="section-subtitle">Profesionales con quienes trabajamos.</p>
-        </div>
-        <a href="/aliados" class="btn-ver-todos btn-ver-todos--dark">Ver todos →</a>
-      </div>
-
-      <div class="aliados-preview-grid">
-        {featuredAliados.map((aliado) => (
-          <div class="aliado-preview-card">
-            <Image
-              src={aliado.data.avatar}
-              alt={aliado.data.name}
-              width={72}
-              height={72}
-              class="aliado-preview-avatar"
-            />
-            <div class="aliado-preview-info">
-              <h3 class="aliado-preview-name">{aliado.data.name}</h3>
-              <ul class="aliado-preview-services">
-                {aliado.data.services.slice(0, 2).map((s) => (
-                  <li class="aliado-preview-tag">{s}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section id="contacto" class="cta-section">
-    <div class="cta-inner">
-      <h2 class="cta-title">¿Listo para empezar?</h2>
-      <p class="cta-text">
-        Hablemos sobre tu marca y cómo podemos hacer crecer tu presencia digital.
-      </p>
+      <!-- Right: CTA note card -->
       <a
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
-        class="cta-btn"
+        class="cta-card"
+        aria-label="Contactanos por WhatsApp"
       >
-        Escribinos por WhatsApp
+        <img src="/assets/cta-note.png" alt="" class="cta-card-img" aria-hidden="true" />
+        <span class="cta-card-text">¡HACE TU<br/>CONSULTA!</span>
       </a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ ABOUT US ═══ -->
+  <section id="nosotros" class="aboutus-section">
+    <div class="aboutus-texture" aria-hidden="true"></div>
+
+    <div class="aboutus-inner">
+      <!-- Left: text content -->
+      <div class="aboutus-left">
+        <div class="aboutus-title-wrap">
+          <h2 class="aboutus-title">About us</h2>
+          <img src="/assets/stroke-aboutus.png" alt="" class="stroke-aboutus" aria-hidden="true" />
+        </div>
+
+        <p class="aboutus-text">
+          <strong>Guadalupe, Luciana, Agustina, Victoria</strong> e <strong>Ignacio</strong>, el equipo detrás de la agencia.
+          Trabajamos para brindar <strong>soluciones creativas</strong> a las empresas.
+          Colaboramos con cada cliente para ofrecer exactamente lo que necesita.
+        </p>
+
+        <!-- TEAM·A -->
+        <div class="teama-wrap">
+          <p class="teama-text">
+            TEAM
+            <img src="/assets/dot-teama.png" alt="" class="teama-dot" aria-hidden="true" />
+            A
+          </p>
+          <img src="/assets/stroke-teama.png" alt="" class="stroke-teama" aria-hidden="true" />
+        </div>
+      </div>
+
+      <!-- Right: team photo placeholder -->
+      <div class="aboutus-photo-wrap">
+        <div class="aboutus-photo-placeholder" aria-label="Foto del equipo (próximamente)"></div>
+      </div>
+    </div>
+
+    <!-- ALIADOS section tab (bottom-left) -->
+    <a href="/aliados" class="section-tab tab-aliados">
+      <span class="section-tab-label">ALIADOS</span>
+    </a>
+  </section>
+
+  <!-- ════════════════════════════════════ ALIADOS PREVIEW ═══ -->
+  <section class="aliados-preview-section">
+    <div class="aliados-preview-inner">
+      <!-- Scrapbook cards -->
+      <div class="aliados-cards">
+        {featuredAliados.length > 0 ? (
+          featuredAliados.map((aliado, i) => (
+            <div
+              class={`aliado-scrap-card aliado-scrap-card--${i === 0 ? 'a' : 'b'}`}
+            >
+              <div class="aliado-scrap-inner">
+                <img
+                  src="/assets/aliados-card-bg.png"
+                  alt=""
+                  class="aliado-scrap-bg"
+                  aria-hidden="true"
+                />
+                <Image
+                  src={aliado.data.avatar}
+                  alt={aliado.data.name}
+                  width={200}
+                  height={200}
+                  class="aliado-scrap-avatar"
+                />
+                <p class="aliado-scrap-name">{aliado.data.name}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <>
+            <div class="aliado-scrap-card aliado-scrap-card--a">
+              <div class="aliado-scrap-inner aliado-scrap-placeholder">
+                <p class="aliado-scrap-name">colomÉ</p>
+              </div>
+            </div>
+            <div class="aliado-scrap-card aliado-scrap-card--b">
+              <div class="aliado-scrap-inner aliado-scrap-placeholder">
+                <p class="aliado-scrap-name">AA estudio</p>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <!-- Right: description text -->
+      <div class="aliados-preview-desc">
+        <p>
+          Profesionales de confianza con quienes colaboramos para potenciar cada proyecto.
+          Cada aliado aporta su especialidad al trabajo en equipo.
+        </p>
+        <a href="/aliados" class="aliados-preview-link">Ver todos →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════ BLOGCITO PREVIEW ═══ -->
+  <section class="blogcito-preview-section">
+    <!-- BLOGCITO section tab -->
+    <a href="/blogcito" class="section-tab tab-blogcito">
+      <span class="section-tab-label">BLOGCITO</span>
+    </a>
+
+    <div class="blogcito-preview-grid">
+      {latestPosts.length > 0 ? (
+        latestPosts.map((post) => {
+          const slug = post.id.split('/')[0];
+          return (
+            <a href={`/blogcito/${slug}`} class="blog-preview-card">
+              <div class="blog-preview-img-wrap">
+                <Image
+                  src={post.data.image}
+                  alt={post.data.title}
+                  width={335}
+                  height={407}
+                  class="blog-preview-img"
+                />
+              </div>
+              <h3 class="blog-preview-title">{post.data.title}</h3>
+              <p class="blog-preview-desc">{post.data.description}</p>
+            </a>
+          );
+        })
+      ) : (
+        [1, 2, 3].map((n) => (
+          <div class="blog-preview-card blog-preview-card--placeholder">
+            <div class="blog-preview-img-placeholder"></div>
+            <h3 class="blog-preview-title">Próximamente</h3>
+            <p class="blog-preview-desc">Descripción breve del artículo.</p>
+          </div>
+        ))
+      )}
     </div>
   </section>
 </Layout>
 
 <style>
-  /* HERO */
+  /* ──────────────────── SHARED SECTION TAB ──────────────────── */
+  .section-tab {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 319px;
+    height: 57px;
+    text-decoration: none !important;
+    z-index: 2;
+    border-radius: 20px 20px 0 0;
+    padding-left: 50px;
+  }
+
+  .tab-nosotros {
+    bottom: 0;
+    left: 0;
+    background-color: #2D2A29;
+    color: #F9F4EA !important;
+  }
+  .tab-nosotros .section-tab-label {
+    color: #F9F4EA !important;
+  }
+
+  .tab-aliados {
+    bottom: 0;
+    left: 0;
+    background-color: #F9F4EA;
+    color: #2D2A29 !important;
+  }
+  .tab-aliados .section-tab-label {
+    color: #2D2A29 !important;
+  }
+
+  .tab-blogcito {
+    top: -57px;
+    left: 0;
+    background-color: #F0C14B; /* Mustard to stand out on cream */
+    color: #2D2A29 !important;
+  }
+  .tab-blogcito .section-tab-label {
+    color: #2D2A29 !important;
+  }
+
+  .section-tab-label {
+    position: relative;
+    z-index: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.625rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  /* ─────────────────────────────── HERO ──────────────────────── */
   .hero {
     background-color: #F9F4EA;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 3rem 1.5rem 3rem 1.5rem;
     position: relative;
     overflow: hidden;
+    padding: 3rem 4rem 5rem;
+    min-height: 640px;
+  }
+
+  /* Stars — large absolute container at top-right of hero */
+  .stars-cluster {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 400px;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* Star 1: largest, top right */
+  .star-1 {
+    right: 20px;
+    top: 45px;
+    width: 155px;
+    height: auto;
+    rotate: 13deg;
+  }
+
+  /* Star 2: medium, top left */
+  .star-2 {
+    right: 215px;
+    top: 65px;
+    width: 105px;
+    height: auto;
+    rotate: -5deg;
+  }
+
+  /* Star 3: small, bottom center */
+  .star-3 {
+    right: 110px;
+    top: 215px;
+    width: 80px;
+    height: auto;
+    rotate: 7deg;
   }
 
   .hero-content {
     max-width: 1100px;
-    width: 100%;
-    z-index: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin: 0;
+    gap: 2rem;
+    padding-top: 2rem;
   }
 
-  .logo-container {
-    position: relative;
-    max-width: 500px;
+  .hero-logo-wrap {
+    max-width: 547px;
     width: 100%;
-    margin-top: 1rem;
-  }
-
-  .hero-greeting {
-    position: absolute;
-    top: -1rem;
-    left: 22%;
-    font-family: Georgia, serif;
-    font-style: italic;
-    font-weight: normal;
-    font-size: 1.6rem;
-    color: #2D2A29;
-    letter-spacing: 0.02em;
-    z-index: 2;
   }
 
   .hero-logo {
@@ -226,176 +362,444 @@ const services = [
     display: block;
   }
 
+  .hero-text-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100%; /* Allow text to span the full available width */
+  }
+
   .hero-text {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
-    font-size: 1.25rem;
-    color: #5C5753;
-    line-height: 1.6;
-    margin: 1rem 0 0 0;
-    max-width: 700px;
-  }
-
-  @media (max-width: 640px) {
-    .hero {
-      padding: 2rem 1.5rem;
-      min-height: auto;
-      align-items: flex-start;
-    }
-    .logo-container {
-      max-width: 320px;
-    }
-    .hero-greeting {
-      font-size: 1.2rem;
-      top: -0.6rem;
-      left: 22%;
-    }
-    .hero-text {
-      font-size: 1.05rem;
-      margin-top: 1rem;
-    }
-  }
-
-  /* SECTIONS SHARED */
-  .section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.4rem;
-  }
-
-  .section-title--light {
-    color: #F9F4EA;
-  }
-
-  .section-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.9rem;
-    color: #5C5753;
-    margin: 0 0 2.5rem;
-  }
-
-  .section-subtitle--light {
-    color: rgba(249, 244, 234, 0.7);
-    margin-bottom: 0;
-  }
-
-  .section-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-  }
-
-  /* SERVICES */
-  .services-section {
-    padding: 5rem 0;
-    background-color: #F9F4EA;
-  }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  @media (min-width: 640px) {
-    .services-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 900px) {
-    .services-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .service-card {
-    background: #2D2A29;
-    border-radius: 14px;
-    padding: 1.75rem 1.5rem;
-  }
-
-  .service-number {
-    display: block;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: #F0C14B;
-    letter-spacing: 0.05em;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-
-  .service-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    color: #F9F4EA;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.5rem;
-  }
-
-  .service-desc {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    color: rgba(249, 244, 234, 0.65);
-    line-height: 1.6;
+    font-size: clamp(1rem, 2vw, 1.5625rem);
+    color: rgba(0, 0, 0, 0.55);
+    line-height: 1.45;
     margin: 0;
   }
 
-  /* BLOG PREVIEW */
-  .preview-section {
-    padding: 5rem 0;
-    background-color: #F9F4EA;
+  .hero-text strong {
+    font-weight: 600;
   }
 
-  .preview-section--dark {
+  .stroke-hero {
+    display: block;
+    width: min(527px, 100%);
+    height: auto;
+    margin-left: 250px; /* Aligns with "creatividad, orden..." start point */
+    margin-top: -0.5rem;
+  }
+
+  /* ──────────────────────────── SERVICES ─────────────────────── */
+  .services-section {
     background-color: #2D2A29;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 4rem 5rem;
   }
 
-  .preview-grid {
+  .services-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/texture-bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .services-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .services-left {
+    flex: 1 1 400px;
+  }
+
+  .services-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .services-title {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2.5rem, 6vw, 4.6875rem);
+    color: #F9F4EA;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .stroke-services {
+    display: block;
+    width: min(265px, 80%);
+    height: auto;
+  }
+
+  .services-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .services-list li {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: -0.02em;
+    line-height: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Icons immediately to the right of text */
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* Optional subtile guide */
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .service-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .cta-card {
+    flex: 0 0 auto;
+    position: relative;
+    display: block;
+    max-width: 480px; /* Increased size to match Figma proportions */
+    width: 100%;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .cta-card:hover {
+    transform: rotate(-1deg) scale(1.02);
+  }
+
+  .cta-card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  .cta-card-text {
+    position: absolute;
+    top: 50%;
+    left: 48%; /* Adjust for visual center within the paper texture */
+    transform: translate(-50%, -55%);
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3vw, 2.3rem);
+    color: #2D2A29;
+    text-align: center;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    width: 75%;
+  }
+
+  /* ────────────────────────── ABOUT US ───────────────────────── */
+  .aboutus-section {
+    background-color: #2D2A29;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 4rem 6rem;
+  }
+
+  .aboutus-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/texture-aboutus.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .aboutus-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .aboutus-left {
+    flex: 1 1 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .aboutus-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .aboutus-title {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(3rem, 7vw, 5rem);
+    color: #F9F4EA;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .stroke-aboutus {
+    display: block;
+    width: min(245px, 80%);
+    height: auto;
+  }
+
+  .aboutus-text {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1rem, 2vw, 1.5625rem);
+    color: #F9F4EA;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  .aboutus-text strong {
+    font-weight: 600;
+  }
+
+  /* TEAM·A */
+  .teama-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 1rem;
+  }
+
+  .teama-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 5.3125rem);
+    color: #F9F4EA;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .teama-dot {
+    width: 13px;
+    height: 13px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-bottom: 0.6em;
+  }
+
+  .stroke-teama {
+    display: block;
+    width: min(185px, 60%);
+    height: auto;
+    margin-left: 2px;
+  }
+
+  /* Team photo */
+  .aboutus-photo-wrap {
+    flex: 0 0 auto;
+    width: min(511px, 100%);
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .aboutus-photo-placeholder {
+    width: 100%;
+    min-height: 500px;
+    background-color: #D9D9D9;
+    border-radius: 4px;
+  }
+
+  /* ─────────────────────── ALIADOS PREVIEW ───────────────────── */
+  .aliados-preview-section {
+    background-color: #F9F4EA;
+    padding: 5rem 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .aliados-preview-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+    padding-top: 2rem;
+  }
+
+  .aliados-cards {
+    flex: 1 1 400px;
+    position: relative;
+    height: 420px;
+    min-width: 360px;
+  }
+
+  .aliado-scrap-card {
+    position: absolute;
+    width: 280px;
+    height: 340px;
+  }
+
+  .aliado-scrap-card--a {
+    left: 0;
+    top: 20px;
+    transform: rotate(-5.08deg);
+    z-index: 2;
+  }
+
+  .aliado-scrap-card--b {
+    left: 200px;
+    top: 40px;
+    transform: rotate(4.42deg);
+    z-index: 1;
+  }
+
+  .aliado-scrap-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #D9D9D9;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+  }
+
+  .aliado-scrap-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+  }
+
+  .aliado-scrap-avatar {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .aliado-scrap-placeholder {
+    background-color: #C0B8AE;
+  }
+
+  .aliado-scrap-name {
+    position: relative;
+    z-index: 1;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    color: #2C2527;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 1px 4px rgba(249, 244, 234, 0.7);
+  }
+
+  .aliados-preview-desc {
+    flex: 1 1 250px;
+    max-width: 335px;
+  }
+
+  .aliados-preview-desc p {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1rem, 2vw, 1.5625rem);
+    color: #2C2527;
+    line-height: 1.5;
+    margin: 0 0 1.5rem;
+  }
+
+  .aliados-preview-link {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    color: #2D2A29;
+    text-decoration: none;
+    border-bottom: 2px solid #F0C14B;
+    padding-bottom: 2px;
+    transition: opacity 0.15s ease;
+  }
+
+  .aliados-preview-link:hover {
+    opacity: 0.65;
+  }
+
+  /* ────────────────────── BLOGCITO PREVIEW ───────────────────── */
+  .blogcito-preview-section {
+    background-color: #F9F4EA;
+    padding: 5rem 4rem 5rem;
+    position: relative;
+  }
+
+  .blogcito-preview-grid {
+    max-width: 1200px;
+    margin: 3.5rem auto 0;
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
-  @media (min-width: 640px) {
-    .preview-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+    grid-template-columns: repeat(3, 335px);
+    gap: 1.5rem;
+    justify-content: center;
   }
 
   .blog-preview-card {
-    background: rgba(249, 244, 234, 0.06);
-    border-radius: 12px;
-    overflow: hidden;
-    text-decoration: none;
     display: block;
+    text-decoration: none;
+    color: inherit;
+    background-color: #ffffff;
     transition: transform 0.2s ease;
-    border: 1px solid rgba(240, 193, 75, 0.15);
   }
 
   .blog-preview-card:hover {
     transform: translateY(-4px);
   }
 
-  .preview-img-wrap {
+  .blog-preview-img-wrap {
+    width: 335px;
+    height: 407px;
     overflow: hidden;
-    aspect-ratio: 16 / 9;
+    background-color: #D9D9D9;
   }
 
-  .preview-img {
+  .blog-preview-img-placeholder {
+    width: 335px;
+    height: 407px;
+    background-color: #D9D9D9;
+  }
+
+  .blog-preview-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -403,28 +807,24 @@ const services = [
     transition: transform 0.3s ease;
   }
 
-  .blog-preview-card:hover .preview-img {
+  .blog-preview-card:hover .blog-preview-img {
     transform: scale(1.04);
   }
 
-  .preview-body {
-    padding: 1rem 1rem 1.25rem;
-  }
-
-  .preview-title {
+  .blog-preview-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    color: #F9F4EA;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.4rem;
-    line-height: 1.2;
+    font-size: clamp(2rem, 4.5vw, 4.0625rem);
+    color: #2C2527;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin: 0.75rem 0 0.4rem;
   }
 
-  .preview-desc {
+  .blog-preview-desc {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
-    font-size: 0.8rem;
-    color: rgba(249, 244, 234, 0.6);
+    font-size: clamp(0.875rem, 1.5vw, 1.25rem);
+    color: #2C2527;
     line-height: 1.5;
     margin: 0;
     display: -webkit-box;
@@ -433,139 +833,91 @@ const services = [
     overflow: hidden;
   }
 
-  .btn-ver-todos {
-    display: inline-block;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
-    color: #F0C14B;
-    text-decoration: none;
-    border-bottom: 1px solid #F0C14B;
-    padding-bottom: 2px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: opacity 0.15s ease;
-  }
+  /* ────────────────────── RESPONSIVE ────────────────────────── */
+  @media (max-width: 900px) {
+    .hero {
+      padding: 2rem 1.5rem 4rem;
+      min-height: auto;
+    }
 
-  .btn-ver-todos--dark {
-    color: #2D2A29;
-    border-color: #2D2A29;
-  }
+    .stars-cluster {
+      width: 200px;
+      height: 220px;
+    }
 
-  .btn-ver-todos:hover {
-    opacity: 0.7;
-  }
+    .star-1 { right: 8px;  top: 80px;  width: 60px; height: 58px; }
+    .star-2 { right: 84px; top: 84px;  width: 48px; height: 46px; }
+    .star-3 { right: 32px; top: 150px; width: 42px; height: 40px; }
 
-  /* ALIADOS PREVIEW */
-  .aliados-preview-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+    .stroke-hero {
+      margin-left: 0;
+    }
 
-  @media (min-width: 640px) {
-    .aliados-preview-grid {
-      grid-template-columns: repeat(3, 1fr);
+    .services-section,
+    .aboutus-section,
+    .aliados-preview-section,
+    .blogcito-preview-section {
+      padding: 3.5rem 1.5rem 4rem;
+    }
+
+    .services-inner,
+    .aboutus-inner,
+    .aliados-preview-inner {
+      flex-direction: column;
+    }
+
+    .cta-card {
+      align-self: center;
+    }
+
+    .aboutus-photo-wrap {
+      width: 100%;
+    }
+
+    .aboutus-photo-placeholder {
+      min-height: 300px;
+    }
+
+    .aliados-cards {
+      height: 350px;
+      min-width: unset;
+      width: 100%;
+    }
+
+    .aliado-scrap-card {
+      width: 220px;
+      height: 270px;
+    }
+
+    .aliado-scrap-card--b {
+      left: 160px;
+    }
+
+    .blogcito-preview-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .blog-preview-img-wrap,
+    .blog-preview-img-placeholder {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 335 / 407;
     }
   }
 
-  .aliado-preview-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 2px 8px rgba(45, 42, 41, 0.07);
-  }
+  @media (max-width: 600px) {
+    .blogcito-preview-grid {
+      grid-template-columns: 1fr;
+    }
 
-  .aliado-preview-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #F0C14B;
-    flex-shrink: 0;
-  }
+    .section-tab {
+      width: 240px;
+      height: 48px;
+    }
 
-  .aliado-preview-info {
-    min-width: 0;
-  }
-
-  .aliado-preview-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.4rem;
-  }
-
-  .aliado-preview-services {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-  }
-
-  .aliado-preview-tag {
-    background: #F9F4EA;
-    border: 1px solid #F0C14B;
-    color: #2D2A29;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.7rem;
-    border-radius: 20px;
-    padding: 0.15rem 0.5rem;
-    white-space: nowrap;
-  }
-
-  /* CTA */
-  .cta-section {
-    background: #F0C14B;
-    padding: 5rem 1.5rem;
-    text-align: center;
-  }
-
-  .cta-inner {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .cta-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0 0 0.75rem;
-  }
-
-  .cta-text {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 1rem;
-    color: #2D2A29;
-    opacity: 0.8;
-    line-height: 1.6;
-    margin: 0 0 2rem;
-  }
-
-  .cta-btn {
-    display: inline-block;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.08em;
-    color: #F0C14B;
-    background: #2D2A29;
-    border-radius: 12px;
-    padding: 0.85rem 2.5rem;
-    text-decoration: none;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-
-  .cta-btn:hover {
-    background: #F9F4EA;
-    color: #2D2A29;
+    .section-tab-label {
+      font-size: 2rem;
+      margin-left: 40px;
+    }
   }
 </style>

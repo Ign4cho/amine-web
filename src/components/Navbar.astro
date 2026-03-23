@@ -1,26 +1,30 @@
 ---
+const currentPath = Astro.url.pathname;
+
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+
 const navItems = [
-  { label: "HOME",         href: "/",         key: "home"        },
-  { label: "BLOGCITO",     href: "/blogcito",  key: "blogcito"    },
-  { label: "ALIADOS",      href: "/aliados",   key: "aliados"     },
+  { label: "HOME",         href: "/",            key: "home"        },
+  { label: "ALIADOS",      href: "/aliados",     key: "aliados"     },
+  { label: "BLOGCITO",     href: "/blogcito",    key: "blogcito"    },
   { label: "CONTACTANOS!", href: "/contactanos", key: "contactanos" },
 ];
 ---
 
-<nav
-  x-data="{ active: window.location.pathname === '/' ? 'home' : window.location.pathname.replace('/', '') }"
-  class="navbar-root"
->
-  {navItems.map((item) => (
-    <a
-      href={item.href}
-      class="nav-tab"
-      :class={`active === '${item.key}' ? 'tab-active' : 'tab-inactive'`}
-      @click={`active = '${item.key}'`}
-    >
-      {item.label}
-    </a>
-  ))}
+<nav class="navbar-root">
+  {navItems.map((item) => {
+    const active = isActive(item.href);
+    return (
+      <a
+        href={item.href}
+        class={`nav-tab ${active ? 'tab-active' : 'tab-inactive'}`}
+        aria-current={active ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    );
+  })}
 </nav>
 
 <style>
@@ -29,10 +33,9 @@ const navItems = [
     width: 100%;
     display: flex;
     align-items: flex-end;
-    height: 56px;
+    height: 63px;
     padding: 0 14px;
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 100;
     box-sizing: border-box;
   }
@@ -42,16 +45,15 @@ const navItems = [
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 20px;
+    padding-left: 18px;
     position: relative;
-    height: 46px;
-    margin: 0 14px;
+    height: 52px;
+    margin: 0 8px;
     border-radius: 18px 18px 0 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
+    font-size: clamp(0.9rem, 2.6vw, 2.375rem);
     letter-spacing: 0.07em;
     text-decoration: none !important;
-    text-decoration-line: none !important;
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
@@ -62,6 +64,7 @@ const navItems = [
     white-space: nowrap;
   }
 
+  /* Curved corner fillers */
   .nav-tab::before,
   .nav-tab::after {
     content: "";
@@ -82,12 +85,14 @@ const navItems = [
     background-image: radial-gradient(circle at 100% 0, transparent 11.5px, var(--tab-bg, #F0C14B) 12px);
   }
 
+  /* Active tab */
   .tab-active {
     --tab-bg: #F9F4EA;
     background-color: var(--tab-bg) !important;
     color: #2D2A29 !important;
   }
 
+  /* Inactive tab */
   .tab-inactive {
     --tab-bg: #F0C14B;
     background-color: var(--tab-bg) !important;
@@ -96,23 +101,8 @@ const navItems = [
 
   @media (max-width: 768px) {
     .navbar-root {
-        padding: 0 6px;
-    }
-    .nav-tab {
-      font-size: 1rem;
-      margin: 0 6px;
-      padding: 0 16px;
-      letter-spacing: 0.03em;
-      border-radius: 12px 12px 0 0;
-    }
-    .nav-tab::before,
-    .nav-tab::after {
-      width: 6px;
-      height: 6px;
-    }
-    .nav-tab::before {
-      left: -6px;
-      background-image: radial-gradient(circle at 0 0, transparent 5.5px, var(--tab-bg, #F0C14B) 6px);
+      padding: 0 4px;
+      height: 56px;
     }
     .nav-tab::after {
       right: -6px;

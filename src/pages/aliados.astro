@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import { WHATSAPP_URL } from '../constants';
@@ -10,30 +9,47 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout title="Aliados — Amine Social Media">
-  <Navbar />
 
-  <main class="aliados-main">
-    <header class="aliados-header">
+  <!-- Header -->
+  <header class="aliados-header">
+    <div class="aliados-header-texture" aria-hidden="true"></div>
+    <div class="aliados-header-inner">
+      <div class="aliados-header-tab">
+        <img src="/assets/tab-aliados.png" alt="" class="aliados-header-tab-img" aria-hidden="true" />
+        <span class="aliados-header-tab-label">ALIADOS</span>
+      </div>
       <h1 class="aliados-title">Aliados</h1>
       <p class="aliados-subtitle">
-        Profesionales de confianza con quienes trabajamos para potenciar tu marca.
+        Profesionales de confianza con quienes colaboramos para potenciar cada proyecto.
       </p>
-    </header>
+    </div>
+  </header>
 
-    <section class="aliados-grid-section">
-      <div class="aliados-grid">
-        {sorted.map((aliado) => (
-          <article class="aliado-card">
-            <div class="aliado-avatar-wrap">
-              <Image
-                src={aliado.data.avatar}
-                alt={aliado.data.name}
-                width={100}
-                height={100}
-                class="aliado-avatar"
-              />
-            </div>
+  <!-- Partner grid -->
+  <main class="aliados-main">
+    <div class="aliados-grid">
+      {sorted.map((aliado, i) => (
+        <article class={`aliado-card aliado-card--${i % 2 === 0 ? 'a' : 'b'}`}>
+          <!-- Scrapbook-style avatar -->
+          <div class="aliado-scrap-wrap">
+            <img
+              src="/assets/aliados-card-bg.png"
+              alt=""
+              class="aliado-scrap-bg"
+              aria-hidden="true"
+            />
+            <Image
+              src={aliado.data.avatar}
+              alt={aliado.data.name}
+              width={280}
+              height={340}
+              class="aliado-avatar-img"
+            />
+            <p class="aliado-scrap-name">{aliado.data.name}</p>
+          </div>
 
+          <!-- Info -->
+          <div class="aliado-info">
             <h2 class="aliado-name">{aliado.data.name}</h2>
             <p class="aliado-description">{aliado.data.description}</p>
 
@@ -70,118 +86,202 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
                 </a>
               )}
             </div>
-          </article>
-        ))}
-      </div>
-    </section>
+          </div>
+        </article>
+      ))}
+    </div>
 
     <!-- CTA -->
     <section class="aliados-cta">
-      <p class="cta-text">¿Querés sumarte a nuestra red de aliados?</p>
-      <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="cta-btn"
-      >
-        Escribinos por WhatsApp
-      </a>
+      <div class="aliados-cta-texture" aria-hidden="true"></div>
+      <div class="aliados-cta-inner">
+        <p class="cta-title">¿Querés sumarte a nuestra red de aliados?</p>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cta-btn"
+        >
+          Escribinos por WhatsApp
+        </a>
+      </div>
     </section>
   </main>
 </Layout>
 
 <style>
-  .aliados-main {
-    min-height: 100vh;
-    background-color: #F9F4EA;
-  }
-
+  /* Header */
   .aliados-header {
     background-color: #2D2A29;
-    padding: 3rem 1rem 2.5rem;
-    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 4rem 4rem;
+  }
+
+  .aliados-header-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/texture-bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .aliados-header-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .aliados-header-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 319px;
+    height: 57px;
+    margin-left: -4rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .aliados-header-tab-img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  .aliados-header-tab-label {
+    position: relative;
+    z-index: 1;
+    margin-left: 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.625rem;
+    letter-spacing: 0.04em;
+    color: #2D2A29;
+    line-height: 1;
   }
 
   .aliados-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: Georgia, serif;
+    font-style: italic;
     font-size: clamp(3rem, 8vw, 5rem);
-    color: #F0C14B;
-    letter-spacing: 0.06em;
+    color: #F9F4EA;
+    letter-spacing: -0.02em;
     margin: 0 0 0.5rem;
+    line-height: 1;
   }
 
   .aliados-subtitle {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
-    font-size: 0.95rem;
-    color: #F9F4EA;
-    opacity: 0.8;
+    font-size: 1rem;
+    color: rgba(249, 244, 234, 0.75);
     margin: 0;
   }
 
-  .aliados-grid-section {
-    padding: 3rem 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
+  /* Main */
+  .aliados-main {
+    background-color: #F9F4EA;
   }
 
   .aliados-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .aliados-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 960px) {
-    .aliados-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .aliado-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2rem 1.5rem;
-    box-shadow: 0 2px 12px rgba(45, 42, 41, 0.08);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 4rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
+    gap: 5rem;
   }
 
-  .aliado-avatar-wrap {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 3px solid #F0C14B;
+  /* Partner card */
+  .aliado-card {
+    display: flex;
+    gap: 4rem;
+    align-items: flex-start;
+  }
+
+  .aliado-card--b {
+    flex-direction: row-reverse;
+  }
+
+  /* Scrapbook photo */
+  .aliado-scrap-wrap {
+    flex: 0 0 auto;
+    width: 280px;
+    height: 340px;
+    position: relative;
     overflow: hidden;
-    flex-shrink: 0;
+    border-radius: 4px;
+    background-color: #D9D9D9;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
   }
 
-  .aliado-avatar {
+  .aliado-card--a .aliado-scrap-wrap {
+    transform: rotate(-3deg);
+  }
+
+  .aliado-card--b .aliado-scrap-wrap {
+    transform: rotate(3deg);
+  }
+
+  .aliado-scrap-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity: 0.45;
+  }
+
+  .aliado-avatar-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .aliado-scrap-name {
+    position: relative;
+    z-index: 1;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 2rem;
+    color: #2C2527;
+    margin: 0;
+    text-shadow: 0 1px 6px rgba(249, 244, 234, 0.8);
+  }
+
+  /* Info */
+  .aliado-info {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.5rem;
   }
 
   .aliado-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2rem, 4vw, 2.8rem);
     color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0.25rem 0 0;
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1;
   }
 
   .aliado-description {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: #5C5753;
     line-height: 1.6;
     margin: 0;
@@ -190,22 +290,21 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
   .aliado-services {
     list-style: none;
     padding: 0;
-    margin: 0.25rem 0;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    justify-content: center;
+    gap: 0.5rem;
   }
 
   .service-tag {
-    background: #F9F4EA;
-    border: 1px solid #F0C14B;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
     color: #2D2A29;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.75rem;
+    background: transparent;
+    border: 1.5px solid #F0C14B;
     border-radius: 20px;
-    padding: 0.2rem 0.65rem;
+    padding: 0.2rem 0.8rem;
   }
 
   .aliado-contact {
@@ -217,11 +316,11 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     align-items: center;
     gap: 0.5rem;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
+    font-size: 1.1rem;
     letter-spacing: 0.06em;
     text-decoration: none;
     border-radius: 8px;
-    padding: 0.5rem 1.2rem;
+    padding: 0.6rem 1.5rem;
     transition: background 0.15s ease, color 0.15s ease;
   }
 
@@ -245,18 +344,36 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     color: #2D2A29;
   }
 
+  /* CTA */
   .aliados-cta {
-    background: #2D2A29;
-    padding: 3rem 1rem;
+    background-color: #2D2A29;
+    position: relative;
+    overflow: hidden;
     text-align: center;
+    padding: 4rem 1.5rem;
   }
 
-  .cta-text {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 1rem;
+  .aliados-cta-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/texture-bg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .aliados-cta-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-title {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     color: #F9F4EA;
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.5rem;
   }
 
   .cta-btn {
@@ -269,10 +386,43 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     border-radius: 10px;
     padding: 0.7rem 2rem;
     text-decoration: none;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease;
   }
 
   .cta-btn:hover {
     background: #F9F4EA;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .aliados-header {
+      padding: 0 1.5rem 3rem;
+    }
+
+    .aliados-header-tab {
+      margin-left: -1.5rem;
+    }
+
+    .aliados-grid {
+      padding: 3rem 1.5rem;
+      gap: 3rem;
+    }
+
+    .aliado-card,
+    .aliado-card--b {
+      flex-direction: column;
+    }
+
+    .aliado-scrap-wrap {
+      width: 100%;
+      max-width: 280px;
+      height: 240px;
+      align-self: flex-start;
+    }
+
+    .aliado-card--a .aliado-scrap-wrap,
+    .aliado-card--b .aliado-scrap-wrap {
+      transform: rotate(-2deg);
+    }
   }
 </style>
