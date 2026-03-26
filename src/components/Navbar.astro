@@ -100,13 +100,44 @@ const navItems = [
   }
 
   @media (max-width: 768px) {
+    /*
+     * Mobile folder-tab proportions:
+     *   - Gap between tabs  = 8px  (margin 0 4px each side)
+     *   - Corner connectors = 8px  (same size as gap so they fully fill the concave arc)
+     *   - Tab height        = 46px inside 56px navbar  (~82%, same ratio as desktop)
+     *   - border-radius     = 18px 18px 0 0  (identical to desktop)
+     */
     .navbar-root {
-      padding: 0 4px;
-      height: 56px;
+      padding: 0 2px;
+      height: 50px;
     }
+
+    .nav-tab {
+      margin: 0 4px;
+      padding-left: 6px;
+      justify-content: flex-start;
+      height: 36px;
+      font-size: clamp(0.62rem, 3vw, 0.9rem);
+      letter-spacing: 0.05em;
+      border-radius: 18px 18px 0 0;
+      text-decoration: none !important;
+    }
+
+    /* Connectors: 8px radius, positioned so they completely cover the 8px gap */
+    .nav-tab::before,
     .nav-tab::after {
-      right: -6px;
-      background-image: radial-gradient(circle at 100% 0, transparent 5.5px, var(--tab-bg, #F0C14B) 6px);
+      width: 8px;
+      height: 8px;
+    }
+
+    .nav-tab::before {
+      left: -8px;
+      background-image: radial-gradient(circle at 0 0, transparent 7.5px, var(--tab-bg, #F0C14B) 8px);
+    }
+
+    .nav-tab::after {
+      right: -8px;
+      background-image: radial-gradient(circle at 100% 0, transparent 7.5px, var(--tab-bg, #F0C14B) 8px);
     }
   }
 </style>

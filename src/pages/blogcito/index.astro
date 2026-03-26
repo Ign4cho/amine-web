@@ -18,12 +18,8 @@ const nextUrl = totalPages > 1 ? '/blogcito/page/2' : undefined;
 
 <BlogLayout title="Blogcito" description="Artículos sobre marketing digital, redes sociales y crecimiento de marca.">
   <main class="blog-main">
-    <!-- Header with section tab -->
+    <!-- Header -->
     <header class="blog-header">
-      <div class="blog-header-tab">
-        <img src="/assets/tab-blogcito.png" alt="" class="blog-header-tab-img" aria-hidden="true" />
-        <span class="blog-header-tab-label">BLOGCITO</span>
-      </div>
       <h1 class="blog-header-title">Blogcito</h1>
       <p class="blog-header-subtitle">Estrategias, consejos y reflexiones sobre el mundo digital.</p>
     </header>
@@ -60,39 +56,9 @@ const nextUrl = totalPages > 1 ? '/blogcito/page/2' : undefined;
   /* Header */
   .blog-header {
     background-color: #2D2A29;
-    padding: 0 4rem 3rem;
+    padding: 3rem 4rem 3rem;
     text-align: left;
     position: relative;
-  }
-
-  .blog-header-tab {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    width: 319px;
-    height: 57px;
-    margin-left: -4rem;
-    margin-bottom: 2rem;
-  }
-
-  .blog-header-tab-img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-  }
-
-  .blog-header-tab-label {
-    position: relative;
-    z-index: 1;
-    margin-left: 50px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.625rem;
-    letter-spacing: 0.04em;
-    color: #2D2A29;
-    line-height: 1;
   }
 
   .blog-header-title {
@@ -144,10 +110,6 @@ const nextUrl = totalPages > 1 ? '/blogcito/page/2' : undefined;
   @media (max-width: 700px) {
     .blog-header {
       padding: 0 1.5rem 2rem;
-    }
-
-    .blog-header-tab {
-      margin-left: -1.5rem;
     }
 
     .blog-grid-section {

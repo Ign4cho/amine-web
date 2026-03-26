@@ -30,8 +30,8 @@ Deployment: run `npm run build`, then manually upload `dist/` to Hostinger `publ
 
 ### Layouts
 
-- `src/layouts/Layout.astro` — base HTML layout for all non-blog pages (Google Fonts, global.css, `title` prop)
-- `src/layouts/BlogLayout.astro` — blog-only layout with SEO meta (title, description, og:image). Does **not** extend `Layout.astro` — keep them isolated.
+- `src/layouts/Layout.astro` — base HTML layout for all non-blog pages (Google Fonts, global.css, `title` prop). Renders `<Navbar />` and `<Footer />` automatically.
+- `src/layouts/BlogLayout.astro` — blog-only layout with SEO meta (title, description, og:image). Does **not** extend `Layout.astro` — keep them isolated. Also renders `<Navbar />` and `<Footer />` automatically.
 
 ### Blog Components
 
@@ -39,11 +39,13 @@ Blog components live exclusively in `src/components/blog/` — never mix with ot
 
 ### Navbar
 
-Alpine.js active state:
-```js
-x-data="{ active: window.location.pathname === '/' ? 'home' : window.location.pathname.replace('/', '') }"
-```
-4 tabs: HOME `/`, BLOGCITO `/blogcito`, ALIADOS `/aliados`, CONTACTANOS! `#contacto`. Active tab turns cream, inactive tabs are mustard. Sticky on `md:` and up.
+Active tab is detected server-side via `Astro.url.pathname` — no Alpine.js involved. Tab order: HOME `/`, ALIADOS `/aliados`, BLOGCITO `/blogcito`, CONTACTANOS! `/contactanos`. Active tab turns cream, inactive tabs are mustard.
+
+`position: fixed` is enforced via `.navbar-root` in `src/styles/global.css` (with `!important`) to prevent Astro's scoped CSS from interfering. A `.navbar-spacer` div after `<nav>` compensates for the removed document flow.
+
+**Mobile tabs:** 36px tall inside a 50px navbar. Same `18px 18px 0 0` border-radius as desktop. Gap between tabs: `margin: 0 4px` (8px gap, dark header bg shows through). Corner connectors: 8px × 8px `radial-gradient` pseudo-elements — must match or exceed gap size to fill the concave arc. Font: `clamp(0.62rem, 3vw, 0.9rem)`, left-aligned with `padding-left: 6px`.
+
+**Do not add `<Navbar />` to individual pages** — it is rendered automatically by both layouts.
 
 ### Admin Page (`/admin`)
 
@@ -65,7 +67,7 @@ Custom Tailwind classes from `tailwind.config.mjs`:
 
 ## Components
 
-- `src/components/Navbar.astro` — sticky navbar, tabs order: HOME / ALIADOS / BLOGCITO / CONTACTANOS!
+- `src/components/Navbar.astro` — fixed navbar (via global.css), tabs order: HOME / ALIADOS / BLOGCITO / CONTACTANOS!
 - `src/components/Footer.astro` — footer with texture bg + 3 nav columns; included automatically in both layouts
 - `src/components/blog/BlogGridCard.astro` — 3-column grid card for blogcito feed pages (image + title + expand toggle + link)
 - `src/components/blog/PostCard.astro` — single-post page card (full content inline, Alpine toggle)
