@@ -34,7 +34,10 @@ const navItems = [
     display: flex;
     align-items: flex-end;
     height: 63px;
-    padding: 0 14px;
+    /* Left padding calibrado para que el texto del primer tab (HOME) caiga
+       exactamente en 4rem = 64px (mismo left-edge que el contenido del hero).
+       Cálculo: 4rem − margin(8px) − padding-left(18px) = 38px. */
+    padding: 0 38px;
     position: relative;
     z-index: 100;
     box-sizing: border-box;

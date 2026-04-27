@@ -1,123 +1,171 @@
 ---
-import { getCollection } from 'astro:content';
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import BlogGridCard from '../../components/blog/BlogGridCard.astro';
-import Pagination from '../../components/blog/Pagination.astro';
-
-const POSTS_PER_PAGE = 6;
-
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
-
-const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
-const pagePosts = sortedPosts.slice(0, POSTS_PER_PAGE);
-const nextUrl = totalPages > 1 ? '/blogcito/page/2' : undefined;
+import Layout from '../../layouts/Layout.astro';
 ---
 
-<BlogLayout title="Blogcito" description="Artículos sobre marketing digital, redes sociales y crecimiento de marca.">
-  <main class="blog-main">
-    <!-- Header -->
-    <header class="blog-header">
-      <h1 class="blog-header-title">Blogcito</h1>
-      <p class="blog-header-subtitle">Estrategias, consejos y reflexiones sobre el mundo digital.</p>
-    </header>
-
-    <!-- 3-column grid -->
-    <section class="blog-grid-section">
-      {pagePosts.length > 0 ? (
-        <div class="blog-grid">
-          {pagePosts.map((post) => (
-            <BlogGridCard post={post} />
-          ))}
-        </div>
-      ) : (
-        <div class="blog-empty">
-          <p>Próximamente — el contenido está en camino.</p>
-        </div>
-      )}
-
-      <Pagination
-        currentPage={1}
-        totalPages={totalPages}
-        nextUrl={nextUrl}
+<Layout title="Blogcito — Próximamente">
+  <main class="soon-main">
+    <section class="soon-hero">
+      <img
+        src="/assets/pc-blogcito.png"
+        alt="Monitor retro con Amine Blogcitos en pantalla"
+        class="soon-pc"
       />
+
+      <div class="soon-copy">
+        <h1 class="soon-title">proximamente<span class="soon-dot">.</span></h1>
+        <p class="soon-sub">(no queremos tener una cuenta de instagram de la agencia, encontramos una solucion!)</p>
+      </div>
     </section>
   </main>
-</BlogLayout>
+</Layout>
 
 <style>
-  .blog-main {
-    min-height: 100vh;
-    background-color: #F9F4EA;
+  /* Two-zone background: warm beige (wall) on top, light lavender-gray (desk)
+     on bottom. Sharp line between zones, with a soft shadow below (wall casts
+     a shadow onto the desk edge). */
+  .soon-main {
+    min-height: calc(100vh - 50px);
+    background:
+      /* shadow the wall casts onto the desk, just below the line */
+      linear-gradient(
+        to bottom,
+        transparent 64.5%,
+        rgba(0, 0, 0, 0.22) 65%,
+        rgba(0, 0, 0, 0) 71%
+      ),
+      /* base two-tone with hard horizontal split at 65% */
+      linear-gradient(
+        to bottom,
+        #E8D5A3 0%,
+        #E8D5A3 65%,
+        #D8D5DC 65%,
+        #D8D5DC 100%
+      );
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Header */
-  .blog-header {
-    background-color: #2D2A29;
-    padding: 3rem 4rem 3rem;
-    text-align: left;
+  /* Hero grid rows match the background split so PC can sit ON the line */
+  .soon-hero {
     position: relative;
+    flex: 1;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 65% 35%;
+    grid-template-columns: 45% 55%;
+    padding: 0 clamp(1.5rem, 4vw, 4rem) 0 clamp(1rem, 2vw, 2rem);
+    min-height: calc(100vh - 50px);
   }
 
-  .blog-header-title {
-    font-family: Georgia, serif;
+  .soon-pc {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: end;
+    justify-self: start;
+    display: block;
+    width: clamp(260px, 85%, 520px);
+    height: auto;
+    margin-bottom: 0;
+    /* Shift the PC down so the whole keyboard rests on the desk side. */
+    transform: translateY(32%);
+    filter: drop-shadow(0 18px 22px rgba(45, 42, 41, 0.18));
+  }
+
+  .soon-copy {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    align-self: center;
+    justify-self: start;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .soon-title {
+    font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    color: #F9F4EA;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 5.5vw, 4.5rem);
+    line-height: 0.95;
+    color: #1A1A1A;
     letter-spacing: -0.02em;
-    margin: 0 0 0.5rem;
-  }
-
-  .blog-header-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.95rem;
-    color: rgba(249, 244, 234, 0.75);
     margin: 0;
   }
 
-  /* Grid */
-  .blog-grid-section {
-    padding: 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  .soon-dot {
+    font-style: italic;
   }
 
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 335px);
-    gap: 2rem;
-    justify-content: center;
+  .soon-sub {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-weight: 400;
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    color: #2D2A29;
+    line-height: 1.45;
+    margin: 0;
+    max-width: 68ch;
   }
 
-  .blog-empty {
-    text-align: center;
-    padding: 4rem 0;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    color: #5C5753;
-    font-size: 1rem;
-  }
-
-  @media (max-width: 1100px) {
-    .blog-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 700px) {
-    .blog-header {
-      padding: 0 1.5rem 2rem;
-    }
-
-    .blog-grid-section {
-      padding: 2rem 1.5rem;
+  @media (max-width: 760px) {
+    .soon-main {
+      align-items: stretch;
+      min-height: 560px;
+      background:
+        linear-gradient(
+          to bottom,
+          transparent 63.5%,
+          rgba(0, 0, 0, 0.2) 64%,
+          rgba(0, 0, 0, 0) 70%
+        ),
+        linear-gradient(
+          to bottom,
+          #E8D5A3 0%,
+          #E8D5A3 64%,
+          #D8D5DC 64%,
+          #D8D5DC 100%
+        );
     }
 
-    .blog-grid {
+    /* Two rows matching the 64/36 background split — PC ends exactly on the line */
+    .soon-hero {
+      display: grid;
+      grid-template-rows: 64% 36%;
       grid-template-columns: 1fr;
+      padding: 0;
+      gap: 0;
+      min-height: 560px;
+    }
+
+    .soon-pc {
+      grid-row: 1;
+      grid-column: 1;
+      width: 70%;
+      max-width: 360px;
+      align-self: end;
+      justify-self: center;
+      margin-bottom: 0;
+      transform: translateY(25%);
+    }
+
+    .soon-copy {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: start;
+      justify-self: center;
+      align-items: center;
+      text-align: center;
+      padding: 1.5rem 1.5rem 2.5rem;
+      max-width: 90%;
+    }
+
+    .soon-title {
+      text-align: center;
+    }
+
+    .soon-sub {
+      text-align: center;
+      max-width: 100%;
     }
   }
 </style>

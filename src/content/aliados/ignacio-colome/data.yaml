@@ -1,10 +1,21 @@
 name: Ignacio Colomé
-services:
-  - Desarrollo Web
-  - Soluciones de Datos
+area: web
 avatar: ./avatar.svg
-description: Especialista técnico en programación web y soluciones orientadas a datos.
+photo: ./photo.png
+paper: ./paper.png
+logo: ./logo.png
+description: >-
+  Soy Ignacio Colomé, licenciado en Sistemas de Información. Me interesa
+  construir soluciones tecnológicas que potencien el trabajo creativo,
+  combinando criterio técnico con atención al detalle. En Amine me encargo del
+  desarrollo web y de que cada idea del equipo tenga la plataforma que necesita
+  para funcionar.
+services:
+  - Desarrollo web
+  - Análisis de datos
+  - Soporte técnico a las ideas
 contact:
   type: email
-  value: ignacio@espacioamine.com
+  value: nachocolome@gmail.com
+portfolio: https://ign4cho.github.io/portfolio-web/
 order: 2

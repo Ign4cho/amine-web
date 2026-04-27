@@ -4,11 +4,14 @@ import BlogLayout from '../../layouts/BlogLayout.astro';
 import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.id.split('/')[0] },
-    props: { post },
-  }));
+  // Blogcito deshabilitado en v2 — ver src/pages/blogcito/index.astro (página "próximamente").
+  // Para reactivar: devolver posts.map(...) como antes.
+  return [];
+  // const posts = await getCollection('blog');
+  // return posts.map((post) => ({
+  //   params: { slug: post.id.split('/')[0] },
+  //   props: { post },
+  // }));
 }
 
 const { post } = Astro.props;

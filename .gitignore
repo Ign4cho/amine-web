@@ -26,3 +26,9 @@ pnpm-debug.log*
 # local planning files
 context.md
 Prompt.md
+
+# Claude Code local state (per-machine)
+.claude/
+
+# PO/designer feedback drop zone (local reference only — heavy PNG assets)
+design-refs/

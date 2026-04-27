@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL } from '../constants';
+import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL, TIKTOK_URL } from '../constants';
 ---
 
 <Layout title="Contactanos — Amine Social Media">
@@ -11,63 +11,71 @@ import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL } from '../constants';
     </header>
 
     <section class="contact-section">
-      <!-- WhatsApp CTA -->
-      <div class="contact-card whatsapp-card">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="postit postit--whatsapp"
+        aria-label="Escribinos por WhatsApp"
+      >
+        <span class="postit-tape" aria-hidden="true"></span>
+        <span class="postit-corner" aria-hidden="true"></span>
+        <span class="postit-icon" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
             <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.557 4.117 1.532 5.845L.057 23.492a.5.5 0 0 0 .614.644l5.77-1.508A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.523-5.158-1.433l-.36-.215-3.726.974.999-3.629-.236-.374A9.945 9.945 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
           </svg>
-        </div>
-        <h2 class="contact-card-title">WhatsApp</h2>
-        <p class="contact-card-text">La forma más rápida de hablar con nosotros. Respondemos en el día.</p>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="contact-btn contact-btn--primary"
-        >
-          Escribinos por WhatsApp
-        </a>
-      </div>
+        </span>
+        <h2 class="postit-title">WhatsApp</h2>
+        <p class="postit-text">Hablá con nosotros por WhatsApp.</p>
+        <span class="postit-cta">MANDANOS TUS IDEAS !</span>
+      </a>
 
-      <!-- Email -->
-      <div class="contact-card email-card">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <a
+        href={`mailto:${CONTACT_EMAIL}`}
+        class="postit postit--email"
+        aria-label="Mandanos un mail"
+      >
+        <span class="postit-tape" aria-hidden="true"></span>
+        <span class="postit-corner" aria-hidden="true"></span>
+        <span class="postit-icon" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="2" y="4" width="20" height="16" rx="2"/>
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
           </svg>
-        </div>
-        <h2 class="contact-card-title">Email</h2>
-        <p class="contact-card-text">Para consultas más detalladas o presupuestos personalizados.</p>
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          class="contact-btn contact-btn--secondary"
-        >
-          Mandanos un mail
-        </a>
-      </div>
+        </span>
+        <h2 class="postit-title">Email</h2>
+        <p class="postit-text">
+          ¿Necesitás un presupuesto personalizado? Para propuestas especiales y servicios de nuestros aliados,
+        </p>
+        <span class="postit-cta">PERO SIEMPRE MEJOR WSP</span>
+      </a>
 
-      <!-- Instagram -->
-      <div class="contact-card instagram-card">
-        <div class="contact-icon">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <div class="postit postit--social" aria-label="Seguinos en redes sociales">
+        <span class="postit-tape" aria-hidden="true"></span>
+        <span class="postit-corner" aria-hidden="true"></span>
+        <span class="postit-icon" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
             <circle cx="12" cy="12" r="4"/>
-            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/>
           </svg>
-        </div>
-        <h2 class="contact-card-title">Instagram</h2>
-        <p class="contact-card-text">Seguinos para contenido diario sobre marketing y redes sociales.</p>
-        <a
-          href={INSTAGRAM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="contact-btn contact-btn--instagram"
-        >
-          Seguinos en Instagram
-        </a>
+        </span>
+        <h2 class="postit-title">Redes Sociales</h2>
+        <p class="postit-text">Seguinos en nuestras redes</p>
+        <ul class="postit-socials">
+          <li>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              Instagram: @guadasancheznph
+            </a>
+          </li>
+          <li>
+            <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">
+              TikTok: @espacio.amine
+            </a>
+          </li>
+        </ul>
+        <p class="postit-tagline">Mantenete actualizado con todas las novedades.</p>
       </div>
     </section>
   </main>
@@ -81,7 +89,7 @@ import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL } from '../constants';
 
   .contact-header {
     background-color: #2D2A29;
-    padding: 3rem 1rem 2.5rem;
+    padding: 3.5rem 1rem 3rem;
     text-align: center;
   }
 
@@ -103,98 +111,206 @@ import { WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL } from '../constants';
   }
 
   .contact-section {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
+    padding: 5rem 2rem 6rem;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 3rem;
+    justify-items: center;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 760px) {
     .contact-section {
       grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
     }
   }
 
-  .contact-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2rem 1.5rem;
-    box-shadow: 0 2px 12px rgba(45, 42, 41, 0.08);
+  /* Postit */
+  .postit {
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
-  }
-
-  .contact-icon {
-    color: #F0C14B;
-    margin-bottom: 0.25rem;
-  }
-
-  .contact-card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
+    align-items: flex-start;
+    text-align: left;
+    text-decoration: none;
     color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0;
+    width: 100%;
+    max-width: 300px;
+    min-height: 300px;
+    padding: 3rem 1.75rem 2rem;
+    box-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.08),
+      0 10px 20px rgba(45, 42, 41, 0.18),
+      0 20px 40px rgba(45, 42, 41, 0.1);
+    transition: transform 250ms ease, box-shadow 250ms ease;
+    isolation: isolate;
   }
 
-  .contact-card-text {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    color: #5C5753;
-    line-height: 1.6;
-    margin: 0;
+  /* Los tres postits ahora son amarillos con distintas intensidades —
+     los dos de la derecha se acercan al mostaza de la página (#F0C14B). */
+  .postit--whatsapp {
+    background: #FCE879; /* Amarillo manteca (sin cambio) */
+    transform: rotate(-2.5deg);
+  }
+
+  .postit--email {
+    background: #F0C14B; /* Brand mustard exacto */
+    transform: rotate(1.5deg);
+  }
+
+  .postit--social {
+    background: #E8B83D; /* Mostaza algo más profundo/ámbar */
+    transform: rotate(-1deg);
+  }
+
+  .postit:hover {
+    transform: rotate(0deg) translateY(-6px);
+    box-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.08),
+      0 16px 28px rgba(45, 42, 41, 0.22),
+      0 28px 50px rgba(45, 42, 41, 0.14);
+  }
+
+  /* Washi tape at top */
+  .postit-tape {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    width: 110px;
+    height: 30px;
+    background: rgba(249, 244, 234, 0.72);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.25) 0 6px,
+      transparent 6px 12px
+    );
+    box-shadow: 0 2px 4px rgba(45, 42, 41, 0.12);
+    /* Jagged tape edges */
+    clip-path: polygon(
+      2% 0%, 10% 15%, 20% 0%, 30% 12%, 42% 0%, 55% 10%, 68% 0%, 80% 14%, 92% 0%, 100% 8%,
+      98% 100%, 90% 86%, 78% 100%, 65% 88%, 50% 100%, 38% 90%, 25% 100%, 12% 85%, 0% 95%
+    );
+  }
+
+  .postit--email .postit-tape {
+    transform: translateX(-50%) rotate(4deg);
+  }
+
+  .postit--social .postit-tape {
+    transform: translateX(-50%) rotate(-2deg);
+  }
+
+  /* Folded corner (bottom-right) */
+  .postit-corner {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(
+      135deg,
+      transparent 50%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(255, 255, 255, 0.65) 58%
+    );
+    pointer-events: none;
+  }
+
+  .postit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2D2A29;
+    margin-bottom: 0.75rem;
+    opacity: 0.85;
+  }
+
+  .postit-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.5rem;
+    line-height: 1;
+  }
+
+  .postit-text {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: #2D2A29;
+    line-height: 1.5;
+    margin: 0 0 auto;
     flex: 1;
   }
 
-  .contact-btn {
-    display: inline-block;
+  .postit-cta {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    margin-top: 1.25rem;
+    color: #2D2A29;
+    border-bottom: 2px solid #2D2A29;
+    padding-bottom: 2px;
+    align-self: flex-start;
+    transition: transform 200ms ease;
+  }
+
+  .postit:hover .postit-cta {
+    transform: translateX(4px);
+  }
+
+  /* Social postit: el .postit-text no debe crecer (el default `flex: 1` es
+     para los postits con CTA abajo). Acá queremos text → lista → tagline,
+     y sólo la tagline es empujada al pie. */
+  .postit--social .postit-text {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  /* Social postit: lista de handles (cada uno clickeable) + tagline abajo */
+  .postit-socials {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .postit-socials a {
+    color: #2D2A29;
     text-decoration: none;
-    border-radius: 8px;
-    padding: 0.5rem 1.2rem;
-    margin-top: 0.5rem;
-    transition: background 0.15s ease, color 0.15s ease;
+    border-bottom: 1px solid rgba(45, 42, 41, 0.35);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    display: inline-block;
   }
 
-  .contact-btn--primary {
-    background: #F0C14B;
-    color: #2D2A29;
+  .postit-socials a:hover {
+    border-color: #2D2A29;
+    transform: translateX(2px);
   }
 
-  .contact-btn--primary:hover {
-    background: #2D2A29;
-    color: #F0C14B;
+  .postit-tagline {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-weight: 400;
+    font-size: 0.82rem;
+    color: rgba(45, 42, 41, 0.78);
+    line-height: 1.5;
+    /* Queda al pie del postit, igual que el .postit-cta de los otros */
+    margin: auto 0 0;
+    padding-top: 1rem;
   }
 
-  .contact-btn--secondary {
-    background: #2D2A29;
-    color: #F9F4EA;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    letter-spacing: 0;
-  }
-
-  .contact-btn--secondary:hover {
-    background: #F0C14B;
-    color: #2D2A29;
-  }
-
-  .contact-btn--instagram {
-    background: #F0C14B;
-    color: #2D2A29;
-  }
-
-  .contact-btn--instagram:hover {
-    background: #2D2A29;
-    color: #F0C14B;
+  @media (max-width: 759px) {
+    .postit {
+      max-width: 340px;
+      min-height: 260px;
+    }
   }
 </style>

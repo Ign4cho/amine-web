@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Status
+
+**v1.0 is live at [espacioamine.com](https://espacioamine.com)** (deployed via Hostinger File Manager from `dist/`). Ongoing work is small-detail tweaks per PO screenshots. Blogcito is feature-flagged off (`getStaticPaths() => []` on `[slug]` and `page/[page]`).
+
 ## Commands
 
 ```bash
@@ -24,8 +28,9 @@ Deployment: run `npm run build`, then manually upload `dist/` to Hostinger `publ
 ### Content Collections (Astro 5)
 
 - `src/content/blog/{slug}/` — `index.md` + `cover.svg/jpg` + `avatar.svg/jpg`
-- `src/content/aliados/{name}/` — `data.yaml` + `avatar.svg/jpg`
+- `src/content/aliados/{name}/` — `data.yaml` + `avatar.svg/jpg` + optional `photo.png`, `paper.png`, `logo.png`
 - Schema defined in `src/content.config.ts`
+- **Aliados schema** accepts optional `photo`, `paper`, `logo` (all `image()`), `area` (string), `portfolio` (URL). Required: `name`, `avatar`, `description`, `services`, `contact`, `order`.
 - **Critical:** In Astro 5, `entry.id` includes the file extension (e.g. `my-post/index.md`). Derive slugs via `post.id.split('/')[0]`, not `replace(/\/index$/, '')`.
 
 ### Layouts
@@ -62,8 +67,12 @@ Custom Tailwind classes from `tailwind.config.mjs`:
 | `bg-mustard` | `#F0C14B` | Inactive tabs, CTA buttons |
 | `text-primary` | `#2D2A29` | Main text |
 | `text-light` | `#5C5753` | Secondary text |
-| `font-bebas` | Bebas Neue | Headings, navigation |
-| `font-opensans` | Open Sans 300 | Body text |
+| `font-bebas` | Bebas Neue | Headings, navigation, CTA labels |
+| `font-opensans` | Open Sans 300 | Subtitles, descriptors |
+
+**Body/editorial fonts (loaded in `Layout.astro`):**
+- `Courier Prime` — body text on Aliados (descriptions) and Contactanos (postit text)
+- `Outfit` — stand-in for Glacial Indifference in Aliados paper cards (services list). Swap to a self-hosted `@font-face` when brand font asset arrives.
 
 ## Components
 
@@ -79,6 +88,40 @@ Downloaded from Figma (expire in 7 days from download, re-download if needed):
 
 To re-download, use the Figma MCP with `get_design_context` on node `1:2` (fileKey `MqAecRNylbU4Ei9khFb7dP`) which returns fresh asset URLs. See `figma-prompt.md` for the mapping.
 
+## Page Patterns
+
+### Aliados (`/aliados`)
+
+Dark header + cream grid. Each aliado is an alternating-layout `<article>` (photo-left / info-left by index). Grid columns: `7fr 4fr` (photo/info, reversed to `4fr 7fr` on odd rows) with 1.5rem gap. Articles separated by a subtle bottom border (`rgba(45,42,41,0.18)`). Header has reduced bottom padding (`0 4rem 1.5rem`) and grid has reduced top padding (`1rem 4rem 3rem`) so polaroids start close to the subtitle.
+
+- **Photo** is a clickable polaroid (`transform: rotate(-3deg)`, flips to `+3deg` on reverse rows) wrapped in an `<a href={portfolio}>`. Source images rendered at 900×1100 so they stay crisp as the fluid column scales.
+- **Paper** (torn postit PNG per aliado) is absolutely-positioned bg, services list sits inside via `.aliado-paper-content`. Each aliado has slug-scoped CSS (`.aliado-paper-wrap--{slug}`) for width + padding since paper proportions differ.
+- **Mobile (`max-width: 900px`)** — papers hide entirely; services render as a plain Courier Prime list below the photo (`.aliado-services-plain`, duplicated markup toggled via `display`).
+
+### Contactanos (`/contactanos`)
+
+Three CSS-only postits in yellow tones — `#FCE879` (butter) / `#F0C14B` (brand mustard) / `#E8B83D` (deeper amber) — built as `.postit-tape` (washi tape pseudo with jagged `clip-path`) + `.postit-corner` (folded-corner gradient). Per-card rotation (-2.5° / 1.5° / -1°) that straightens + lifts on hover. WhatsApp + Email cards are full-card `<a>` CTAs. Third card is "Redes Sociales" — a `<div>` (not anchor) containing two inline `<a>` links to IG (`@guadasancheznph`) and TikTok (`@espacio.amine`), since nested anchors aren't valid HTML. The social card overrides `.postit-text { flex: 0 0 auto }` so the tagline (not the description) is what gets pushed to the bottom.
+
+### Home (`/`) — v2 redesign
+
+Section order (in `src/pages/index.astro`): Hero → Services → About Us → Aliados Preview → Blogcito Preview.
+
+- **Hero** — 2-column: left has the Amine logo (PNG, `.hero-logo-wrap` left-justified, *not* centered) + descriptor text (`clamp(1.25rem, 2.15vw, 1.95rem)` — reduced ~2pt from launch sizing) + `stroke-hero`. Right uses the composed PNG `hero-carpeta-foto.png` (carpeta + foto pre-compuesta en un solo asset) sized big and bled off the right edge via `.hero-right` `width: clamp(520px, 58vw, 900px)` + `margin-right: clamp(-380px, -22vw, -180px)` (overflow hidden on `.hero`). Decorative stars cluster sits above the folder. If a dynamic photo carousel is needed later, swap back to `hero-carpeta.png` + overlay photos (prior implementation kept in git history).
+- **Services** — dark bg (`#2D2A29`), list on the left (Bebas Neue, `#` prefix, per-item icon), right column has a single composed CTA asset `cta-con-firma.png` (note + firma + "¡HACÉ TU CONSULTA!" baked in) wrapped in `<a class="cta-card" href={WHATSAPP_URL}>`. Earlier versions split note + `amine-firma.png` with negative margins; replaced with the composed PNG to keep alignment fixed.
+- **About Us** (`id="nosotros"`) — dark bg with `home-footer-bg.png` rotated 180° + blur + grayscale overlay (`opacity: 0.38`). Left: "About us" title with `aboutus-redondeo.png` oval behind (percentages tuned to sit around the text) + star next to it, paragraph, `teama-logo.png` (also collapsed with negative margins due to PNG padding). Right: clipboard (`aboutus-photo.png` rotated 2.5° + `aboutus-gancho.png` clip overlay). Section uses `overflow: visible` so the photo exits the bottom (negative `margin-bottom`). Mobile flips to vertical margins to avoid overlap.
+- **Aliados Preview** — 2 polaroids (`aliado-agus.png`, `aliado-nacho.png`) + carpeta (`aliado-carpeta.png`) superimposed with negative `margin-left` clamps. **Exception to the left-anchor convention**: this section's `.aliados-preview-inner` uses `margin: 0 auto` + `justify-content: center` because the cluster reads better centered. Mobile separates the three elements vertically (no overlap, `margin-top: 2.5rem` between each) since stacking polaroids on a phone produced visual confusion. Knobs documented inline in the CSS — PO iterates sizes/overlaps often. **PNG overlap calibration**: the polaroid/carpeta PNGs were re-exported without transparent borders mid-iteration, so margin-left clamps were tightened (`clamp(-8rem, -8vw, -3rem)` from `clamp(-14rem, -14vw, -6rem)`).
+- **Blogcito Preview** — mirrors `/blogcito`: two-tone CSS bg + `pc-blogcito.png` + "proximamente" copy. Blogcito está deshabilitado en esta release (`[slug]` y `page/[page]` devuelven `getStaticPaths() => []`).
+
+### Footer
+
+Background: `home-footer-bg.png` with `grayscale(1) blur(4px)` + `opacity: 0.45` + `scale(1.05)`. Left column is a postit (`home-footer-postit.png`, rotated -3°) with IG + TikTok handles rendered as inline SVG icons + Georgia italic labels. Right column has 3 nav columns. Mobile reorders — postit goes below the nav via `order` on flex items.
+
+**Social handles**: IG `@guadasancheznph` (constant `INSTAGRAM_URL`) + TikTok `@espacio.amine` (constant `TIKTOK_URL`). `espacio.amine` **does not exist on Instagram** — don't add it there.
+
+## Design References (`design-refs/`)
+
+Non-shipped folder holding PO/designer feedback: per-page `CHANGES.md` + PNG annotations + source assets in `{page}/assets/`. See `design-refs/guia-de-cambios.md` for the workflow. Master checklist: `design-refs/CHANGES.md`.
+
 ## Site-wide Config
 
 All URLs, contact info, and the admin password live in `src/constants.ts` — import from there instead of hardcoding.
@@ -86,4 +129,14 @@ All URLs, contact info, and the admin password live in `src/constants.ts` — im
 - WhatsApp: `wa.me/5492645827270`
 - Email: `espacioamine@gmail.com`
 - Instagram: `instagram.com/guadasancheznph`
+- TikTok: `tiktok.com/@espacio.amine`
 - Domain: `espacioamine.com`
+
+## Working Conventions
+
+- **Dev workflow**: `npm run dev` runs on :4321 (or :4322 if busy). The PO iterates heavily via screenshots — expect many small size/position tweaks per section.
+- **Wide-monitor left-anchoring**: `.hero-layout`, `.services-inner`, `.aboutus-inner` all use `margin: 0` (NOT `margin: 0 auto`) so content stays pinned to the 4rem left edge on ultrawide displays. `.aliados-preview-inner` is the documented exception (centered).
+- **PNG transparent padding**: Several brand assets (`amine-firma.png`, `teama-logo.png`, etc.) ship with large transparent space around the visible element. Collapse with negative margins — usually `margin-top: clamp(-14rem, -15vw, -7rem)` style fluid values so it scales. Do **not** crop the PNG.
+- **Section bleed**: Use `overflow: visible` on a section + negative `margin-bottom` on the child to let elements exit the bottom (About Us photo), or `overflow: hidden` on the section + `width` + negative `margin-right` to bleed right (Hero carpeta).
+- **Flex column wrapping**: `flex: 1 1 0; min-width: 0` on the text column + `&nbsp;` on short titles prevents content-driven min-width from pushing adjacent columns to wrap.
+- **Design refs workflow**: PO drops annotated PNGs and source assets into `design-refs/{page}/`. Mark items `[x]` in the page's `CHANGES.md` as you ship them.

@@ -19,12 +19,17 @@ const aliados = defineCollection({
   schema: ({ image }) => z.object({
     name: z.string(),
     avatar: image(),
+    photo: image().optional(),
+    paper: image().optional(),
+    logo: image().optional(),
     description: z.string(),
     services: z.array(z.string()),
     contact: z.object({
       type: z.enum(['whatsapp', 'email']),
       value: z.string(),
     }),
+    portfolio: z.string().url().optional(),
+    area: z.string().optional(),
     order: z.number(),
   }),
 });

@@ -5,25 +5,9 @@ import BlogGridCard from '../../../components/blog/BlogGridCard.astro';
 import Pagination from '../../../components/blog/Pagination.astro';
 
 export async function getStaticPaths() {
-  const POSTS_PER_PAGE = 6;
-  const allPosts = await getCollection('blog');
-  const sortedPosts = allPosts.sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime()
-  );
-  const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
-
-  return Array.from({ length: totalPages - 1 }, (_, i) => {
-    const page = i + 2;
-    const start = (page - 1) * POSTS_PER_PAGE;
-    return {
-      params: { page: String(page) },
-      props: {
-        posts: sortedPosts.slice(start, start + POSTS_PER_PAGE),
-        currentPage: page,
-        totalPages,
-      },
-    };
-  });
+  // Blogcito deshabilitado en v2 — ver src/pages/blogcito/index.astro (página "próximamente").
+  // Para reactivar: restaurar el return original.
+  return [];
 }
 
 const { posts, currentPage, totalPages } = Astro.props;
