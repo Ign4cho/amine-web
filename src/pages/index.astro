@@ -44,7 +44,7 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
           Trabajamos con marcas desde una estructura colaborativa, donde el <strong>trabajo en equipo</strong> potencia cada talento para generar impacto real.<br/>
           Impulsamos marcas con <strong>creatividad, orden y visión de crecimiento</strong>.
         </p>
-        <img src="/assets/stroke-hero.png" alt="" class="stroke-hero" aria-hidden="true" />
+        <img src="/assets/stroke-hero.svg" alt="" class="stroke-hero" aria-hidden="true" />
       </div>
 
       <!-- Right: decorative stars + folder with carousel photo -->
@@ -76,29 +76,29 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
       <div class="services-left">
         <div class="services-title-wrap">
           <h2 class="services-title">Our service</h2>
-          <img src="/assets/stroke-services.png" alt="" class="stroke-services" aria-hidden="true" />
+          <img src="/assets/stroke-services.svg" alt="" class="stroke-services" aria-hidden="true" />
         </div>
 
         <ul class="services-list">
           <li>
             <span># SOCIAL MEDIA MANAGER</span>
-            <img src="/assets/icon-star.png" alt="" class="service-icon" aria-hidden="true" />
+            <img src="/assets/icon-star.svg" alt="" class="service-icon" aria-hidden="true" />
           </li>
           <li>
             <span># SESIONES DE FOTOS Y VIDEOS</span>
-            <img src="/assets/icon-camera.png" alt="" class="service-icon" aria-hidden="true" />
+            <img src="/assets/icon-camera.svg" alt="" class="service-icon" aria-hidden="true" />
           </li>
           <li>
             <span># DIRECCIÓN CREATIVA</span>
-            <img src="/assets/icon-brush.png" alt="" class="service-icon" aria-hidden="true" />
+            <img src="/assets/icon-brush.svg" alt="" class="service-icon" aria-hidden="true" />
           </li>
           <li>
             <span># BRANDING</span>
-            <img src="/assets/icon-arrow.png" alt="" class="service-icon" aria-hidden="true" />
+            <img src="/assets/icon-arrow.svg" alt="" class="service-icon" aria-hidden="true" />
           </li>
           <li>
             <span># DESARROLLO WEB</span>
-            <img src="/assets/icon-laptop.png" alt="" class="service-icon service-icon--laptop" aria-hidden="true" />
+            <img src="/assets/icon-laptop4.svg" alt="" class="service-icon service-icon--laptop" aria-hidden="true" />
           </li>
         </ul>
       </div>
@@ -146,10 +146,11 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
         </div>
       </div>
 
-      <!-- Right: clipboard with team photo + bulldog clip -->
+      <!-- Right: clipboard with team photo (foto + gancho ya compuestos en
+           un único asset `fotoConGancho.png` — antes eran dos imágenes
+           separadas que a veces desalineaban) -->
       <div class="aboutus-photo-wrap">
-        <img src="/assets/aboutus-gancho.png" alt="" aria-hidden="true" class="aboutus-gancho" />
-        <img src="/assets/aboutus-photo.png" alt="Equipo Amine" class="aboutus-photo" />
+        <img src="/assets/fotoConGancho.png" alt="Equipo Amine" class="aboutus-photo" />
       </div>
     </div>
 
@@ -352,6 +353,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     height: auto;
     object-fit: contain;
     display: block;
+    /* El PNG del logo trae ~4.31% de padding transparente a la izquierda.
+       Lo compensamos con un margin-left negativo para que la "A" visible de
+       AMÍNE quede alineada con el borde izquierdo del párrafo de abajo. */
+    margin-left: -4.31%;
   }
 
   .hero-text {
@@ -525,10 +530,12 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     flex-shrink: 0;
   }
 
-  /* Laptop icon is wider/shorter than the others — give it a bit more room */
+  /* Laptop icon (line-art SVG `icon-laptop4.svg` de la diseñadora, viewBox ancho ~1.54:1).
+     Más ancho que alto; lo dejamos a la misma altura visual (~36px) que el
+     resto, dándole más ancho. object-fit: contain lo centra sin deformar. */
   .service-icon--laptop {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 38px;
   }
 
   /* Right column: single composed CTA asset (cta-con-firma.png) — el
@@ -684,32 +691,23 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
      and dropped below the section edge. Occupies nearly the full right side. */
   .aboutus-photo-wrap {
     flex: 0 0 auto;
-    width: clamp(380px, 46vw, 620px);
+    width: clamp(300px, 34vw, 460px);
     position: relative;
     align-self: flex-start;
-    /* Pull the bottom of the photo below the section so it "exits" it. */
-    margin-bottom: clamp(-9rem, -9vw, -4rem);
-  }
-
-  .aboutus-gancho {
-    position: absolute;
-    top: clamp(-56px, -4.5vw, -32px);
-    left: 50%;
-    transform: translateX(-50%) rotate(2deg);
-    width: clamp(90px, 10vw, 150px);
-    height: auto;
-    z-index: 2;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+    /* Lift the whole clipboard up so it no longer "se cae" por la parte
+       de abajo de la sección. */
+    margin-top: clamp(-7rem, -7vw, -3rem);
+    /* Sin sangrado negativo: la foto queda contenida dentro de la sección. */
+    margin-bottom: 0;
   }
 
   .aboutus-photo {
     display: block;
     width: 100%;
     height: auto;
-    transform: rotate(2.5deg);
-    /* Sin box-shadow/border-radius: el PNG del clipboard trae su propia
-       sombra baked-in y el shadow CSS rectangular hacía visible el bounding
-       box transparente detrás de la foto. */
+    /* `fotoConGancho.png` es un asset opaco (rectángulo, sin transparencia)
+       que trae la foto + el gancho compuestos. Se muestra derecho: rotarlo
+       dejaría ver las esquinas del rectángulo claro sobre el fondo oscuro. */
   }
 
   /* Star sitting *inside* the ALIADOS tab (right side, dentro del tab).
@@ -918,14 +916,17 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .hero-right {
-      /* Carpeta ocupando casi todo el ancho disponible, con leve desborde derecho
-         para que siga la idea de "cayéndose" que tiene el desktop */
-      width: 108%;
+      /* En mobile la carpeta se ve "cortada": agrandada y anclada al borde
+         izquierdo de la pantalla, de modo que solo se vea su parte izquierda
+         (el resto se derrama a la derecha y lo recorta `overflow: hidden` del
+         hero). Subir `width` muestra menos carpeta (más recorte). */
+      width: 210%;
       max-width: none;
-      align-self: center;
+      align-self: flex-start;
       margin-top: 0;
-      margin-right: -8%;
-      margin-left: -2%;
+      margin-right: 0;
+      /* Bleed hasta el borde izquierdo real (el hero tiene 1.5rem de padding) */
+      margin-left: -1.5rem;
       /* En mobile dejamos que .stars-cluster salga de este contenedor y se ancle al .hero */
       position: static;
     }
@@ -976,11 +977,6 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
       margin-top: clamp(-10rem, -20vw, -4rem);
       /* Buffer before the next section (no overflow into aliados on mobile) */
       margin-bottom: 2rem;
-    }
-
-    .aboutus-gancho {
-      top: -28px;
-      width: clamp(60px, 16vw, 90px);
     }
 
     .aliados-preview-inner {
@@ -1069,9 +1065,13 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
       grid-column: 1;
       align-self: end;
       justify-self: center;
-      width: 70%;
-      max-width: 340px;
-      transform: translateY(38%);
+      /* PC mucho más grande en mobile. El teclado sigue "apoyado" sobre la
+         línea del cambio de color (64%): `align-self: end` apoya el bottom del
+         PNG en la línea y `translateY` lo baja apenas para que el teclado
+         descanse sobre el escritorio (valor chico = más arriba). */
+      width: 115%;
+      max-width: 520px;
+      transform: translateY(30%);
     }
 
     .blogcito-soon-copy {

@@ -1,0 +1,15 @@
+notas de cambio en la version mobile.
+
+del hero, que el logo de espacioamine y el texto de Abajo estén con la misma alineación a la izquierda
+el asset de la carpeta se debería ver la mitad izquierda de la carpeta, como que esté cortada
+
+el asset de la pc de la preview de blogicto debería ser bastante más grande
+hacer mucho mas grandes las fotos de blogcito
+
+
+
+
+arreglar el clipcito del png de las fotos del team
+la pc de blogcito mucho más grande}
+
+y que sería defasado en el post it del footer

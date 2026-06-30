@@ -32,3 +32,6 @@ Prompt.md
 
 # PO/designer feedback drop zone (local reference only — heavy PNG assets)
 design-refs/
+
+# backup del .git corrupto (2026-06-30) — borrar tras verificar
+.git_corrupt_*/
