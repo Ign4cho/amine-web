@@ -523,19 +523,14 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     margin-bottom: 0.3rem;
   }
 
+  /* Todos los íconos del set tienen aspectos muy distintos (0.55 a 1.54).
+     Para que se vean "iguales" en la lista, fijamos la MISMA ALTURA y dejamos
+     que el ancho se ajuste solo a la proporción de cada uno (sin deformar).
+     Así quedan alineados y con peso visual parejo. */
   .service-icon {
-    width: 36px;
-    height: 36px;
-    object-fit: contain;
+    height: 30px;
+    width: auto;
     flex-shrink: 0;
-  }
-
-  /* Laptop icon (line-art SVG `icon-laptop4.svg` de la diseñadora, viewBox ancho ~1.54:1).
-     Más ancho que alto; lo dejamos a la misma altura visual (~36px) que el
-     resto, dándole más ancho. object-fit: contain lo centra sin deformar. */
-  .service-icon--laptop {
-    width: 56px;
-    height: 38px;
   }
 
   /* Right column: single composed CTA asset (cta-con-firma.png) — el
