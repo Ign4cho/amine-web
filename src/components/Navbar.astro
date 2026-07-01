@@ -116,14 +116,20 @@ const navItems = [
     }
 
     .nav-tab {
+      /* min-width: 0 permite que los tabs se encojan por debajo de su
+         contenido; sin esto (default min-width: auto) el tab CONTACTANOS!
+         no achica, el navbar desborda 390px y ENSANCHA el viewport de layout
+         (100vw pasa a ~480), rompiendo todo el mobile de la página. */
+      min-width: 0;
       margin: 0 4px;
       padding-left: 6px;
       justify-content: flex-start;
       height: 36px;
-      font-size: clamp(0.62rem, 3vw, 0.9rem);
-      letter-spacing: 0.05em;
+      font-size: clamp(0.58rem, 2.7vw, 0.9rem);
+      letter-spacing: 0.04em;
       border-radius: 18px 18px 0 0;
       text-decoration: none !important;
+      overflow: hidden;
     }
 
     /* Connectors: 8px radius, positioned so they completely cover the 8px gap */

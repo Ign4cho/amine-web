@@ -901,6 +901,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     .hero-layout {
       flex-direction: column;
       gap: 2rem;
+      /* Stretch para que .hero-left ocupe todo el ancho y el texto envuelva
+         dentro del viewport (con flex-start se encogía al contenido y la
+         línea larga se cortaba). */
+      align-items: stretch;
       /* Static para que .stars-cluster (absolute) se ancle al .hero, no al layout */
       position: static;
     }
@@ -908,20 +912,33 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     .hero-left {
       padding-top: 0;
       gap: 1rem;
+      /* Ancho acotado al viewport (menos el padding lateral del hero) con vw,
+         para que ni el texto ni el logo desborden. */
+      width: 100%;
+      max-width: calc(100vw - 3rem);
+      flex: 0 0 auto;
+      min-width: 0;
+    }
+
+    .hero-logo-wrap {
+      /* Logo a un tamaño mobile sensato (no el 547px de desktop). */
+      max-width: 260px;
+    }
+
+    .hero-text {
+      max-width: calc(100vw - 3rem);
+      font-size: clamp(1.05rem, 4.4vw, 1.35rem);
     }
 
     .hero-right {
-      /* En mobile la carpeta se ve "cortada": agrandada y anclada al borde
-         izquierdo de la pantalla, de modo que solo se vea su parte izquierda
-         (el resto se derrama a la derecha y lo recorta `overflow: hidden` del
-         hero). Subir `width` muestra menos carpeta (más recorte). */
-      width: 210%;
+      /* Mobile repensado: en vez de recortar la carpeta (mostrando solo su
+         mitad izquierda y perdiendo la composición), la mostramos ENTERA,
+         centrada y contenida como pieza visual del hero. Se lee la idea:
+         carpeta + foto. */
+      width: min(92%, 440px);
       max-width: none;
-      align-self: flex-start;
-      margin-top: 0;
-      margin-right: 0;
-      /* Bleed hasta el borde izquierdo real (el hero tiene 1.5rem de padding) */
-      margin-left: -1.5rem;
+      align-self: center;
+      margin: 0 auto;
       /* En mobile dejamos que .stars-cluster salga de este contenedor y se ancle al .hero */
       position: static;
     }
@@ -943,6 +960,9 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
 
     .stroke-hero {
       margin-left: 0;
+      /* El width base min(480px, 85%) llegaba a 480px y desbordaba hero-left,
+         ensanchando el viewport en headless. Lo acotamos al viewport. */
+      width: min(85%, 300px);
     }
 
     .hero-folder {
@@ -954,6 +974,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     .aliados-preview-section,
     .blogcito-preview-section {
       padding: 3.5rem 1.5rem 4rem;
+      /* En mobile ninguna sección debe desbordar horizontalmente: los bleeds
+         de desktop (foto del clipboard, PC de blogcito) ensanchaban el viewport
+         de layout (100vw pasaba a ~500) y rompían el resto. */
+      overflow-x: hidden;
     }
 
     .services-inner,
@@ -988,9 +1012,9 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .aliado-photo {
-      /* Bien grandes — se desbordan del viewport a propósito (el section
-         tiene overflow: hidden para recortar) */
-      width: clamp(420px, 122vw, 760px);
+      /* Contenidas al viewport (el clamp con min 420px forzaba ≥420px incluso
+         a 390 de viewport, ensanchando el layout viewport). */
+      width: min(88vw, 420px);
     }
 
     /* Las polaroids se separan verticalmente en mobile (no se solapan) */
