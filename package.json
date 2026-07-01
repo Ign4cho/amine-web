@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/check-build.mjs --mode prod",
     "build:preview": "cross-env SITE_URL=https://preview.espacioamine.com astro build",
+    "postbuild:preview": "node scripts/check-build.mjs --mode preview",
+    "check": "node scripts/check-build.mjs --mode prod",
     "preview": "astro preview",
     "astro": "astro"
   },
