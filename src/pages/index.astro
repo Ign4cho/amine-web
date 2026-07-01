@@ -914,8 +914,8 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
   /* ────────────────────── RESPONSIVE ────────────────────────── */
   @media (max-width: 900px) {
     .hero {
-      /* Las estrellas ahora acompañan al folder, no van arriba → menos padding. */
-      padding: 2.5rem 1.5rem 4rem;
+      /* Espacio arriba para las estrellas (van bajo el navbar). */
+      padding: 5.5rem 1.5rem 3.5rem;
     }
 
     .hero-layout {
@@ -951,31 +951,31 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .hero-right {
-      /* Mobile bold: la carpeta+foto es la pieza scrapbook protagonista —
-         entera, grande, centrada, con leve inclinación (ver .hero-folder). */
-      width: min(96%, 500px);
+      /* Carpeta grande y "cortada" (dirección del diseñador): anclada al borde
+         izquierdo y sangrada a la derecha, el hero (overflow: hidden) recorta
+         el exceso → se ve la mitad izquierda del folder con la foto. */
+      width: 155%;
       max-width: none;
-      align-self: center;
-      margin: 0.5rem auto 0;
-      /* Relativo para anclar el cluster de estrellas al folder. */
-      position: relative;
+      align-self: flex-start;
+      margin: 0.5rem 0 0 -1.5rem;
+      /* Static → el cluster de estrellas (absolute) se ancla al .hero, arriba. */
+      position: static;
     }
 
-    /* Estrellas como acento scrapbook asomando arriba-derecha del folder
-       (el cluster está dentro de .hero-right, ahora position: relative). */
+    /* Estrellas arriba del hero (bajo el navbar), como acento. */
     .stars-cluster {
       position: absolute;
-      top: -20px;
+      top: 6px;
       left: 0;
-      right: 4px;
+      right: 0;
       width: 100%;
-      height: 60px;
+      height: 90px;
       z-index: 3;
     }
 
-    .star-1 { right: 6px;   top: 0;   left: auto; width: 58px; height: auto; rotate: 13deg; }
-    .star-2 { right: 72px;  top: 16px; left: auto; width: 42px; height: auto; rotate: -5deg; }
-    .star-3 { right: 128px; top: 2px;  left: auto; width: 30px; height: auto; rotate: 7deg; }
+    .star-1 { right: 14px;  top: 0;   left: auto; width: 66px; height: auto; rotate: 13deg; }
+    .star-2 { right: 92px;  top: 22px; left: auto; width: 48px; height: auto; rotate: -5deg; }
+    .star-3 { right: 158px; top: 4px;  left: auto; width: 36px; height: auto; rotate: 7deg; }
 
     .stroke-hero {
       margin-left: 0;
@@ -986,8 +986,6 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
 
     .hero-folder {
       margin-top: 0.5rem;
-      /* Leve inclinación scrapbook. */
-      transform: rotate(-2.5deg);
     }
 
     .services-section,
@@ -995,10 +993,11 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     .aliados-preview-section,
     .blogcito-preview-section {
       padding: 3.5rem 1.5rem 4rem;
-      /* En mobile ninguna sección debe desbordar horizontalmente: los bleeds
-         de desktop (foto del clipboard, PC de blogcito) ensanchaban el viewport
-         de layout (100vw pasaba a ~500) y rompían el resto. */
-      overflow-x: hidden;
+      /* En mobile ninguna sección debe desbordar. `overflow: hidden` en AMBOS
+         ejes (no solo -x): About Us tiene `overflow: visible` de base, y mezclar
+         overflow-x:hidden con overflow-y:visible hace que -y compute a `auto`
+         → aparecía un scroll interno feo al empezar la sección de abajo. */
+      overflow: hidden;
     }
 
     .services-inner,
