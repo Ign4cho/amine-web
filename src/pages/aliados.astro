@@ -162,6 +162,9 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
   /* Main */
   .aliados-main {
     background-color: #F9F4EA;
+    /* Recorta el leve desborde de la polaroid rotada cuando llena el ancho
+       en mobile (evita scroll horizontal). */
+    overflow-x: hidden;
   }
 
   .aliados-grid {
@@ -399,8 +402,10 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     }
 
     .aliados-grid {
-      padding: 3rem 1.5rem;
-      gap: 5rem;
+      /* Menos aire vertical: la foto full-bleed ya es grande, no necesita
+         tanto padding arriba ni gap entre aliados. */
+      padding: 1rem 1.5rem 2rem;
+      gap: 2rem;
     }
 
     .aliado,
@@ -417,9 +422,29 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
       order: 0;
     }
 
+    /* Pasamos la columna de la foto a flujo normal (block). El truco de
+       full-bleed (margin-left: calc(50% - Wvw)) es confiable en block flow,
+       pero falla dentro de un flex container + ancestros con overflow-x:hidden
+       (que es justo el caso: html/body y .aliados-main lo tienen). */
     .aliado-photo-col {
-      align-items: flex-start;
-      max-width: 100%;
+      display: block;
+      max-width: none;
+    }
+
+    /* Polaroid full-bleed a 105vw: el marco blanco pasa de los bordes de la
+       pantalla. margin-left: calc(50% - 52.5vw) la centra (desborda 2.5vw por
+       lado). El overflow-x:hidden global recorta lo que sobra. */
+    .aliado-photo-link,
+    .aliado-photo--static {
+      display: block;
+      width: 105vw;
+      max-width: none;
+      margin-left: calc(50% - 52.5vw);
+      /* El PNG de la foto trae ~21% de padding transparente arriba y abajo.
+         A 105vw de ancho eso son ~27vw de alto vacío por lado. Lo colapsamos
+         con margen negativo para que no haya tanto aire arriba/abajo. */
+      margin-top: -24vw;
+      margin-bottom: -24vw;
     }
 
     .aliado-paper-wrap--agustina-albarracin,

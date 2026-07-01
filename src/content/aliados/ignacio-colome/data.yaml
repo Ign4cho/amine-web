@@ -17,5 +17,5 @@ services:
 contact:
   type: email
   value: nachocolome@gmail.com
-portfolio: https://ign4cho.github.io/portfolio-web/
+portfolio: https://ign4cho.github.io/
 order: 2
