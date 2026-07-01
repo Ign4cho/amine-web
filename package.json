@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:preview": "cross-env SITE_URL=https://preview.espacioamine.com astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -20,5 +21,8 @@
     "esbuild@0.27.3": true,
     "esbuild@0.25.12": true,
     "sharp@0.34.5": true
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }
