@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Mobile-first rebuild** in progress on branch `mobile-redesign` (pushed to origin, not merged). Goal: rethink mobile with mobile-first patterns + clear tap affordances, deployed to a `preview.espacioamine.com` subdomain for review before merging. See "Mobile conventions" below.
 
+**Pending (mobile-redesign):** (1) create the `preview.espacioamine.com` subdomain in Hostinger and upload the `build:preview` `dist/`; (2) designer review + iterate; (3) still-untouched mobile-first opportunities: Blogcito preview / section-tab affordances, plus whatever the designer wants bolder; (4) merge to `main` once approved. Affordance pattern already applied to aliados-preview, services CTA and `/aliados` portfolio links.
+
 ## Commands
 
 ```bash
