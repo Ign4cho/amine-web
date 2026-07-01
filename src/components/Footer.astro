@@ -13,6 +13,7 @@ import {
   <div class="footer-container">
     <!-- Left: postit with social handles -->
     <div class="footer-brand">
+      <p class="footer-brand-heading">Seguinos</p>
       <div class="footer-postit">
         <img
           src="/assets/home-footer-postit.png"
@@ -140,6 +141,12 @@ import {
     margin-top: -44px;
   }
 
+  /* Heading "Seguinos" — solo mobile (ver @media), para que el postit se lea
+     como un bloque más del footer y no una decoración flotante. */
+  .footer-brand-heading {
+    display: none;
+  }
+
   .footer-postit {
     position: relative;
     width: 100%;
@@ -250,18 +257,38 @@ import {
       padding: 0 24px 40px;
     }
     .footer-container {
-      gap: 40px;
-      justify-content: center;
+      gap: 28px;
+      justify-content: flex-start;
+      padding-top: 44px;
     }
     .footer-brand {
       width: 100%;
-      justify-content: center;
-      /* Mobile: postit goes BELOW the nav columns */
+      /* Mobile: bloque social (heading + postit) debajo de las columnas,
+         alineado a la izquierda como el resto para que no quede flotando. */
       order: 2;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
       margin-top: 0;
     }
-    .footer-postit {
+    .footer-brand-heading {
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      color: #F0C14B;
+      margin: 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(240, 193, 75, 0.3);
+      width: 100%;
       max-width: 220px;
+    }
+    .footer-postit {
+      max-width: 210px;
+      /* Sube el postit para comer el espacio transparente del PNG (la cinta),
+         así queda pegado al heading y no desconectado. */
+      margin-top: -34px;
+      margin-left: -6px;
     }
     .footer-nav {
       gap: 32px;
