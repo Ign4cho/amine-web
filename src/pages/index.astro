@@ -114,6 +114,15 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
         >
           <img src="/assets/cta-con-firma.png" alt="¡Hacé tu consulta!" class="cta-card-img" />
         </a>
+
+        <!-- Affordance clara solo-mobile: el note es un PNG, este link deja
+             explícito que lleva a WhatsApp. -->
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="preview-cta preview-cta--light"
+        >Escribinos por WhatsApp <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -176,6 +185,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
       <a href="/aliados" class="aliados-preview-folder" aria-label="Ver todos los aliados">
         <img src="/assets/aliado-carpeta.png" alt="Ver todos los aliados" />
       </a>
+
+      <!-- CTA explícito solo-mobile: en mobile no hay hover, así que el
+           enlace a /aliados necesita affordance clara de que es tappable. -->
+      <a href="/aliados" class="preview-cta">Conocé a los aliados <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
@@ -807,6 +820,13 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     z-index: 5;
   }
 
+  /* CTA explícito de preview (solo-mobile). En desktop el hover revela que el
+     cluster es navegable; en mobile no hay hover, así que este botón deja
+     claro adónde lleva. Oculto en desktop. */
+  .preview-cta {
+    display: none;
+  }
+
   /* ────────────────────── BLOGCITO PREVIEW ───────────────────── */
   /* Matches /blogcito page: two-tone bg (wall/desk) with PC sitting on the split line. */
   .blogcito-preview-section {
@@ -894,8 +914,8 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
   /* ────────────────────── RESPONSIVE ────────────────────────── */
   @media (max-width: 900px) {
     .hero {
-      /* Espacio arriba reservado para las estrellas, que van sobre el logo */
-      padding: 7rem 1.5rem 5rem;
+      /* Las estrellas ahora acompañan al folder, no van arriba → menos padding. */
+      padding: 2.5rem 1.5rem 4rem;
     }
 
     .hero-layout {
@@ -921,8 +941,8 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .hero-logo-wrap {
-      /* Logo a un tamaño mobile sensato (no el 547px de desktop). */
-      max-width: 260px;
+      /* Logo protagonista en mobile. */
+      max-width: 300px;
     }
 
     .hero-text {
@@ -931,32 +951,31 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .hero-right {
-      /* Mobile repensado: en vez de recortar la carpeta (mostrando solo su
-         mitad izquierda y perdiendo la composición), la mostramos ENTERA,
-         centrada y contenida como pieza visual del hero. Se lee la idea:
-         carpeta + foto. */
-      width: min(92%, 440px);
+      /* Mobile bold: la carpeta+foto es la pieza scrapbook protagonista —
+         entera, grande, centrada, con leve inclinación (ver .hero-folder). */
+      width: min(96%, 500px);
       max-width: none;
       align-self: center;
-      margin: 0 auto;
-      /* En mobile dejamos que .stars-cluster salga de este contenedor y se ancle al .hero */
-      position: static;
+      margin: 0.5rem auto 0;
+      /* Relativo para anclar el cluster de estrellas al folder. */
+      position: relative;
     }
 
-    /* En mobile, las estrellas van arriba del todo — encima del logo y del texto */
+    /* Estrellas como acento scrapbook asomando arriba-derecha del folder
+       (el cluster está dentro de .hero-right, ahora position: relative). */
     .stars-cluster {
       position: absolute;
-      /* Pegadas al borde superior del hero (justo bajo el navbar) */
-      top: 6px;
+      top: -20px;
       left: 0;
-      right: 0;
+      right: 4px;
       width: 100%;
-      height: 100px;
+      height: 60px;
+      z-index: 3;
     }
 
-    .star-1 { right: 14px;  top: 0;   left: auto; width: 72px; height: auto; rotate: 13deg; }
-    .star-2 { right: 96px;  top: 24px; left: auto; width: 52px; height: auto; rotate: -5deg; }
-    .star-3 { right: 168px; top: 6px;  left: auto; width: 40px; height: auto; rotate: 7deg; }
+    .star-1 { right: 6px;   top: 0;   left: auto; width: 58px; height: auto; rotate: 13deg; }
+    .star-2 { right: 72px;  top: 16px; left: auto; width: 42px; height: auto; rotate: -5deg; }
+    .star-3 { right: 128px; top: 2px;  left: auto; width: 30px; height: auto; rotate: 7deg; }
 
     .stroke-hero {
       margin-left: 0;
@@ -966,7 +985,9 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     }
 
     .hero-folder {
-      margin-top: 0;
+      margin-top: 0.5rem;
+      /* Leve inclinación scrapbook. */
+      transform: rotate(-2.5deg);
     }
 
     .services-section,
@@ -1041,10 +1062,39 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
 
     .aliados-preview-folder {
       /* Carpeta debajo de las polaroids, separada verticalmente */
-      width: clamp(400px, 118vw, 720px);
+      width: min(88vw, 420px);
       margin-left: 0;
-      margin-top: 2.5rem;
+      margin-top: 2rem;
       align-self: center;
+    }
+
+    /* CTA sutil y tappable en mobile: texto + flecha con subrayado mostaza
+       (acento de marca, sin competir con el scrapbook). */
+    .preview-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      align-self: center;
+      margin-top: 1.5rem;
+      padding-bottom: 3px;
+      color: #2D2A29;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      border-bottom: 2px solid #F0C14B;
+    }
+
+    .preview-cta span {
+      font-size: 1.35rem;
+      line-height: 1;
+      transition: transform 0.15s ease;
+    }
+
+    /* Variante para fondo oscuro (Services): texto cream. */
+    .preview-cta--light {
+      color: #F9F4EA;
+      margin-top: 1.25rem;
     }
 
     /* Sección sin padding lateral, overflow hidden para contener el desborde,
