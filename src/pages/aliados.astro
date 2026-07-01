@@ -94,16 +94,28 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
 
               <p class="aliado-description">{aliado.data.description}</p>
 
-              <a
-                href={`mailto:${aliado.data.contact.value}`}
-                class="aliado-email-btn"
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <rect x="2" y="4" width="20" height="16" rx="2"/>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                </svg>
-                {aliado.data.contact.value}
-              </a>
+              <div class="aliado-actions">
+                <a
+                  href={`mailto:${aliado.data.contact.value}`}
+                  class="aliado-email-btn"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                  {aliado.data.contact.value}
+                </a>
+
+                {aliado.data.portfolio && (
+                  <a
+                    href={aliado.data.portfolio}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="aliado-portfolio-cta"
+                    aria-label={`Ver portfolio de ${aliado.data.name}`}
+                  >Ver portfolio <span aria-hidden="true">→</span></a>
+                )}
+              </div>
             </div>
           </article>
         );
@@ -379,6 +391,50 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
   .aliado-email-btn:hover {
     background: #2D2A29;
     color: #F0C14B;
+  }
+
+  /* Fila de acciones: botón de email + CTA de portfolio. */
+  .aliado-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .aliado-email-btn {
+    margin-top: 0;
+  }
+
+  /* CTA de portfolio: link sutil (texto + flecha + subrayado mostaza), mismo
+     patrón de affordance que en el home. El polaroid tambien linkea al
+     portfolio, pero sin hover no se entiende — esto lo hace explícito. */
+  .aliado-portfolio-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #2D2A29;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    border-bottom: 2px solid #F0C14B;
+    padding-bottom: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .aliado-portfolio-cta span {
+    font-size: 1.35rem;
+    line-height: 1;
+    transition: transform 0.15s ease;
+  }
+
+  .aliado-portfolio-cta:hover {
+    color: #5C5753;
+  }
+
+  .aliado-portfolio-cta:hover span {
+    transform: translateX(3px);
   }
 
   @media (max-width: 1100px) {
