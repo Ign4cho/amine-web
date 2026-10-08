@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-**v1.0 is live at [espacioamine.com](https://espacioamine.com)** (deployed via Hostinger File Manager from `dist/`). Ongoing work is small-detail tweaks per PO screenshots. Blogcito is feature-flagged off (`getStaticPaths() => []` on `[slug]` and `page/[page]`).
+**v1.0 is live at [espacioamine.com](https://espacioamine.com)** (deployed via Hostinger File Manager from `dist/`). Ongoing work is small-detail tweaks per PO screenshots. En prod el Blogcito sigue mostrando el cartel "próximamente".
 
 **Mobile-first rebuild** in progress on branch `mobile-redesign` (pushed to origin, not merged). Goal: rethink mobile with mobile-first patterns + clear tap affordances, deployed to a `preview.espacioamine.com` subdomain for review before merging. See "Mobile conventions" below.
+
+**Propuesta octubre 2026** on branch `preview-octubre` (desde `mobile-redesign`): Blogcito funcional como feed + ABM en `/admin`, About Us con fondo plano, Aliados rediseñado como "hojas". Todo destinado a preview, nunca a prod sin aprobación de la PO. Decisiones y cómo revertir: `design-refs/decisiones-octubre.md`. Flags en `src/constants.ts` (`BLOGCITO_ENABLED`, `ABOUTUS_FLAT_BG`).
 
 **Pending (mobile-redesign):** (1) create the `preview.espacioamine.com` subdomain in Hostinger and upload the `build:preview` `dist/`; (2) designer review + iterate; (3) still-untouched mobile-first opportunities: Blogcito preview / section-tab affordances, plus whatever the designer wants bolder; (4) merge to `main` once approved. Affordance pattern already applied to aliados-preview, services CTA and `/aliados` portfolio links.
 
@@ -43,7 +45,7 @@ Uses CDP `Emulation.setDeviceMetricsOverride` to render at the **exact** viewpor
 
 ### Content Collections (Astro 5)
 
-- `src/content/blog/{slug}/` — `index.md` + `cover.svg/jpg` + `avatar.svg/jpg`
+- `src/data/blogcito.json` — **todas** las notas del Blogcito en un único JSON (loader `file()` de `astro/loaders`). No hay markdown ni carpeta por post: el panel `/admin` exporta este archivo entero. Las imágenes viven en `public/blogcito/` como rutas públicas (no `image()`), para que se puedan subir por File Manager.
 - `src/content/aliados/{name}/` — `data.yaml` + `avatar.svg/jpg` + optional `photo.png`, `paper.png`, `logo.png`
 - Schema defined in `src/content.config.ts`
 - **Aliados schema** accepts optional `photo`, `paper`, `logo` (all `image()`), `area` (string), `portfolio` (URL). Required: `name`, `avatar`, `description`, `services`, `contact`, `order`.
@@ -51,12 +53,17 @@ Uses CDP `Emulation.setDeviceMetricsOverride` to render at the **exact** viewpor
 
 ### Layouts
 
-- `src/layouts/Layout.astro` — base HTML layout for all non-blog pages (Google Fonts, global.css, `title` prop). Renders `<Navbar />` and `<Footer />` automatically.
-- `src/layouts/BlogLayout.astro` — blog-only layout with SEO meta (title, description, og:image). Does **not** extend `Layout.astro` — keep them isolated. Also renders `<Navbar />` and `<Footer />` automatically.
+- `src/layouts/Layout.astro` — único layout del sitio (Google Fonts, global.css, `title` prop, noindex en preview). Renderiza `<Navbar />` y `<Footer />` automáticamente. `BlogLayout.astro` se eliminó junto con las rutas por post.
 
-### Blog Components
+### Blogcito Components
 
-Blog components live exclusively in `src/components/blog/` — never mix with other site components. Content logic (`getCollection`) stays in page files; components receive typed props.
+Viven exclusivamente en `src/components/blogcito/`:
+- `PostCard.astro` — card del feed, cuerpo expandible inline con Alpine (`x-data="{ open: false }"`), patrón "Leer más" de LinkedIn. No hay página por nota.
+- `SideBanner.astro` — "publicidad" interna (CTA WhatsApp + redes). En desktop va en el rail sticky, en mobile intercalado tras la 3ra nota. Mismo componente, dos clases (`--rail` / `--inline`).
+- `MiniCard.astro` — card compacta del preview en el home.
+- `ComingSoon.astro` — vista "próximamente", intacta, se usa con `BLOGCITO_ENABLED = false`.
+
+La lógica de contenido (`getCollection`) queda en las páginas; los componentes reciben props.
 
 ### Navbar
 
@@ -70,7 +77,9 @@ Active tab is detected server-side via `Astro.url.pathname` — no Alpine.js inv
 
 ### Admin Page (`/admin`)
 
-Frontend-only password gate via Alpine.js — stored in `src/constants.ts`. The team accepts this as sufficient security. Form generates Markdown frontmatter for copy-paste into `src/content/blog/`.
+Frontend-only password gate via Alpine.js — stored in `src/constants.ts`. The team accepts this as sufficient security.
+
+ABM completo del Blogcito (crear / editar / borrar / ordenar / publicar), registrado como `Alpine.data('blogcitoAdmin')` en un `<script is:inline define:vars>` para no meter un `x-data` gigante en el markup. El estado de trabajo se guarda en `localStorage` (`amine-blogcito-draft`); el estado publicado se inyecta desde `src/data/blogcito.json`. **No publica solo**: el botón "Descargar blogcito.json" baja el archivo que hay que reemplazar en `src/data/` + rebuild. Autogestión real requeriría backend (ver `design-refs/decisiones-octubre.md`).
 
 ## Design Tokens
 
@@ -94,8 +103,7 @@ Custom Tailwind classes from `tailwind.config.mjs`:
 
 - `src/components/Navbar.astro` — fixed navbar (via global.css), tabs order: HOME / ALIADOS / BLOGCITO / CONTACTANOS!
 - `src/components/Footer.astro` — footer with texture bg + 3 nav columns; included automatically in both layouts
-- `src/components/blog/BlogGridCard.astro` — 3-column grid card for blogcito feed pages (image + title + expand toggle + link)
-- `src/components/blog/PostCard.astro` — single-post page card (full content inline, Alpine toggle)
+- `src/components/blogcito/*` — ver "Blogcito Components" arriba
 
 ## Figma Assets (`public/assets/`)
 
@@ -126,7 +134,15 @@ Section order (in `src/pages/index.astro`): Hero → Services → About Us → A
 - **Services** — dark bg (`#2D2A29`), list on the left (Bebas Neue, `#` prefix, per-item icon), right column has a single composed CTA asset `cta-con-firma.png` (note + firma + "¡HACÉ TU CONSULTA!" baked in) wrapped in `<a class="cta-card" href={WHATSAPP_URL}>`. Earlier versions split note + `amine-firma.png` with negative margins; replaced with the composed PNG to keep alignment fixed.
 - **About Us** (`id="nosotros"`) — dark bg with `home-footer-bg.png` rotated 180° + blur + grayscale overlay (`opacity: 0.38`). Left: "About us" title with `aboutus-redondeo.png` oval behind (percentages tuned to sit around the text) + star next to it, paragraph, `teama-logo.png` (also collapsed with negative margins due to PNG padding). Right: clipboard (`aboutus-photo.png` rotated 2.5° + `aboutus-gancho.png` clip overlay). Section uses `overflow: visible` so the photo exits the bottom (negative `margin-bottom`). Mobile flips to vertical margins to avoid overlap.
 - **Aliados Preview** — 2 polaroids (`aliado-agus.png`, `aliado-nacho.png`) + carpeta (`aliado-carpeta.png`) superimposed with negative `margin-left` clamps. **Exception to the left-anchor convention**: this section's `.aliados-preview-inner` uses `margin: 0 auto` + `justify-content: center` because the cluster reads better centered. Mobile separates the three elements vertically (no overlap, `margin-top: 2.5rem` between each) since stacking polaroids on a phone produced visual confusion. Knobs documented inline in the CSS — PO iterates sizes/overlaps often. **PNG overlap calibration**: the polaroid/carpeta PNGs were re-exported without transparent borders mid-iteration, so margin-left clamps were tightened (`clamp(-8rem, -8vw, -3rem)` from `clamp(-14rem, -14vw, -6rem)`).
-- **Blogcito Preview** — mirrors `/blogcito`: two-tone CSS bg + `pc-blogcito.png` + "proximamente" copy. Blogcito está deshabilitado en esta release (`[slug]` y `page/[page]` devuelven `getStaticPaths() => []`).
+- **Blogcito Preview** — con `BLOGCITO_ENABLED = true` muestra la misma escenografía (fondo dos tonos + `pc-blogcito.png` apoyada en la línea) con las últimas 2 notas en `MiniCard` + CTA "Ver todas las notas →". Con el flag en `false` vuelve el cartel "proximamente" (markup y CSS `.blogcito-soon-*` intactos). **En mobile la línea pared/escritorio no puede ser un gradiente en %** (el contenido es de alto variable): se pinta con un pseudo-elemento `::before` sobre la fila 1 del grid, así la PC siempre apoya exacto.
+
+### Blogcito (`/blogcito`)
+
+Feed de notas: header oscuro (mismo patrón que `/aliados`) + grilla `auto-fill minmax(270px, 1fr)` + rail derecho sticky con `SideBanner`. Las notas se expanden inline con "Leer más" (Alpine); **no hay página por nota**. En ≤1000px el rail se oculta y el banner pasa a estar intercalado tras la 3ra nota.
+
+### Aliados — rediseño octubre
+
+Cada aliado es una "hoja": tarjeta `#FFFDF8` con borde, `box-shadow` dura y rotación alterna ±0.4°, sobre un fondo de papel cuadriculado hecho con `repeating-linear-gradient` en `.aliados-main::before`. Encabezado por aliado: número en marca de agua (`.aliado-index`, absolute) + nombre + etiqueta de área. Las polaroids llevan `margin-top/-bottom: -13%` para colapsar el padding transparente de los PNG. **En mobile la hoja se desarma** (`background: none; border: none; padding: 0`): ahí la polaroid es full-bleed a 105vw y no puede vivir dentro de una tarjeta con márgenes.
 
 ### Footer
 

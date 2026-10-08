@@ -35,3 +35,6 @@ design-refs/
 
 # backup del .git corrupto (2026-06-30) — borrar tras verificar
 .git_corrupt_*/
+
+# capturas locales de revisión visual
+shots/
