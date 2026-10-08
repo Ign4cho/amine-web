@@ -1,0 +1,68 @@
+[
+  {
+    "id": "por-que-no-tenemos-instagram",
+    "title": "Por qué la agencia no tiene Instagram (y sí tiene Blogcito)",
+    "date": "2026-10-02",
+    "tag": "Detrás de escena",
+    "image": "/blogcito/cover-1.svg",
+    "excerpt": "Todas las agencias abren una cuenta y publican placas de colores. Nosotras preferimos un lugar propio donde contar lo que hacemos sin pelear con un algoritmo.",
+    "body": "Cuando armamos Amine la pregunta apareció enseguida: ¿abrimos una cuenta de la agencia? La respuesta corta fue no.\n\nUna cuenta más significa producir contenido todas las semanas para una plataforma que decide quién lo ve. Preferimos poner esa energía en los proyectos de los clientes y dejar acá, en el Blogcito, lo que tenemos ganas de contar: cómo trabajamos, qué aprendimos en cada proyecto y qué cosas nos salieron mal.\n\nAcá no hay métricas de vanidad ni horarios óptimos de publicación. Hay notas cuando hay algo para decir.",
+    "order": 1,
+    "published": true
+  },
+  {
+    "id": "identidad-visual-no-es-solo-el-logo",
+    "title": "Tu identidad visual no es el logo",
+    "date": "2026-09-24",
+    "tag": "Branding",
+    "image": "/blogcito/cover-2.svg",
+    "excerpt": "El logo es la parte más chica del sistema. Lo que realmente hace que te reconozcan es todo lo que viene después.",
+    "body": "La mayoría de las consultas que nos llegan empiezan igual: «necesito un logo». Casi siempre lo que hace falta es otra cosa.\n\nUna identidad visual es el conjunto de decisiones que se repiten: la paleta, las tipografías, el tono de los textos, cómo se recortan las fotos, qué pasa cuando hay que comunicar una promoción apurada un viernes a la noche. El logo es apenas la firma de todo eso.\n\nCuando el sistema está bien armado, cualquiera del equipo puede producir una pieza nueva y seguir pareciendo la misma marca. Cuando no lo está, cada posteo parece de una empresa distinta.",
+    "order": 2,
+    "published": true
+  },
+  {
+    "id": "una-web-propia-vs-link-en-bio",
+    "title": "Una web propia vs. el link en la bio",
+    "date": "2026-09-15",
+    "tag": "Desarrollo web",
+    "image": "/blogcito/cover-3.svg",
+    "excerpt": "Alquilar tu presencia en una red social sale barato hasta el día en que te cambian las reglas o te cierran la cuenta.",
+    "body": "Las redes sirven para que te descubran. No sirven para ser el único lugar donde existís.\n\nUna web propia es el único espacio donde controlás todo: qué se muestra primero, cómo te contactan, qué pasa cuando alguien te busca en Google. No depende de que una plataforma siga existiendo ni de que el alcance orgánico de este mes acompañe.\n\nNo hace falta que sea enorme. Una página bien hecha, rápida y clara, que explique qué hacés y cómo contactarte, ya te pone por delante de la mayoría.",
+    "order": 3,
+    "published": true
+  },
+  {
+    "id": "medir-lo-que-importa",
+    "title": "Medir lo que importa (y dejar de mirar los likes)",
+    "date": "2026-09-03",
+    "tag": "Datos",
+    "image": "/blogcito/cover-4.svg",
+    "excerpt": "Mil likes que no generan una sola consulta valen menos que diez mensajes de gente que quiere comprar.",
+    "body": "El problema de los likes es que son fáciles de medir. Por eso terminan siendo la métrica de la que todos hablan.\n\nAntes de empezar un proyecto definimos con el cliente qué cuenta como resultado: consultas por WhatsApp, turnos reservados, ventas, lo que sea que mueva el negocio. Después armamos la comunicación para eso y medimos eso.\n\nA veces el resultado es que hay que publicar menos y mejor. A veces es que el problema no estaba en las redes sino en que nadie entendía qué vendías.",
+    "order": 4,
+    "published": true
+  },
+  {
+    "id": "como-trabajamos-con-un-cliente-nuevo",
+    "title": "Cómo trabajamos con un cliente nuevo",
+    "date": "2026-08-21",
+    "tag": "Procesos",
+    "image": "/blogcito/cover-5.svg",
+    "excerpt": "Primero escuchamos, después proponemos. Nunca al revés, aunque sea tentador llegar con la solución armada.",
+    "body": "El primer encuentro no es para mostrar lo que sabemos hacer. Es para entender el negocio: quién compra, cómo compra, qué pasó con lo que se intentó antes.\n\nDespués armamos una propuesta con alcance concreto: qué entregamos, en cuánto tiempo y qué necesitamos del cliente para poder avanzar. Esa última parte es la que más se subestima y la que más retrasa los proyectos.\n\nY durante el trabajo mostramos avances parciales. Preferimos corregir el rumbo temprano antes que presentar algo terminado que no era lo que se esperaba.",
+    "order": 5,
+    "published": true
+  },
+  {
+    "id": "equipo-chico-decisiones-rapidas",
+    "title": "Equipo chico, decisiones rápidas",
+    "date": "2026-08-08",
+    "tag": "Detrás de escena",
+    "image": "/blogcito/cover-6.svg",
+    "excerpt": "Somos cinco. No hay comités ni cadenas de aprobación: hablás con la persona que está haciendo el trabajo.",
+    "body": "La estructura freelance tiene mala fama, y en parte se la ganó. Pero bien armada tiene una ventaja difícil de igualar: no hay intermediarios.\n\nCuando escribís por un cambio, le llega a quien lo va a hacer. No pasa por una cuenta, un coordinador y un equipo creativo. Eso acorta los tiempos y evita que la idea original se diluya en el camino.\n\nLa contra es que hay que ser muy ordenados con los compromisos. Por eso cada proyecto tiene un alcance escrito y una persona responsable desde el día uno.",
+    "order": 6,
+    "published": true
+  }
+]

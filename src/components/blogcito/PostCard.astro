@@ -1,0 +1,214 @@
+---
+// Card del feed del Blogcito. El cuerpo completo se expande inline
+// (patrón LinkedIn: "Leer más"), no hay página por nota.
+interface Props {
+  post: {
+    id: string;
+    data: {
+      title: string;
+      date: string;
+      tag?: string;
+      image: string;
+      excerpt: string;
+      body: string;
+    };
+  };
+}
+
+const { post } = Astro.props;
+const { title, date, tag, image, excerpt, body } = post.data;
+
+const formattedDate = new Date(`${date}T12:00:00`).toLocaleDateString('es-AR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const paragraphs = body.split('\n\n').map((p) => p.trim()).filter(Boolean);
+---
+
+<article class="bpost" x-data="{ open: false }">
+  <div class="bpost-media" @click="open = !open">
+    <img src={image} alt="" class="bpost-img" loading="lazy" decoding="async" />
+    {tag && <span class="bpost-tag">{tag}</span>}
+  </div>
+
+  <div class="bpost-body">
+    <time class="bpost-date" datetime={date}>{formattedDate}</time>
+    <h2 class="bpost-title" @click="open = !open">{title}</h2>
+
+    <p class="bpost-excerpt">{excerpt}</p>
+
+    <div class="bpost-full" x-show="open" x-cloak x-transition.opacity.duration.250ms>
+      {paragraphs.map((p) => <p class="bpost-p">{p}</p>)}
+    </div>
+
+    <button
+      type="button"
+      class="bpost-more"
+      @click="open = !open"
+      :aria-expanded="open ? 'true' : 'false'"
+    >
+      <span x-text="open ? 'Leer menos' : 'Leer más'">Leer más</span>
+      <span class="bpost-more-arrow" :class="open && 'bpost-more-arrow--up'" aria-hidden="true">→</span>
+    </button>
+  </div>
+</article>
+
+<style>
+  /* Card de papel: borde oscuro + sombra dura, en línea con el resto del
+     lenguaje "scrapbook" del sitio (postits de contactanos, polaroids). */
+  .bpost {
+    display: flex;
+    flex-direction: column;
+    background: #FFFDF8;
+    border: 2px solid #2D2A29;
+    border-radius: 4px;
+    box-shadow: 6px 6px 0 rgba(45, 42, 41, 0.9);
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .bpost:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 9px 9px 0 rgba(45, 42, 41, 0.9);
+  }
+
+  /* La imagen y el título también expanden: en un feed es el gesto natural.
+     El control accesible sigue siendo el botón "Leer más". */
+  .bpost-media,
+  .bpost-title {
+    cursor: pointer;
+  }
+
+  .bpost-media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-bottom: 2px solid #2D2A29;
+    background: #E8D5A3;
+  }
+
+  .bpost-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .bpost-tag {
+    position: absolute;
+    left: 0;
+    bottom: 12px;
+    background: #F0C14B;
+    color: #2D2A29;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    padding: 3px 14px 2px;
+    border: 2px solid #2D2A29;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .bpost-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.1rem 1.25rem 1.35rem;
+    flex: 1;
+  }
+
+  .bpost-date {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem;
+    color: #5C5753;
+    letter-spacing: 0.02em;
+  }
+
+  .bpost-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+    line-height: 1.15;
+    color: #2D2A29;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .bpost-excerpt,
+  .bpost-p {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2D2A29;
+    margin: 0;
+  }
+
+  .bpost-full {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-top: 0.2rem;
+    border-top: 1px dashed rgba(45, 42, 41, 0.3);
+    margin-top: 0.3rem;
+  }
+
+  .bpost-full .bpost-p {
+    color: #3A3634;
+  }
+
+  /* CTA explícito — en mobile no hay hover, así que el affordance tiene que
+     ser texto + flecha + subrayado mostaza (convención del sitio). */
+  .bpost-more {
+    align-self: flex-start;
+    margin-top: auto;
+    min-height: 44px;
+    padding: 0.9rem 0 0.1rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid #F0C14B;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+    color: #2D2A29;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    transition: border-color 0.15s ease, gap 0.15s ease;
+  }
+
+  .bpost-more:hover {
+    border-bottom-color: #2D2A29;
+    gap: 0.65rem;
+  }
+
+  .bpost-more-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .bpost-more-arrow--up {
+    transform: rotate(-90deg);
+  }
+
+  @media (max-width: 760px) {
+    .bpost {
+      box-shadow: 4px 4px 0 rgba(45, 42, 41, 0.9);
+    }
+
+    .bpost-body {
+      padding: 1rem 1.1rem 1.2rem;
+    }
+
+    .bpost-title {
+      font-size: 1.35rem;
+    }
+
+    .bpost-date {
+      font-size: 0.875rem;
+    }
+  }
+</style>

@@ -1,16 +1,22 @@
 import { defineCollection, z } from 'astro:content';
+import { file } from 'astro/loaders';
 
-const blog = defineCollection({
-  type: 'content',
-  schema: ({ image }) => z.object({
+// Blogcito v2: un único JSON con todas las notas, editable desde /admin.
+// No usa markdown ni una carpeta por post a propósito: el panel de admin
+// exporta este archivo completo, así la owner puede autogestionar el feed
+// sin tocar la estructura del repo. Las imágenes viven en `public/blogcito/`
+// (ruta pública, no `image()`), para que se puedan subir por File Manager.
+const blogcito = defineCollection({
+  loader: file('src/data/blogcito.json'),
+  schema: z.object({
     title: z.string(),
-    date: z.date(),
-    image: image(),
-    description: z.string(),
-    author: z.object({
-      name: z.string(),
-      avatar: image(),
-    }),
+    date: z.string(), // ISO corta: YYYY-MM-DD
+    tag: z.string().optional(),
+    image: z.string(), // ruta pública, ej: /blogcito/cover-1.svg
+    excerpt: z.string(), // visible siempre, antes de "Leer más"
+    body: z.string(), // párrafos separados por \n\n, se revela al expandir
+    order: z.number(),
+    published: z.boolean().default(true),
   }),
 });
 
@@ -34,4 +40,4 @@ const aliados = defineCollection({
   }),
 });
 
-export const collections = { blog, aliados };
+export const collections = { blogcito, aliados };

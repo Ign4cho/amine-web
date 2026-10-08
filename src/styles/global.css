@@ -21,3 +21,7 @@ body {
   font-weight: 300;
 }
 
+/* Alpine: evita el flash de contenido colapsado antes de que hidrate. */
+[x-cloak] {
+  display: none !important;
+}

@@ -1,0 +1,140 @@
+---
+// Card compacta del preview de Blogcito en el home. Linkea al feed completo
+// (no hay página por nota).
+interface Props {
+  post: {
+    data: { title: string; date: string; tag?: string; image: string };
+  };
+}
+
+const { post } = Astro.props;
+const { title, date, tag, image } = post.data;
+
+const formattedDate = new Date(`${date}T12:00:00`).toLocaleDateString('es-AR', {
+  day: 'numeric',
+  month: 'short',
+});
+---
+
+<a href="/blogcito" class="bmini">
+  <span class="bmini-media">
+    <img src={image} alt="" class="bmini-img" loading="lazy" decoding="async" />
+  </span>
+  <span class="bmini-body">
+    <span class="bmini-meta">
+      {tag && <span class="bmini-tag">{tag}</span>}
+      <span class="bmini-date">{formattedDate}</span>
+    </span>
+    <span class="bmini-title">{title}</span>
+    <span class="bmini-cta">Leer <span aria-hidden="true">&#8594;</span></span>
+  </span>
+</a>
+
+<style>
+  .bmini {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: #FFFDF8;
+    border: 2px solid #2D2A29;
+    border-radius: 4px;
+    box-shadow: 5px 5px 0 rgba(45, 42, 41, 0.9);
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .bmini:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 rgba(45, 42, 41, 0.9);
+  }
+
+  .bmini-media {
+    flex: 0 0 34%;
+    max-width: 150px;
+    border-right: 2px solid #2D2A29;
+    background: #E8D5A3;
+    display: block;
+  }
+
+  .bmini-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .bmini-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 1rem;
+    min-width: 0;
+  }
+
+  .bmini-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .bmini-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: #2D2A29;
+    background: #F0C14B;
+    border: 1px solid #2D2A29;
+    border-radius: 3px;
+    padding: 1px 7px 0;
+    text-transform: uppercase;
+  }
+
+  .bmini-date {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    color: #5C5753;
+  }
+
+  /* Affordance propio: sin hover en mobile, la card necesita decir que se
+     puede tocar (convención del sitio: texto + flecha + subrayado mostaza). */
+  .bmini-cta {
+    align-self: flex-start;
+    margin-top: 0.15rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    color: #2D2A29;
+    border-bottom: 2px solid #F0C14B;
+    padding-bottom: 1px;
+  }
+
+  .bmini-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+    line-height: 1.2;
+    color: #2D2A29;
+  }
+
+  @media (max-width: 760px) {
+    .bmini-media {
+      flex: 0 0 38%;
+    }
+
+    .bmini-body {
+      padding: 0.75rem 0.85rem;
+    }
+
+    .bmini-title {
+      font-size: 1rem;
+    }
+
+    .bmini-date,
+    .bmini-tag {
+      font-size: 0.875rem;
+    }
+  }
+</style>

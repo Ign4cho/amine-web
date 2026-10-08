@@ -1,67 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { ADMIN_PASSWORD } from '../constants';
+import { readdirSync } from 'node:fs';
+import blogcitoPosts from '../data/blogcito.json';
+
+// Imágenes ya disponibles en public/blogcito/ — se ofrecen como sugerencia
+// en el campo "imagen" para no tener que escribir la ruta de memoria.
+let availableImages: string[] = [];
+try {
+  availableImages = readdirSync('public/blogcito')
+    .filter((f) => /\.(png|jpe?g|svg|webp|avif)$/i.test(f))
+    .map((f) => `/blogcito/${f}`)
+    .sort();
+} catch {
+  availableImages = [];
+}
+
+// Estado publicado actual (lo que hay en src/data/blogcito.json).
+const publishedPosts = blogcitoPosts;
 ---
 
 <Layout title="Admin — Amine Social Media">
   <main class="admin-main">
     <!--
-      IMPORTANT: This password is frontend-only and is NOT cryptographically secure.
-      It is intended as a lightweight barrier for internal team use only.
+      IMPORTANTE: la contraseña es solo frontend y NO es segura
+      criptográficamente. Es una barrera liviana para uso interno del equipo.
     -->
-    <div
-      x-data={`{
-        password: '',
-        authenticated: false,
-        wrongPassword: false,
-        adminPassword: '${ADMIN_PASSWORD}',
-        login() {
-          if (this.password === this.adminPassword) {
-            this.authenticated = true;
-            this.wrongPassword = false;
-          } else {
-            this.wrongPassword = true;
-            this.password = '';
-          }
-        },
-        title: '',
-        slug: '',
-        date: new Date().toISOString().split('T')[0],
-        authorName: '',
-        description: '',
-        body: '',
-        generatedContent: '',
-        copied: false,
-        generateSlug() {
-          this.slug = this.title
-            .toLowerCase()
-            .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
-            .replace(/[^a-z0-9\\s-]/g, '')
-            .trim()
-            .replace(/\\s+/g, '-');
-        },
-        generatePost() {
-          this.generatedContent =
-            '---\\n' +
-            'title: "' + this.title + '"\\n' +
-            'date: ' + this.date + '\\n' +
-            'image: ./cover.jpg\\n' +
-            'description: "' + this.description + '"\\n' +
-            'author:\\n' +
-            '  name: "' + this.authorName + '"\\n' +
-            '  avatar: ./avatar.jpg\\n' +
-            '---\\n\\n' +
-            this.body;
-        },
-        async copyToClipboard() {
-          await navigator.clipboard.writeText(this.generatedContent);
-          this.copied = true;
-          setTimeout(() => { this.copied = false; }, 2000);
-        }
-      }`}
-      class="admin-container"
-    >
-      <!-- PASSWORD GATE -->
+    <div x-data="blogcitoAdmin()" class="admin-container">
+      <!-- ─────────────────────────── PASSWORD GATE ─────────────────────────── -->
       <div x-show="!authenticated" class="login-card">
         <div class="login-logo">
           <span class="login-logo-text">AMINE</span>
@@ -76,167 +42,379 @@ import { ADMIN_PASSWORD } from '../constants';
             id="admin-password"
             type="password"
             x-model="password"
-            placeholder="••••••••"
+            placeholder="Escribí la contraseña"
             class="form-input"
             autocomplete="current-password"
           />
-          <p x-show="wrongPassword" class="error-msg" x-cloak>
-            Contraseña incorrecta
-          </p>
+          <p x-show="wrongPassword" class="error-msg" x-cloak>Contraseña incorrecta</p>
           <button type="submit" class="btn-login">Ingresar</button>
         </form>
       </div>
 
-      <!-- ADMIN PANEL -->
+      <!-- ──────────────────────────── ADMIN PANEL ──────────────────────────── -->
       <div x-show="authenticated" x-cloak class="admin-panel">
         <header class="panel-header">
-          <h1 class="panel-title">Nuevo post</h1>
-          <p class="panel-subtitle">Completá el formulario para generar el archivo del post.</p>
+          <div>
+            <h1 class="panel-title">Blogcito</h1>
+            <p class="panel-subtitle">
+              Creá, editá, ordená y borrá las notas del feed.
+              <span x-text="`${posts.length} nota${posts.length === 1 ? '' : 's'} · ${posts.filter(p => p.published).length} publicada${posts.filter(p => p.published).length === 1 ? '' : 's'}`"></span>
+            </p>
+          </div>
+          <span class="panel-flag" x-show="dirty" x-cloak>Cambios sin descargar</span>
         </header>
 
         <div class="panel-body">
-          <!-- FORM -->
-          <form @submit.prevent="generatePost()" class="post-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Título *</label>
-                <input
-                  type="text"
-                  x-model="title"
-                  @input="generateSlug()"
-                  placeholder="Título del post"
-                  class="form-input"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="form-row form-row--two">
-              <div class="form-group">
-                <label class="form-label">Slug (URL)</label>
-                <input
-                  type="text"
-                  x-model="slug"
-                  placeholder="slug-del-post"
-                  class="form-input"
-                />
-                <small class="form-hint">Generado automáticamente desde el título. Podés editarlo.</small>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Fecha</label>
-                <input
-                  type="date"
-                  x-model="date"
-                  class="form-input"
-                />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Nombre del autor *</label>
-              <input
-                type="text"
-                x-model="authorName"
-                placeholder="Ej: Guada Sanchez"
-                class="form-input"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Descripción corta *</label>
-              <textarea
-                x-model="description"
-                placeholder="Descripción breve que aparece en la vista previa (2-3 oraciones)"
-                class="form-input form-textarea"
-                rows="3"
-                required
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Cuerpo del post (Markdown) *</label>
-              <textarea
-                x-model="body"
-                placeholder="Escribí el contenido del post en Markdown..."
-                class="form-input form-textarea form-textarea--lg"
-                rows="14"
-                required
-              ></textarea>
-              <small class="form-hint">Podés usar Markdown: **negrita**, ## títulos, - listas, etc.</small>
-            </div>
-
-            <button type="submit" class="btn-generate">
-              Generar archivo
-            </button>
-          </form>
-
-          <!-- GENERATED OUTPUT -->
-          <div x-show="generatedContent" x-cloak class="output-section">
-            <div class="output-header">
-              <h2 class="output-title">Archivo generado</h2>
-              <button
-                @click="copyToClipboard()"
-                class="btn-copy"
-                x-text="copied ? '¡Copiado!' : 'Copiar al portapapeles'"
-              ></button>
-            </div>
-
-            <pre class="output-code" x-text="generatedContent"></pre>
-
-            <!-- Instructions -->
-            <div class="instructions">
-              <h3 class="instructions-title">¿Cómo publicar este post?</h3>
-
-              <div class="instructions-block">
-                <h4>Si no sos admin:</h4>
-                <p>Enviá este contenido generado + la foto de portada a un administrador para que lo suba.</p>
+          <div class="abm">
+            <!-- ── LISTA ────────────────────────────────────────────────── -->
+            <section class="abm-list">
+              <div class="abm-list-head">
+                <h2 class="abm-h2">Notas</h2>
+                <button type="button" class="btn-primary btn-sm" @click="newPost()">+ Nueva nota</button>
               </div>
 
-              <div class="instructions-block">
-                <h4>Si sos admin:</h4>
-                <ol>
-                  <li>Copiá el contenido generado arriba</li>
-                  <li>
-                    Creá la carpeta:
-                    <code x-text="`src/content/blog/${slug || 'nombre-del-post'}/`"></code>
+              <p x-show="posts.length === 0" class="abm-empty" x-cloak>
+                No hay notas todavía. Creá la primera con “Nueva nota”.
+              </p>
+
+              <ul class="abm-items">
+                <template x-for="(post, i) in posts" :key="post.id">
+                  <li class="abm-item" :class="editingIndex === i && 'abm-item--active'">
+                    <div class="abm-item-order">
+                      <button type="button" class="btn-icon" @click="move(i, -1)" :disabled="i === 0" title="Subir">▲</button>
+                      <span class="abm-item-num" x-text="i + 1"></span>
+                      <button type="button" class="btn-icon" @click="move(i, 1)" :disabled="i === posts.length - 1" title="Bajar">▼</button>
+                    </div>
+
+                    <img class="abm-item-thumb" :src="post.image" alt="" />
+
+                    <div class="abm-item-info">
+                      <span class="abm-item-title" x-text="post.title"></span>
+                      <span class="abm-item-meta">
+                        <span x-text="post.date"></span>
+                        <span x-show="post.tag"> · <span x-text="post.tag"></span></span>
+                      </span>
+                      <span
+                        class="abm-badge"
+                        :class="post.published ? 'abm-badge--on' : 'abm-badge--off'"
+                        x-text="post.published ? 'Publicada' : 'Borrador'"
+                      ></span>
+                    </div>
+
+                    <div class="abm-item-actions">
+                      <button type="button" class="btn-ghost" @click="togglePublished(i)" x-text="post.published ? 'Despublicar' : 'Publicar'"></button>
+                      <button type="button" class="btn-ghost" @click="editPost(i)">Editar</button>
+                      <button type="button" class="btn-ghost btn-ghost--danger" @click="removePost(i)">Borrar</button>
+                    </div>
                   </li>
-                  <li>Guardá el contenido como <code>index.md</code> dentro de esa carpeta</li>
-                  <li>Agregá la imagen de portada como <code>cover.jpg</code> en la misma carpeta</li>
-                  <li>Agregá el avatar del autor como <code>avatar.jpg</code> en la misma carpeta</li>
-                  <li>Hacé <code>git push</code> para disparar el deploy automático</li>
-                </ol>
-              </div>
-            </div>
+                </template>
+              </ul>
+            </section>
+
+            <!-- ── EDITOR ───────────────────────────────────────────────── -->
+            <section class="abm-editor" x-show="editingIndex !== null" x-cloak>
+              <h2 class="abm-h2" x-text="editingIndex === -1 ? 'Nueva nota' : 'Editando nota'"></h2>
+
+              <form @submit.prevent="savePost()" class="post-form">
+                <div class="form-group">
+                  <label class="form-label">Título *</label>
+                  <input type="text" x-model="draft.title" @input="syncId()" class="form-input" required />
+                </div>
+
+                <div class="form-row form-row--two">
+                  <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" x-model="draft.date" class="form-input" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Etiqueta</label>
+                    <input type="text" x-model="draft.tag" placeholder="Ej: Branding" class="form-input" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Identificador (interno)</label>
+                  <input type="text" x-model="draft.id" class="form-input" />
+                  <small class="form-hint">Se genera solo desde el título. Tiene que ser único.</small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Imagen *</label>
+                  <input type="text" x-model="draft.image" list="blogcito-images" class="form-input" placeholder="/blogcito/mi-imagen.jpg" required />
+                  <datalist id="blogcito-images">
+                    {availableImages.map((img) => <option value={img}></option>)}
+                  </datalist>
+                  <small class="form-hint">
+                    Subí el archivo a la carpeta <code>blogcito/</code> del sitio y escribí acá la ruta.
+                    Ideal: 1200×800 px.
+                  </small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Bajada *</label>
+                  <textarea x-model="draft.excerpt" rows="3" class="form-input form-textarea" required
+                    placeholder="Las 2 o 3 líneas que se ven siempre, antes del “Leer más”."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Cuerpo *</label>
+                  <textarea x-model="draft.body" rows="12" class="form-input form-textarea form-textarea--lg" required
+                    placeholder="El texto completo. Dejá una línea en blanco entre párrafo y párrafo."></textarea>
+                  <small class="form-hint">Texto plano. Un renglón vacío = párrafo nuevo.</small>
+                </div>
+
+                <label class="form-check">
+                  <input type="checkbox" x-model="draft.published" />
+                  <span>Publicada (visible en el sitio)</span>
+                </label>
+
+                <p x-show="formError" x-cloak class="error-msg" x-text="formError"></p>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary">Guardar nota</button>
+                  <button type="button" class="btn-ghost" @click="cancelEdit()">Cancelar</button>
+                </div>
+              </form>
+            </section>
           </div>
+
+          <!-- ── PUBLICAR ───────────────────────────────────────────────── -->
+          <section class="publish">
+            <h2 class="abm-h2">Publicar los cambios</h2>
+            <p class="publish-text">
+              Los cambios quedan guardados en este navegador. Para que se vean en el sitio hay que
+              bajar el archivo y pasárselo a quien sube la web.
+            </p>
+
+            <div class="publish-actions">
+              <button type="button" class="btn-primary" @click="downloadJson()">Descargar blogcito.json</button>
+              <button type="button" class="btn-ghost" @click="copyJson()" x-text="copied ? '¡Copiado!' : 'Copiar JSON'"></button>
+              <button type="button" class="btn-ghost btn-ghost--danger" @click="resetToPublished()">Descartar mis cambios</button>
+            </div>
+
+            <details class="publish-details">
+              <summary>¿Cómo se sube al sitio?</summary>
+              <ol>
+                <li>Descargá <code>blogcito.json</code> con el botón de arriba.</li>
+                <li>Si la nota tiene imagen nueva, mandala junto con el archivo.</li>
+                <li>Pasale los dos archivos al administrador del sitio: reemplaza
+                  <code>src/data/blogcito.json</code>, copia la imagen en <code>public/blogcito/</code>
+                  y vuelve a publicar la web.</li>
+              </ol>
+            </details>
+
+            <details class="publish-details">
+              <summary>Ver el JSON generado</summary>
+              <pre class="output-code" x-text="json()"></pre>
+            </details>
+          </section>
         </div>
       </div>
     </div>
   </main>
 </Layout>
 
+<script is:inline define:vars={{ ADMIN_PASSWORD, publishedPosts }}>
+  document.addEventListener('alpine:init', () => {
+    const STORAGE_KEY = 'amine-blogcito-draft';
+    const clone = (v) => JSON.parse(JSON.stringify(v));
+
+    window.Alpine.data('blogcitoAdmin', () => ({
+      // ── auth (solo frontend, barrera liviana para uso interno) ──
+      password: '',
+      authenticated: false,
+      wrongPassword: false,
+      login() {
+        if (this.password === ADMIN_PASSWORD) {
+          this.authenticated = true;
+          this.wrongPassword = false;
+        } else {
+          this.wrongPassword = true;
+          this.password = '';
+        }
+      },
+
+      // ── estado ──
+      posts: [],
+      editingIndex: null, // null = cerrado, -1 = nueva, >=0 = índice editado
+      draft: {},
+      formError: '',
+      copied: false,
+      dirty: false,
+
+      init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            this.posts = JSON.parse(saved);
+            this.dirty = JSON.stringify(this.posts) !== JSON.stringify(publishedPosts);
+          } catch {
+            this.posts = clone(publishedPosts);
+          }
+        } else {
+          this.posts = clone(publishedPosts);
+        }
+      },
+
+      persist() {
+        this.posts.forEach((p, i) => { p.order = i + 1; });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.posts));
+        this.dirty = JSON.stringify(this.posts) !== JSON.stringify(publishedPosts);
+      },
+
+      // ── ABM ──
+      emptyDraft() {
+        return {
+          id: '',
+          title: '',
+          date: new Date().toISOString().split('T')[0],
+          tag: '',
+          image: '',
+          excerpt: '',
+          body: '',
+          order: this.posts.length + 1,
+          published: true,
+        };
+      },
+
+      newPost() {
+        this.draft = this.emptyDraft();
+        this.editingIndex = -1;
+        this.formError = '';
+      },
+
+      editPost(i) {
+        this.draft = clone(this.posts[i]);
+        this.editingIndex = i;
+        this.formError = '';
+      },
+
+      cancelEdit() {
+        this.editingIndex = null;
+        this.formError = '';
+      },
+
+      slugify(text) {
+        return text
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[̀-ͯ]/g, '')
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .slice(0, 60);
+      },
+
+      syncId() {
+        // Solo autogenera mientras se crea: al editar no se pisa el id existente.
+        if (this.editingIndex === -1) this.draft.id = this.slugify(this.draft.title);
+      },
+
+      savePost() {
+        const d = this.draft;
+        if (!d.id) d.id = this.slugify(d.title);
+        if (!d.title.trim() || !d.excerpt.trim() || !d.body.trim() || !d.image.trim()) {
+          this.formError = 'Faltan campos: título, imagen, bajada y cuerpo son obligatorios.';
+          return;
+        }
+        const duplicated = this.posts.some((p, i) => p.id === d.id && i !== this.editingIndex);
+        if (duplicated) {
+          this.formError = 'Ya existe otra nota con ese identificador. Cambiá el título o el identificador.';
+          return;
+        }
+        if (!d.tag) delete d.tag;
+
+        if (this.editingIndex === -1) this.posts.push(d);
+        else this.posts[this.editingIndex] = d;
+
+        this.editingIndex = null;
+        this.formError = '';
+        this.persist();
+      },
+
+      removePost(i) {
+        if (!confirm(`¿Borrar “${this.posts[i].title}”?`)) return;
+        this.posts.splice(i, 1);
+        if (this.editingIndex === i) this.editingIndex = null;
+        this.persist();
+      },
+
+      togglePublished(i) {
+        this.posts[i].published = !this.posts[i].published;
+        this.persist();
+      },
+
+      move(i, dir) {
+        const j = i + dir;
+        if (j < 0 || j >= this.posts.length) return;
+        const [item] = this.posts.splice(i, 1);
+        this.posts.splice(j, 0, item);
+        if (this.editingIndex === i) this.editingIndex = j;
+        this.persist();
+      },
+
+      // ── salida ──
+      json() {
+        return JSON.stringify(
+          this.posts.map((p, i) => ({ ...p, order: i + 1 })),
+          null,
+          2,
+        );
+      },
+
+      downloadJson() {
+        const blob = new Blob([this.json() + '\n'], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'blogcito.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      async copyJson() {
+        await navigator.clipboard.writeText(this.json());
+        this.copied = true;
+        setTimeout(() => { this.copied = false; }, 2000);
+      },
+
+      resetToPublished() {
+        if (!confirm('Se van a perder los cambios que no bajaste. ¿Seguir?')) return;
+        this.posts = clone(publishedPosts);
+        this.editingIndex = null;
+        localStorage.removeItem(STORAGE_KEY);
+        this.dirty = false;
+      },
+    }));
+  });
+</script>
+
 <style>
+  /* Sin min-height: con la card de login (que es chica) el main forzaba el
+     alto de la pantalla y quedaban ~600px de cream vacío antes del footer. */
   .admin-main {
-    min-height: 100vh;
-    background-color: #F9F4EA;
+    background: #F9F4EA;
+    padding: 2.5rem 1.5rem 4rem;
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding: 3rem 1rem;
   }
 
   .admin-container {
     width: 100%;
+    max-width: 1180px;
   }
 
-  /* LOGIN CARD */
+  /* ───────────────────────────── LOGIN ───────────────────────────── */
+  /* Mismo lenguaje de "papel" que las hojas de /aliados y las cards del
+     blogcito, en vez del login SaaS genérico (blanco + radius grande). */
   .login-card {
-    max-width: 400px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 4px 24px rgba(45, 42, 41, 0.12);
+    max-width: 380px;
+    margin: 3rem auto;
+    background: #FFFDF8;
+    border: 1.5px solid rgba(45, 42, 41, 0.22);
+    border-radius: 6px;
+    padding: 2rem;
+    box-shadow: 10px 10px 0 rgba(45, 42, 41, 0.12);
   }
 
   .login-logo {
@@ -279,7 +457,7 @@ import { ADMIN_PASSWORD } from '../constants';
     gap: 0.75rem;
   }
 
-  /* SHARED FORM STYLES */
+  /* ──────────────────────── FORM COMPARTIDO ──────────────────────── */
   .form-label {
     display: block;
     font-family: 'Open Sans', sans-serif;
@@ -313,10 +491,12 @@ import { ADMIN_PASSWORD } from '../constants';
   .form-textarea {
     resize: vertical;
     min-height: 80px;
+    font-family: 'Courier Prime', monospace;
+    line-height: 1.55;
   }
 
   .form-textarea--lg {
-    min-height: 260px;
+    min-height: 240px;
   }
 
   .form-hint {
@@ -328,16 +508,49 @@ import { ADMIN_PASSWORD } from '../constants';
     margin-top: 0.3rem;
   }
 
+  .form-hint code,
+  .publish-details code {
+    font-family: 'Courier Prime', monospace;
+    background: #F9F4EA;
+    border: 1px solid #e8e2d8;
+    border-radius: 4px;
+    padding: 0 4px;
+  }
+
+  .form-row--two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #2D2A29;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
   .error-msg {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
     font-size: 0.85rem;
     color: #c0392b;
-    text-align: center;
     margin: 0;
   }
 
-  .btn-login {
+  /* ───────────────────────────── BOTONES ─────────────────────────── */
+  .btn-login,
+  .btn-primary {
     background: #F0C14B;
     color: #2D2A29;
     font-family: 'Bebas Neue', sans-serif;
@@ -345,28 +558,95 @@ import { ADMIN_PASSWORD } from '../constants';
     letter-spacing: 0.08em;
     border: none;
     border-radius: 8px;
-    padding: 0.7rem;
+    padding: 0.7rem 1.3rem;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .btn-login {
+    width: 100%;
     margin-top: 0.5rem;
   }
 
-  .btn-login:hover {
+  .btn-login:hover,
+  .btn-primary:hover {
     background: #2D2A29;
     color: #F0C14B;
   }
 
-  /* ADMIN PANEL */
+  .btn-sm {
+    font-size: 0.95rem;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid #d9d2c6;
+    border-radius: 8px;
+    padding: 0.45rem 0.85rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.82rem;
+    color: #2D2A29;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: #2D2A29;
+    background: #F9F4EA;
+  }
+
+  .btn-ghost--danger {
+    color: #c0392b;
+  }
+
+  .btn-ghost--danger:hover {
+    border-color: #c0392b;
+  }
+
+  /* Flechas de orden: el glifo es chico pero el área táctil tiene que
+     llegar a ~28px para poder usarse con el dedo. */
+  .btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5C5753;
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0;
+    width: 28px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+  }
+
+  .btn-icon:not(:disabled):hover {
+    background: #F0C14B;
+    color: #2D2A29;
+  }
+
+  .btn-icon:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+
+  /* ──────────────────────────── PANEL ────────────────────────────── */
   .admin-panel {
-    max-width: 780px;
-    margin: 0 auto;
     width: 100%;
   }
 
   .panel-header {
     background: #2D2A29;
     border-radius: 16px 16px 0 0;
-    padding: 2rem 2rem 1.5rem;
+    padding: 1.75rem 2rem 1.4rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .panel-title {
@@ -386,167 +666,263 @@ import { ADMIN_PASSWORD } from '../constants';
     margin: 0;
   }
 
+  .panel-flag {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.06em;
+    font-size: 0.9rem;
+    color: #2D2A29;
+    background: #F0C14B;
+    border-radius: 999px;
+    padding: 0.25rem 0.8rem;
+  }
+
   .panel-body {
     background: #ffffff;
     border-radius: 0 0 16px 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 24px rgba(45, 42, 41, 0.10);
+    padding: 1.75rem 2rem 2rem;
+    box-shadow: 0 4px 24px rgba(45, 42, 41, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .abm {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .abm-h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: #2D2A29;
+    margin: 0 0 0.9rem;
+  }
+
+  .abm-list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .abm-list-head .abm-h2 {
+    margin: 0;
+  }
+
+  .abm-empty {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #9e9891;
+  }
+
+  .abm-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .abm-item {
+    display: grid;
+    grid-template-columns: auto 64px minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: center;
+    border: 1px solid #e8e2d8;
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    background: #FFFDF8;
+  }
+
+  .abm-item--active {
+    border-color: #F0C14B;
+    box-shadow: 0 0 0 2px rgba(240, 193, 75, 0.25);
+  }
+
+  .abm-item-order {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .abm-item-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: #5C5753;
+  }
+
+  .abm-item-thumb {
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e8e2d8;
+    background: #E8D5A3;
+  }
+
+  .abm-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .abm-item-title {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #2D2A29;
+    line-height: 1.25;
+  }
+
+  .abm-item-meta {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    color: #9e9891;
+  }
+
+  .abm-badge {
+    align-self: flex-start;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 1px 8px;
+    margin-top: 0.15rem;
+  }
+
+  .abm-badge--on {
+    background: #E6F4EA;
+    color: #1E7B44;
+  }
+
+  .abm-badge--off {
+    background: #F2EFE9;
+    color: #8A827A;
+  }
+
+  .abm-item-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    border-top: 1px dashed #ece6dc;
+    padding-top: 0.6rem;
+  }
+
+  .abm-editor {
+    border: 1px solid #e8e2d8;
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: #FFFDF8;
+    position: sticky;
+    top: 70px;
   }
 
   .post-form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .form-row {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  @media (min-width: 600px) {
-    .form-row--two {
-      flex-direction: row;
-    }
-
-    .form-row--two .form-group {
-      flex: 1;
-    }
-  }
-
-  .btn-generate {
-    background: #F0C14B;
-    color: #2D2A29;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.08em;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 2rem;
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-
-  .btn-generate:hover {
-    background: #2D2A29;
-    color: #F0C14B;
-  }
-
-  /* OUTPUT */
-  .output-section {
-    margin-top: 2.5rem;
-    border-top: 2px solid #F0C14B;
-    padding-top: 2rem;
-  }
-
-  .output-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 1rem;
+  }
+
+  /* ──────────────────────────── PUBLICAR ─────────────────────────── */
+  .publish {
+    border-top: 1px solid #ece6dc;
+    padding-top: 1.5rem;
+  }
+
+  .publish-text {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #5C5753;
+    margin: 0 0 1rem;
+    max-width: 70ch;
+  }
+
+  .publish-actions {
+    display: flex;
+    gap: 0.75rem;
     flex-wrap: wrap;
     margin-bottom: 1rem;
   }
 
-  .output-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0;
+  .publish-details {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.88rem;
+    color: #5C5753;
+    margin-top: 0.5rem;
   }
 
-  .btn-copy {
-    background: #2D2A29;
-    color: #F9F4EA;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.95rem;
-    letter-spacing: 0.06em;
-    border: none;
-    border-radius: 8px;
-    padding: 0.45rem 1rem;
+  .publish-details summary {
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    color: #2D2A29;
   }
 
-  .btn-copy:hover {
-    background: #F0C14B;
-    color: #2D2A29;
+  .publish-details ol {
+    margin: 0.6rem 0 0;
+    padding-left: 1.2rem;
+    line-height: 1.6;
   }
 
   .output-code {
     background: #2D2A29;
-    color: #F0C14B;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.82rem;
-    line-height: 1.6;
-    padding: 1.25rem;
-    border-radius: 8px;
+    color: #F9F4EA;
+    border-radius: 10px;
+    padding: 1rem;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
     overflow-x: auto;
+    max-height: 420px;
+    margin-top: 0.75rem;
     white-space: pre-wrap;
     word-break: break-word;
   }
 
-  /* INSTRUCTIONS */
-  .instructions {
-    background: #F9F4EA;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
+  /* ─────────────────────────── RESPONSIVE ────────────────────────── */
+  @media (max-width: 960px) {
+    .abm {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .abm-editor {
+      position: static;
+    }
   }
 
-  .instructions-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    color: #2D2A29;
-    letter-spacing: 0.04em;
-    margin: 0 0 1rem;
-  }
+  @media (max-width: 600px) {
+    .admin-main {
+      padding: 1.5rem 1rem 3rem;
+    }
 
-  .instructions-block {
-    margin-bottom: 1rem;
-  }
+    .panel-header,
+    .panel-body {
+      padding-left: 1.1rem;
+      padding-right: 1.1rem;
+    }
 
-  .instructions-block h4 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #2D2A29;
-    margin: 0 0 0.4rem;
-  }
+    .form-row--two {
+      grid-template-columns: 1fr;
+    }
 
-  .instructions-block p,
-  .instructions-block ol {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 0.85rem;
-    color: #5C5753;
-    line-height: 1.6;
-    margin: 0;
-    padding-left: 1.2rem;
-  }
+    .abm-item {
+      grid-template-columns: auto 52px minmax(0, 1fr);
+      gap: 0.6rem;
+    }
 
-  .instructions-block li {
-    margin-bottom: 0.3rem;
-  }
-
-  .instructions-block code {
-    background: #2D2A29;
-    color: #F0C14B;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.8rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-  }
-
-  [x-cloak] {
-    display: none !important;
+    .abm-item-thumb {
+      width: 52px;
+      height: 40px;
+    }
   }
 </style>

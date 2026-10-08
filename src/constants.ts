@@ -10,3 +10,18 @@ export const ADMIN_PASSWORD = "Espacio1234";
 
 // Set to false to remove the "En construcción" overlay from the homepage
 export const UNDER_CONSTRUCTION = false;
+
+// ── Flags reversibles (propuesta octubre 2026) ────────────────────────
+// Cada uno vuelve al estado anterior cambiando el valor a false, sin
+// revertir commits. Ver `design-refs/decisiones-octubre.md`.
+
+/** true  → /blogcito es el feed de notas y el home muestra las últimas 2.
+ *  false → vuelve el cartel "próximamente" en ambos lugares. */
+export const BLOGCITO_ENABLED = true;
+
+/** true  → About Us con fondo plano (sin la textura rotada + blur).
+ *  false → vuelve la textura `home-footer-bg.png` borrosa. */
+export const ABOUTUS_FLAT_BG = true;
+
+/** Cuántas notas se muestran en el preview del home. */
+export const BLOGCITO_HOME_PREVIEW_COUNT = 2;
