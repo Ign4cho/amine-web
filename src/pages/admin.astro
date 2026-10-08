@@ -18,6 +18,12 @@ try {
 
 // Estado publicado actual (lo que hay en src/data/blogcito.json).
 const publishedPosts = blogcitoPosts;
+
+// Sugerencias del campo "autor": el equipo + quien ya haya firmado una nota.
+const TEAM = ['Guada Sánchez', 'Agus Albarracín', 'Nacho Colomé'];
+const authors = [
+  ...new Set([...TEAM, ...publishedPosts.map((p) => p.author).filter(Boolean)]),
+].sort();
 ---
 
 <Layout title="Admin — Amine Social Media">
@@ -92,6 +98,7 @@ const publishedPosts = blogcitoPosts;
                       <span class="abm-item-title" x-text="post.title"></span>
                       <span class="abm-item-meta">
                         <span x-text="post.date"></span>
+                        <span x-show="post.author"> · <span x-text="post.author"></span></span>
                         <span x-show="post.tag"> · <span x-text="post.tag"></span></span>
                       </span>
                       <span
@@ -121,10 +128,20 @@ const publishedPosts = blogcitoPosts;
                   <input type="text" x-model="draft.title" @input="syncId()" class="form-input" required />
                 </div>
 
+                <div class="form-group">
+                  <label class="form-label">Autor</label>
+                  <input type="text" x-model="draft.author" list="blogcito-authors" class="form-input" placeholder="Ej: Guada Sánchez" />
+                  <datalist id="blogcito-authors">
+                    {authors.map((a) => <option value={a}></option>)}
+                  </datalist>
+                  <small class="form-hint">Se muestra como “por {'{'}autor{'}'}” debajo del título.</small>
+                </div>
+
                 <div class="form-row form-row--two">
                   <div class="form-group">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" x-model="draft.date" class="form-input" />
+                    <label class="form-label">Fecha de la nota</label>
+                    <input type="date" x-model="draft.date" class="form-input" required />
+                    <small class="form-hint">Arranca con la de hoy. Cambiala si la nota es de otro día.</small>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Etiqueta</label>
@@ -267,6 +284,7 @@ const publishedPosts = blogcitoPosts;
         return {
           id: '',
           title: '',
+          author: '',
           date: new Date().toISOString().split('T')[0],
           tag: '',
           image: '',
@@ -322,7 +340,12 @@ const publishedPosts = blogcitoPosts;
           this.formError = 'Ya existe otra nota con ese identificador. Cambiá el título o el identificador.';
           return;
         }
+        if (!d.date) {
+          this.formError = 'Falta la fecha de la nota.';
+          return;
+        }
         if (!d.tag) delete d.tag;
+        if (!d.author) delete d.author;
 
         if (this.editingIndex === -1) this.posts.push(d);
         else this.posts[this.editingIndex] = d;

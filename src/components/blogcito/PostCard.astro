@@ -6,6 +6,7 @@ interface Props {
     id: string;
     data: {
       title: string;
+      author?: string;
       date: string;
       tag?: string;
       image: string;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, date, tag, image, excerpt, body } = post.data;
+const { title, author, date, tag, image, excerpt, body } = post.data;
 
 const formattedDate = new Date(`${date}T12:00:00`).toLocaleDateString('es-AR', {
   day: 'numeric',
@@ -36,6 +37,7 @@ const paragraphs = body.split('\n\n').map((p) => p.trim()).filter(Boolean);
   <div class="bpost-body">
     <time class="bpost-date" datetime={date}>{formattedDate}</time>
     <h2 class="bpost-title" @click="open = !open">{title}</h2>
+    {author && <p class="bpost-author">por {author}</p>}
 
     <p class="bpost-excerpt">{excerpt}</p>
 
@@ -137,6 +139,14 @@ const paragraphs = body.split('\n\n').map((p) => p.trim()).filter(Boolean);
     letter-spacing: -0.01em;
   }
 
+  .bpost-author {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #5C5753;
+    margin: -0.25rem 0 0;
+  }
+
   .bpost-excerpt,
   .bpost-p {
     font-family: 'Courier Prime', monospace;
@@ -207,7 +217,8 @@ const paragraphs = body.split('\n\n').map((p) => p.trim()).filter(Boolean);
       font-size: 1.35rem;
     }
 
-    .bpost-date {
+    .bpost-date,
+    .bpost-author {
       font-size: 0.875rem;
     }
   }

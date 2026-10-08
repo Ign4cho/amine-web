@@ -10,6 +10,7 @@ const blogcito = defineCollection({
   loader: file('src/data/blogcito.json'),
   schema: z.object({
     title: z.string(),
+    author: z.string().optional(), // "por {autor}" bajo el título
     date: z.string(), // ISO corta: YYYY-MM-DD
     tag: z.string().optional(),
     image: z.string(), // ruta pública, ej: /blogcito/cover-1.svg

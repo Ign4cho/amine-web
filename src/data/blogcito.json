@@ -2,6 +2,7 @@
   {
     "id": "por-que-no-tenemos-instagram",
     "title": "Por qué la agencia no tiene Instagram (y sí tiene Blogcito)",
+    "author": "Guada Sánchez",
     "date": "2026-10-02",
     "tag": "Detrás de escena",
     "image": "/blogcito/cover-1.svg",
@@ -13,6 +14,7 @@
   {
     "id": "identidad-visual-no-es-solo-el-logo",
     "title": "Tu identidad visual no es el logo",
+    "author": "Agus Albarracín",
     "date": "2026-09-24",
     "tag": "Branding",
     "image": "/blogcito/cover-2.svg",
@@ -24,6 +26,7 @@
   {
     "id": "una-web-propia-vs-link-en-bio",
     "title": "Una web propia vs. el link en la bio",
+    "author": "Nacho Colomé",
     "date": "2026-09-15",
     "tag": "Desarrollo web",
     "image": "/blogcito/cover-3.svg",
@@ -35,6 +38,7 @@
   {
     "id": "medir-lo-que-importa",
     "title": "Medir lo que importa (y dejar de mirar los likes)",
+    "author": "Nacho Colomé",
     "date": "2026-09-03",
     "tag": "Datos",
     "image": "/blogcito/cover-4.svg",
@@ -46,6 +50,7 @@
   {
     "id": "como-trabajamos-con-un-cliente-nuevo",
     "title": "Cómo trabajamos con un cliente nuevo",
+    "author": "Guada Sánchez",
     "date": "2026-08-21",
     "tag": "Procesos",
     "image": "/blogcito/cover-5.svg",
@@ -57,6 +62,7 @@
   {
     "id": "equipo-chico-decisiones-rapidas",
     "title": "Equipo chico, decisiones rápidas",
+    "author": "Agus Albarracín",
     "date": "2026-08-08",
     "tag": "Detrás de escena",
     "image": "/blogcito/cover-6.svg",
