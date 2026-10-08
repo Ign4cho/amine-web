@@ -4,13 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-**v1.0 is live at [espacioamine.com](https://espacioamine.com)** (deployed via Hostinger File Manager from `dist/`). Ongoing work is small-detail tweaks per PO screenshots. En prod el Blogcito sigue mostrando el cartel "próximamente".
+**La propuesta de octubre 2026 está EN PRODUCCIÓN** en [espacioamine.com](https://espacioamine.com) (deploy manual vía Hostinger File Manager desde `dist/`). Se subió sin pasar por el review de la PO — no fue lo planeado, pero se decidió dejarlo. O sea: el Blogcito funcional, el ABM del admin, el About Us plano y el rediseño de Aliados ya están públicos.
+
+> ⚠️ **Si volvés a subir `dist/`, usá `npm run build` (prod), NUNCA `build:preview`.** El build de preview lleva `<meta robots noindex, nofollow>`: subido a espacioamine.com, Google desindexa el sitio. Pasó el 2026-10-08; el fix es rebuildear en modo prod y resubir.
 
 **Mobile-first rebuild** in progress on branch `mobile-redesign` (pushed to origin, not merged). Goal: rethink mobile with mobile-first patterns + clear tap affordances, deployed to a `preview.espacioamine.com` subdomain for review before merging. See "Mobile conventions" below.
 
-**Propuesta octubre 2026** on branch `preview-octubre` (desde `mobile-redesign`): Blogcito funcional como feed + ABM en `/admin`, About Us con fondo plano, Aliados rediseñado como "hojas". Todo destinado a preview, nunca a prod sin aprobación de la PO. Decisiones y cómo revertir: `design-refs/decisiones-octubre.md`. Flags en `src/constants.ts` (`BLOGCITO_ENABLED`, `ABOUTUS_FLAT_BG`).
+**Propuesta octubre 2026** en la rama `preview-octubre` (desde `mobile-redesign`, pusheada a origin, **no mergeada a `main`**): Blogcito funcional como feed + ABM en `/admin`, About Us con fondo plano, Aliados rediseñado como "hojas". Estaba pensada para el subdominio de preview, pero terminó subida a producción (ver arriba). Decisiones de diseño y cómo revertir: `design-refs/decisiones-octubre.md`. Flags en `src/constants.ts` (`BLOGCITO_ENABLED`, `ABOUTUS_FLAT_BG`).
 
-**Pending (mobile-redesign):** (1) create the `preview.espacioamine.com` subdomain in Hostinger and upload the `build:preview` `dist/`; (2) designer review + iterate; (3) still-untouched mobile-first opportunities: Blogcito preview / section-tab affordances, plus whatever the designer wants bolder; (4) merge to `main` once approved. Affordance pattern already applied to aliados-preview, services CTA and `/aliados` portfolio links.
+**Ojo con la divergencia**: lo que está publicado en espacioamine.com sale de `preview-octubre`, pero `main` sigue en v1.0. Hasta que se mergee, `main` NO refleja producción.
+
+**Pendiente:** (1) **resubir `dist/` buildeado con `npm run build`** para sacar el noindex de producción; (2) review de la PO sobre lo que ya está publicado; (3) mergear `preview-octubre` → `main` para que la rama principal refleje producción; (4) reemplazar las 6 notas de ejemplo del Blogcito y sus covers por contenido real; (5) decidir si la autogestión del Blogcito pasa a backend (hoy el admin exporta un JSON que hay que subir a mano). El subdominio `preview.espacioamine.com` nunca llegó a crearse.
 
 ## Commands
 
