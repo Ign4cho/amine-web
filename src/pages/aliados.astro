@@ -27,6 +27,12 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
         const slug = aliado.id.split('/')[0];
         return (
           <article class={`aliado aliado--${slug} ${reverse ? 'aliado--reverse' : ''}`}>
+            <header class="aliado-head">
+              <span class="aliado-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h2 class="aliado-name">{aliado.data.name}</h2>
+              {aliado.data.area && <span class="aliado-area">área {aliado.data.area}</span>}
+            </header>
+
             <div class="aliado-photo-col">
               {aliado.data.portfolio ? (
                 <a
@@ -132,7 +138,7 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     overflow: hidden;
     /* Bottom padding reducido para que el grid de aliados arranque cerca
        del subtítulo del header */
-    padding: 0 4rem 1.5rem;
+    padding: 3.5rem 4rem 2rem;
   }
 
   .aliados-header-texture {
@@ -141,69 +147,157 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     background-image: url('/assets/texture-bg.png');
     background-size: cover;
     background-position: center;
-    opacity: 0.15;
+    opacity: 0.12;
     pointer-events: none;
   }
 
   .aliados-header-inner {
     position: relative;
     z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
+    /* Anclado a la izquierda como el resto del sitio (hero/services/blogcito).
+       Con `margin: 0 auto` el título quedaba a la derecha del borde de las
+       hojas en pantallas anchas. */
+    max-width: 1280px;
+    margin: 0;
   }
 
   .aliados-title {
-    font-family: Georgia, serif;
+    font-family: Georgia, 'Times New Roman', serif;
     font-style: italic;
-    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 700;
+    font-size: clamp(3rem, 7vw, 5.5rem);
     color: #F9F4EA;
     letter-spacing: -0.02em;
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.6rem;
     line-height: 1;
-    padding-top: 2.5rem;
   }
 
   .aliados-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 1rem;
-    color: rgba(249, 244, 234, 0.75);
+    font-family: 'Courier Prime', monospace;
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+    color: rgba(249, 244, 234, 0.8);
     margin: 0;
+    max-width: 60ch;
+    line-height: 1.5;
   }
 
   /* Main */
   .aliados-main {
     background-color: #F9F4EA;
+    position: relative;
     /* Recorta el leve desborde de la polaroid rotada cuando llena el ancho
        en mobile (evita scroll horizontal). */
     overflow-x: hidden;
   }
 
-  .aliados-grid {
-    max-width: 1400px;
-    margin: 0 auto;
-    /* Top padding mínimo: las polaroids arrancan apenas debajo del header */
-    padding: 1rem 4rem 3rem;
-    display: flex;
-    flex-direction: column;
-    /* Secciones casi pegadas — poco aire entre aliados */
-    gap: 1.5rem;
+  /* Papel cuadriculado tenue de fondo: el cream plano dejaba la página
+     "desnuda" (feedback PO, oct 2026). Se hace con gradientes (no PNG) para
+     que no pese ni se vea sucio, y rima con el papel cuadriculado de uno de
+     los aliados. Es fondo: no compite con el collage. */
+  .aliados-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        rgba(45, 42, 41, 0.055) 0 1px,
+        transparent 1px 32px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(45, 42, 41, 0.055) 0 1px,
+        transparent 1px 32px
+      );
+    pointer-events: none;
+    z-index: 0;
   }
 
+  .aliados-grid {
+    position: relative;
+    z-index: 1;
+  }
+
+  .aliados-grid {
+    max-width: 1400px;
+    margin: 0;
+    /* Top padding mínimo: las polaroids arrancan apenas debajo del header */
+    padding: 3rem 4rem 4.5rem;
+    display: flex;
+    flex-direction: column;
+    /* Aire entre hojas: suficiente para que se lean como piezas separadas. */
+    gap: 3rem;
+  }
+
+  /* Cada aliado es una "hoja" apoyada sobre la página: fondo propio, borde
+     fino, sombra dura y una rotación mínima alternada. Antes eran dos bloques
+     sueltos separados por una línea gris, con mucho aire muerto alrededor. */
   .aliado {
+    position: relative;
     display: grid;
     grid-template-columns: 7fr 4fr;
-    gap: 1.5rem;
-    align-items: start;
+    gap: 1.5rem 2rem;
+    align-items: center;
+    /* Semitransparente a propósito: deja ver la cuadrícula del fondo, si no
+       las hojas la tapaban y el papel solo se veía en los márgenes. */
+    background: rgba(255, 253, 248, 0.9);
+    border: 1.5px solid rgba(45, 42, 41, 0.22);
+    border-radius: 6px;
+    box-shadow: 10px 10px 0 rgba(45, 42, 41, 0.15);
+    padding: 1.75rem 2.25rem 1.5rem;
+    transform: rotate(-0.4deg);
   }
 
   .aliado--reverse {
     grid-template-columns: 4fr 7fr;
+    transform: rotate(0.4deg);
   }
 
-  .aliado:not(:last-child) {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(45, 42, 41, 0.18);
+  /* Encabezado de la hoja: número grande en marca de agua + nombre + área.
+     El nombre no estaba en ningún lado fuera del PNG de la polaroid. */
+  .aliado-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-bottom: 1.5px dashed rgba(45, 42, 41, 0.25);
+    padding-bottom: 0.9rem;
+  }
+
+  .aliado-index {
+    position: absolute;
+    top: 0.1rem;
+    right: 2.25rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 7vw, 7rem);
+    line-height: 1;
+    color: rgba(45, 42, 41, 0.08);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .aliado-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+    color: #2D2A29;
+    letter-spacing: -0.015em;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .aliado-area {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2D2A29;
+    background: #F0C14B;
+    border: 1.5px solid #2D2A29;
+    border-radius: 999px;
+    padding: 2px 14px 0;
   }
 
   .aliado--reverse .aliado-photo-col {
@@ -227,6 +321,11 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
     transform: rotate(-3deg);
     transition: transform 400ms ease;
     filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
+    /* Los PNG de las polaroids traen ~18% de padding transparente arriba y
+       abajo: sin colapsarlo, la hoja quedaba con dos franjas vacías enormes
+       (el "muy desnudo" del feedback). */
+    margin-top: -13%;
+    margin-bottom: -13%;
   }
 
   .aliado--reverse .aliado-photo-link,
@@ -257,12 +356,10 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
   }
 
   /* Paper */
+  /* Alineado al mismo eje que la descripción: antes el papel se pegaba al
+     borde opuesto y la columna quedaba con dos márgenes izquierdos. */
   .aliado-paper-wrap {
     position: relative;
-    align-self: flex-end;
-  }
-
-  .aliado--reverse .aliado-paper-wrap {
     align-self: flex-start;
   }
 
@@ -397,8 +494,12 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
   .aliado-actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.9rem 1.5rem;
+    /* En columna siempre: según el ancho de cada columna, el mail y el CTA
+       envolvían en un aliado y no en el otro — las dos hojas se veían
+       distintas sin motivo. */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
     margin-top: 0.5rem;
   }
 
@@ -411,7 +512,11 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
      portfolio, pero sin hover no se entiende — esto lo hace explícito. */
   .aliado-portfolio-cta {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
+    /* 44px de alto táctil: el subrayado queda pegado al texto y la zona
+       tocable crece hacia arriba. */
+    min-height: 44px;
+    padding-top: 0.75rem;
     gap: 0.5rem;
     color: #2D2A29;
     font-family: 'Bebas Neue', sans-serif;
@@ -464,10 +569,74 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
       gap: 2rem;
     }
 
+    /* En mobile la polaroid es full-bleed (105vw): no puede vivir dentro de
+       una hoja con padding, así que la tarjeta se desarma y queda el flujo
+       vertical simple. El encabezado (nombre + área) sí se mantiene. */
     .aliado,
     .aliado--reverse {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+      /* `1fr` = `minmax(auto, 1fr)`: el mínimo es el min-content de la columna,
+         y el pill del email (inline-flex, sin wrap) mide ~336px. A 320px eso
+         empujaba TODO el bloque 40px fuera de pantalla — sin scroll-x visible
+         (html/body tienen overflow-x: hidden), así que el texto se perdía en
+         silencio. `minmax(0, 1fr)` corta la cadena. */
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.25rem;
+      background: none;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      transform: none;
+    }
+
+    .aliado:not(:last-child) {
+      padding-bottom: 2rem;
+      border-bottom: 1.5px dashed rgba(45, 42, 41, 0.25);
+    }
+
+    /* Grid explícito: con flex-wrap la píldora del área caía a la segunda
+       línea solo en el aliado de nombre largo, y los dos encabezados se veían
+       distintos. Así siempre es número + nombre arriba, área debajo. */
+    .aliado-head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: baseline;
+      gap: 0.4rem 0.6rem;
+      border-bottom: none;
+      padding-bottom: 0;
+      min-width: 0;
+    }
+
+    .aliado-index {
+      position: static;
+      grid-area: 1 / 1;
+      font-size: 2.2rem;
+      color: rgba(45, 42, 41, 0.22);
+    }
+
+    .aliado-name {
+      grid-area: 1 / 2;
+    }
+
+    .aliado-area {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-self: start;
+    }
+
+    .aliado-info-col {
+      min-width: 0;
+    }
+
+    /* A ancho completo y con fuente más chica: el mail largo ya no fuerza el
+       ancho de la columna. */
+    .aliado-email-btn {
+      display: flex;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: center;
+      font-size: 1.1rem;
+      padding: 0.8rem 1rem;
+      overflow-wrap: anywhere;
     }
 
     .aliado--reverse .aliado-photo-col {
@@ -499,8 +668,21 @@ const sorted = aliados.sort((a, b) => a.data.order - b.data.order);
       /* El PNG de la foto trae ~21% de padding transparente arriba y abajo.
          A 105vw de ancho eso son ~27vw de alto vacío por lado. Lo colapsamos
          con margen negativo para que no haya tanto aire arriba/abajo. */
-      margin-top: -24vw;
-      margin-bottom: -24vw;
+      margin-top: -28vw;
+      margin-bottom: -28vw;
+    }
+
+    /* Cada PNG trae padding transparente lateral distinto (Agus 7.9%/19.9%,
+       Nacho 18.5%/4.4%): con el mismo margin-left una quedaba pegada a la
+       izquierda y la otra a la derecha. Se compensa por slug. */
+    .aliado--agustina-albarracin .aliado-photo-link,
+    .aliado--agustina-albarracin .aliado-photo--static {
+      margin-left: calc(50% - 52.5vw + 6.3vw);
+    }
+
+    .aliado--ignacio-colome .aliado-photo-link,
+    .aliado--ignacio-colome .aliado-photo--static {
+      margin-left: calc(50% - 52.5vw - 7.4vw);
     }
 
     .aliado-paper-wrap--agustina-albarracin,

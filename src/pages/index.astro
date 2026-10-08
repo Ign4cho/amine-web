@@ -1,9 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
+import { getCollection } from 'astro:content';
+import MiniCard from '../components/blogcito/MiniCard.astro';
+import {
+  WHATSAPP_URL,
+  UNDER_CONSTRUCTION,
+  BLOGCITO_ENABLED,
+  BLOGCITO_HOME_PREVIEW_COUNT,
+  ABOUTUS_FLAT_BG,
+} from '../constants';
 
-// Blogcito preview is disabled in this release (shows "proximamente" card).
-// To reactivate: restore `getCollection('blog')` + `latestPosts` and the grid markup.
+// Blogcito preview: con BLOGCITO_ENABLED = true muestra las últimas notas del
+// feed; con false vuelve el cartel "proximamente" (markup y CSS intactos abajo).
+const latestPosts = BLOGCITO_ENABLED
+  ? (await getCollection('blogcito', ({ data }) => data.published))
+      .sort((a, b) => a.data.order - b.data.order)
+      .slice(0, BLOGCITO_HOME_PREVIEW_COUNT)
+  : [];
 //
 // Aliados preview now uses static composed images (aliado-agus/nacho/carpeta.png)
 // instead of the `aliados` content collection. The /aliados page still uses the collection.
@@ -128,8 +141,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
   </section>
 
   <!-- ══════════════════════════════════════════ ABOUT US ═══ -->
-  <section id="nosotros" class="aboutus-section">
-    <div class="aboutus-texture" aria-hidden="true"></div>
+  <section id="nosotros" class:list={['aboutus-section', ABOUTUS_FLAT_BG && 'aboutus-section--flat']}>
+    {/* Fondo con textura rotada + blur. Con ABOUTUS_FLAT_BG = true no se
+        renderiza: la sección queda chata (pedido de la PO, oct 2026). */}
+    {!ABOUTUS_FLAT_BG && <div class="aboutus-texture" aria-hidden="true"></div>}
 
     <div class="aboutus-inner">
       <!-- Left: text content -->
@@ -193,23 +208,44 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
   </section>
 
   <!-- ══════════════════════════════════ BLOGCITO PREVIEW ═══ -->
-  <section class="blogcito-preview-section">
+  <section class:list={['blogcito-preview-section', BLOGCITO_ENABLED && 'blogcito-preview-section--feed']}>
     <!-- BLOGCITO section tab -->
     <a href="/blogcito" class="section-tab tab-blogcito">
       <span class="section-tab-label">BLOGCITO</span>
     </a>
 
-    <div class="blogcito-soon-inner">
-      <img
-        src="/assets/pc-blogcito.png"
-        alt="Monitor retro con Amine Blogcitos en pantalla"
-        class="blogcito-soon-pc"
-      />
-      <div class="blogcito-soon-copy">
-        <h2 class="blogcito-soon-title">proximamente<span class="blogcito-soon-dot">.</span></h2>
-        <p class="blogcito-soon-sub">(no queremos tener una cuenta de instagram de la agencia, encontramos una solucion!)</p>
+    {BLOGCITO_ENABLED ? (
+      <div class="blogcito-feed-inner">
+        <img
+          src="/assets/pc-blogcito.png"
+          alt="Monitor retro con Amine Blogcitos en pantalla"
+          class="blogcito-feed-pc"
+        />
+
+        <div class="blogcito-feed-copy">
+          <h2 class="blogcito-feed-title">Blogcito<span class="blogcito-feed-dot">.</span></h2>
+          <p class="blogcito-feed-sub">(no queremos tener una cuenta de instagram de la agencia, encontramos una solucion!)</p>
+
+          <div class="blogcito-feed-list">
+            {latestPosts.map((post) => <MiniCard post={post} />)}
+          </div>
+
+          <a href="/blogcito" class="blogcito-feed-cta">Ver todas las notas <span aria-hidden="true">&#8594;</span></a>
+        </div>
       </div>
-    </div>
+    ) : (
+      <div class="blogcito-soon-inner">
+        <img
+          src="/assets/pc-blogcito.png"
+          alt="Monitor retro con Amine Blogcitos en pantalla"
+          class="blogcito-soon-pc"
+        />
+        <div class="blogcito-soon-copy">
+          <h2 class="blogcito-soon-title">proximamente<span class="blogcito-soon-dot">.</span></h2>
+          <p class="blogcito-soon-sub">(no queremos tener una cuenta de instagram de la agencia, encontramos una solucion!)</p>
+        </div>
+      </div>
+    )}
   </section>
 </Layout>
 
@@ -604,6 +640,26 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     overflow: hidden;
   }
 
+  /* ── Fondo chato (ABOUTUS_FLAT_BG = true) ──
+     La textura borrosa hacía que el clipboard y el logo TEAM A parecieran
+     "flotando" sobre una nada gris. Sin textura, el fondo pasa a ser un tono
+     plano MÁS OSCURO que Services (#2D2A29) para que las dos secciones oscuras
+     no se lean como un único bloque, y la foto se ancla con sombra dura +
+     una rotación mínima: deja de levitar y lee como papel pegado. */
+  .aboutus-section--flat {
+    background-color: #211F1E;
+    border-top: 1px solid rgba(249, 244, 234, 0.1);
+  }
+
+  .aboutus-section--flat .aboutus-photo {
+    transform: rotate(1.5deg);
+    /* drop-shadow y NO box-shadow: el PNG tiene transparencia, y box-shadow
+       dibuja el rectángulo del <img> — se veía un recuadro alrededor del
+       asset y un bloque negro recto detrás, en vez de la sombra del
+       clipboard. drop-shadow sigue el alpha. */
+    filter: drop-shadow(13px 15px 0 rgba(0, 0, 0, 0.75));
+  }
+
   .aboutus-inner {
     position: relative;
     z-index: 1;
@@ -682,6 +738,10 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
   /* TEAM A logo */
   .teama-wrap {
     display: flex;
+    /* El PNG trae ~106px de aire transparente a la izquierda: sin colapsarlo
+       los glifos arrancan ~100px a la derecha del título y del párrafo, que sí
+       están sobre el eje de 4rem. */
+    margin-left: clamp(-6.6rem, -7.4vw, -3.7rem);
     /* Logo PNG has lots of transparent space above the visible "TEAM A" text.
        Large negative margins collapse that space so the logo sits right under
        the paragraph and the section ends near the logo bottom. */
@@ -713,9 +773,11 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     display: block;
     width: 100%;
     height: auto;
-    /* `fotoConGancho.png` es un asset opaco (rectángulo, sin transparencia)
-       que trae la foto + el gancho compuestos. Se muestra derecho: rotarlo
-       dejaría ver las esquinas del rectángulo claro sobre el fondo oscuro. */
+    /* `fotoConGancho.png` trae la foto + el gancho compuestos y SÍ tiene canal
+       alfa (el contenido llega a los bordes del lienzo, pero las esquinas son
+       transparentes). Por eso las sombras van con `filter: drop-shadow` y no
+       con `box-shadow`: box-shadow pinta el rectángulo del <img> y se ve un
+       recuadro alrededor del asset. */
   }
 
   /* Star sitting *inside* the ALIADOS tab (right side, dentro del tab).
@@ -911,6 +973,103 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
     max-width: 60ch;
   }
 
+  /* ── Blogcito preview CON feed (BLOGCITO_ENABLED = true) ──
+     Misma escenografía (pared/escritorio + PC apoyada en la línea) pero la
+     columna derecha ahora trae las últimas notas reales en vez del cartel. */
+  .blogcito-feed-inner {
+    width: 100%;
+    min-height: 520px;
+    display: grid;
+    grid-template-rows: 65fr 35fr;
+    grid-template-columns: 42% 58%;
+    padding: 0 clamp(1.5rem, 4vw, 4rem) 0 clamp(1rem, 2vw, 2rem);
+    margin: 0;
+  }
+
+  .blogcito-feed-pc {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: end;
+    justify-self: start;
+    display: block;
+    /* Mismo tamaño que `.blogcito-soon-pc`: la PO pidió explícitamente
+       "agrandar bastante el asset de la pc" (design-refs/CHANGES.md). */
+    width: clamp(360px, 110%, 680px);
+    height: auto;
+    transform: translateY(32%);
+    filter: drop-shadow(0 18px 22px rgba(45, 42, 41, 0.18));
+  }
+
+  .blogcito-feed-copy {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    align-self: center;
+    justify-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 620px;
+    width: 100%;
+    padding: 2.5rem 0;
+  }
+
+  .blogcito-feed-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 0.95;
+    color: #1A1A1A;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .blogcito-feed-dot {
+    font-style: italic;
+  }
+
+  .blogcito-feed-sub {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-size: clamp(0.88rem, 1.05vw, 1rem);
+    color: #2D2A29;
+    line-height: 1.45;
+    margin: 0 0 0.5rem;
+    max-width: 58ch;
+  }
+
+  .blogcito-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* CTA explícito al feed completo — visible en todos los tamaños (en mobile
+     es el único affordance, en desktop refuerza al tab). */
+  .blogcito-feed-cta {
+    align-self: flex-start;
+    margin-top: 0.75rem;
+    /* 44px de zona tocable sin mover el subrayado. */
+    display: inline-flex;
+    align-items: flex-end;
+    /* gap explícito: al pasar a flex, el espacio en blanco entre el texto y
+       la flecha se colapsa y quedaban pegados. */
+    gap: 0.4rem;
+    min-height: 44px;
+    padding-top: 0.75rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+    letter-spacing: 0.05em;
+    color: #2D2A29;
+    text-decoration: none;
+    border-bottom: 2px solid #F0C14B;
+    padding-bottom: 2px;
+    transition: border-color 0.15s ease;
+  }
+
+  .blogcito-feed-cta:hover {
+    border-bottom-color: #2D2A29;
+  }
+
   /* ────────────────────── RESPONSIVE ────────────────────────── */
   @media (max-width: 900px) {
     .hero {
@@ -1071,7 +1230,11 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
        (acento de marca, sin competir con el scrapbook). */
     .preview-cta {
       display: inline-flex;
-      align-items: center;
+      /* flex-end + min-height: 44px de zona tocable sin despegar el subrayado
+         mostaza del texto. */
+      align-items: flex-end;
+      min-height: 44px;
+      padding-top: 0.75rem;
       gap: 0.5rem;
       align-self: center;
       margin-top: 1.5rem;
@@ -1119,6 +1282,86 @@ import { WHATSAPP_URL, UNDER_CONSTRUCTION } from '../constants';
           #D8D5DC 64%,
           #D8D5DC 100%
         );
+    }
+
+    /* Feed del preview en mobile: una columna. La escenografía pared/escritorio
+       deja de ser un gradiente en % (no puede seguir al contenido variable) y
+       pasa a pintarse por filas del grid: un pseudo-elemento cubre exactamente
+       la fila de la PC, así el teclado siempre apoya sobre la línea. */
+    .blogcito-preview-section--feed {
+      padding: 0 1.5rem 3rem;
+      min-height: 0;
+      background: #D8D5DC;
+    }
+
+    .blogcito-feed-inner {
+      position: relative;
+    }
+
+    .blogcito-feed-inner::before {
+      content: '';
+      grid-row: 1;
+      grid-column: 1;
+      margin: 0 -1.5rem;
+      background: #E8D5A3;
+      box-shadow: 0 7px 12px rgba(0, 0, 0, 0.18);
+      z-index: 0;
+    }
+
+    .blogcito-feed-pc {
+      position: relative;
+      z-index: 1;
+      margin-top: 2rem;
+    }
+
+    .blogcito-feed-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .blogcito-feed-inner {
+      grid-template-rows: auto auto;
+      grid-template-columns: 1fr;
+      min-height: 0;
+      padding: 0;
+      gap: 0;
+    }
+
+    .blogcito-feed-pc {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: end;
+      justify-self: center;
+      width: 86%;
+      max-width: 420px;
+      /* El PNG trae 19px de padding transparente abajo (4.66% de su alto): sin
+         compensarlo el teclado quedaba flotando ~5px sobre la línea del
+         escritorio. El padding lateral es asimétrico (93px izq / 53px der), de
+         ahí el -3.3% horizontal. */
+      transform: translate(-3.3%, 4.7%);
+    }
+
+    .blogcito-feed-copy {
+      grid-row: 2;
+      grid-column: 1;
+      align-self: start;
+      justify-self: stretch;
+      max-width: 100%;
+      padding: 1.5rem 0 0.5rem;
+      gap: 0.6rem;
+    }
+
+    .blogcito-feed-title,
+    .blogcito-feed-sub {
+      text-align: center;
+    }
+
+    .blogcito-feed-title {
+      align-self: center;
+    }
+
+    .blogcito-feed-cta {
+      align-self: center;
     }
 
     .blogcito-soon-inner {
