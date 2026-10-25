@@ -1,0 +1,363 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import {
+  WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, TIKTOK_URL, TIKTOK_HANDLE,
+  MAIN_SITE, TAGLINE, SERVICES, TEAM, ABOUT, ALIADOS, POSTS, formatDate, paragraphs,
+} from '../data/site';
+
+import logo from '../assets/amine-logo.png';
+import heroFolder from '../assets/hero-carpeta-foto.png';
+import star from '../assets/star.png';
+import ctaNote from '../assets/cta-con-firma.png';
+import clipboard from '../assets/fotoConGancho.png';
+import teamA from '../assets/teama-logo.png';
+import pc from '../assets/pc-blogcito.png';
+import polaroidAgus from '../assets/aliado-agus.png';
+import polaroidNacho from '../assets/aliado-nacho.png';
+import iconStar from '../assets/icon-star.svg';
+import iconCamera from '../assets/icon-camera.svg';
+import iconBrush from '../assets/icon-brush.svg';
+import iconArrow from '../assets/icon-arrow.svg';
+import iconLaptop from '../assets/icon-laptop4.svg';
+
+const icons = { star: iconStar, camera: iconCamera, brush: iconBrush, arrow: iconArrow, laptop: iconLaptop };
+const polaroids = { agustina: polaroidAgus, ignacio: polaroidNacho };
+
+const chapters = [
+  { id: 'servicios', n: '01', label: 'Servicios' },
+  { id: 'equipo', n: '02', label: 'Equipo' },
+  { id: 'aliados', n: '03', label: 'Aliados' },
+  { id: 'blogcito', n: '04', label: 'Blogcito' },
+  { id: 'contacto', n: '05', label: 'Contacto' },
+];
+
+// Palabras de la frase central que se resaltan en mostaza.
+const accent = new Set(['creatividad,', 'orden']);
+const taglineWords = TAGLINE.split(' ');
+
+const [featured, ...rest] = POSTS;
+---
+
+<Base title="Amine Social Media · Edición Nº 01">
+  <!-- ═══ MASTHEAD ═══ -->
+  <header class="masthead" data-masthead>
+    <a href="#portada" class="masthead-brand" aria-label="Amine, volver a la portada">
+      <Image src={logo} alt="" width={140} class="masthead-logo" />
+    </a>
+    <p class="masthead-issue">Nº 01 · Octubre 2026</p>
+    <nav class="masthead-nav" aria-label="Índice">
+      <ul>
+        {chapters.map((c) => (
+          <li><a href={`#${c.id}`} data-nav={c.id}><span>{c.n}</span>{c.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a href={WHATSAPP_URL} class="btn btn--ink masthead-cta" target="_blank" rel="noopener noreferrer">Hacé tu consulta</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+      <span class="menu-toggle-label">Índice</span>
+      <span class="menu-toggle-lines" aria-hidden="true"><i></i><i></i></span>
+    </button>
+    <div class="progress" aria-hidden="true"><span data-progress></span></div>
+  </header>
+
+  <div class="menu" id="menu" data-menu hidden>
+    <ol class="menu-list">
+      {chapters.map((c, i) => (
+        <li style={`--i:${i}`}><a href={`#${c.id}`} data-menu-link><span>{c.n}</span>{c.label}</a></li>
+      ))}
+    </ol>
+    <a href={WHATSAPP_URL} class="btn btn--mustard menu-cta" target="_blank" rel="noopener noreferrer">Escribinos por WhatsApp</a>
+  </div>
+
+  <main id="contenido">
+    <!-- ═══ PORTADA ═══ -->
+    <section class="cover" id="portada" aria-labelledby="cover-title">
+      <div class="cover-meta" data-reveal>
+        <span>Nº 01</span><span>Octubre 2026</span><span class="hide-sm">San Juan, Argentina</span><span>Edición digital</span>
+      </div>
+
+      <h1 class="cover-title" id="cover-title">
+        <span class="cover-word" aria-hidden="true">Amíne</span>
+        <span class="sr-only">Amine Social Media, agencia de marketing digital</span>
+      </h1>
+      <p class="cover-kicker" aria-hidden="true">Social media</p>
+
+      <div class="cover-art">
+        <Image src={heroFolder} alt="Carpeta amarilla con una polaroid del equipo de Amine" widths={[480, 800, 1200]} sizes="(max-width: 760px) 92vw, 52vw" class="cover-folder" loading="eager" />
+        <Image src={star} alt="" width={160} class="cover-star cover-star--1" />
+        <Image src={star} alt="" width={120} class="cover-star cover-star--2" />
+      </div>
+
+      <div class="cover-body">
+        <p class="cover-lead" data-reveal>
+          Somos una agencia de marketing digital con estructura <mark>freelancer profesional</mark>.
+          Trabajamos con marcas desde una estructura colaborativa, donde el trabajo en equipo potencia cada talento.
+        </p>
+        <a href={WHATSAPP_URL} class="link-cta" target="_blank" rel="noopener noreferrer" data-reveal>Escribinos por WhatsApp <span aria-hidden="true">→</span></a>
+      </div>
+
+      <ol class="coverlines" aria-label="En esta edición">
+        <li data-reveal><a href="#servicios"><span class="coverlines-n">01</span><span><b>Cinco servicios,</b> un mismo equipo</span></a></li>
+        <li data-reveal><a href="#aliados"><span class="coverlines-n">03</span><span><b>Aliados:</b> el oficio que suma</span></a></li>
+        <li data-reveal><a href="#blogcito"><span class="coverlines-n">04</span><span><b>Blogcito:</b> {featured.title}</span></a></li>
+      </ol>
+    </section>
+
+    <!-- ═══ MARQUESINA ═══ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        {[0, 1].map(() => (
+          <div class="marquee-group">
+            {SERVICES.map((s) => (<><span>{s.name}</span><Image src={star} alt="" width={48} class="marquee-star" /></>))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ═══ 01 SERVICIOS ═══ -->
+    <section class="chapter chapter--ink" id="servicios" aria-labelledby="servicios-title" data-chapter>
+      <header class="chapter-head" data-reveal>
+        <p class="chapter-n">01 <span>/ 05</span></p>
+        <h2 class="chapter-title" id="servicios-title">Servicios</h2>
+        <p class="chapter-kicker">Our service</p>
+      </header>
+
+      <ol class="services">
+        {SERVICES.map((s, i) => (
+          <li class="service" data-reveal>
+            <span class="service-n">0{i + 1}</span>
+            <h3 class="service-name"><span class="service-hash">#</span>{s.name}</h3>
+            <img src={icons[s.icon].src} alt="" class="service-icon" width="56" height="56" loading="lazy" />
+            <p class="service-detail">{s.detail}</p>
+          </li>
+        ))}
+      </ol>
+
+      <a href={WHATSAPP_URL} class="services-note" target="_blank" rel="noopener noreferrer" aria-label="¡Hacé tu consulta! Escribinos por WhatsApp" data-reveal>
+        <Image src={ctaNote} alt="" widths={[320, 540]} sizes="(max-width: 760px) 70vw, 320px" />
+        <span class="link-cta link-cta--light">Hacé tu consulta <span aria-hidden="true">→</span></span>
+      </a>
+    </section>
+
+    <!-- ═══ EN NÚMEROS ═══ -->
+    <section class="figures" aria-label="Amine en números">
+      <dl>
+        <div data-reveal><dt>Personas en el equipo</dt><dd>{TEAM.length}</dd></div>
+        <div data-reveal><dt>Servicios</dt><dd>{SERVICES.length}</dd></div>
+        <div data-reveal><dt>Aliados</dt><dd>{ALIADOS.length}</dd></div>
+        <div data-reveal><dt>Notas en el Blogcito</dt><dd>{POSTS.length}</dd></div>
+      </dl>
+    </section>
+
+    <!-- ═══ FRASE ═══ -->
+    <section class="tagline" aria-label="Nuestra idea" data-tagline>
+      <p class="tagline-text">
+        {taglineWords.map((w) => (
+          <><span class:list={['tw', accent.has(w) && 'tw--accent']}>{w}</span>{' '}</>
+        ))}
+      </p>
+    </section>
+
+    <!-- ═══ 02 EQUIPO ═══ -->
+    <section class="chapter" id="equipo" aria-labelledby="equipo-title" data-chapter>
+      <header class="chapter-head" data-reveal>
+        <p class="chapter-n">02 <span>/ 05</span></p>
+        <h2 class="chapter-title" id="equipo-title">Equipo</h2>
+        <p class="chapter-kicker">About us</p>
+      </header>
+
+      <div class="team">
+        <figure class="team-figure" data-reveal>
+          <Image src={clipboard} alt="Planilla con las fotos carnet del equipo de Amine" widths={[400, 640, 800]} sizes="(max-width: 760px) 80vw, 34vw" />
+          <figcaption>Fig. 1 · La planilla del equipo</figcaption>
+        </figure>
+
+        <div class="team-text">
+          <p class="team-lead" data-reveal>{ABOUT}</p>
+          <ul class="team-names" aria-label="Integrantes">
+            {TEAM.map((name, i) => (
+              <li data-reveal><span>{String(i + 1).padStart(2, '0')}</span>{name}</li>
+            ))}
+          </ul>
+          <div class="team-badge" data-reveal>
+            <Image src={teamA} alt="Team A" width={360} class="team-badge-logo" />
+            <p>Así nos llamamos puertas adentro.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 03 ALIADOS ═══ -->
+    <section class="chapter chapter--grid" id="aliados" aria-labelledby="aliados-title" data-chapter>
+      <header class="chapter-head" data-reveal>
+        <p class="chapter-n">03 <span>/ 05</span></p>
+        <h2 class="chapter-title" id="aliados-title">Aliados</h2>
+        <p class="chapter-kicker">Quienes suman su oficio al equipo</p>
+      </header>
+
+      {ALIADOS.map((a, i) => (
+        <article class:list={['case', i % 2 === 1 && 'case--flip']} aria-labelledby={`aliado-${a.slug}`}>
+          <p class="case-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+          <a href={a.portfolio} class="case-photo" target="_blank" rel="noopener noreferrer" aria-label={`Ver el portfolio de ${a.name}`} data-reveal>
+            <Image src={polaroids[a.slug as keyof typeof polaroids]} alt={`Polaroid de ${a.name}`} widths={[360, 560, 780]} sizes="(max-width: 760px) 84vw, 38vw" />
+          </a>
+          <div class="case-body">
+            <p class="case-area" data-reveal>Área {a.area} · {a.studio}</p>
+            <h3 class="case-name" id={`aliado-${a.slug}`} data-reveal>{a.name}</h3>
+            <p class="case-text" data-reveal>{a.description}</p>
+            <ul class="case-services" aria-label="Servicios" data-reveal>
+              {a.services.map((s) => <li>#{s}</li>)}
+            </ul>
+            <div class="case-links" data-reveal>
+              <a href={a.portfolio} class="link-cta" target="_blank" rel="noopener noreferrer">Ver portfolio <span aria-hidden="true">→</span></a>
+              <a href={`mailto:${a.email}`} class="link-plain">{a.email}</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <!-- ═══ 04 BLOGCITO ═══ -->
+    <section class="chapter" id="blogcito" aria-labelledby="blogcito-title" data-chapter>
+      <header class="chapter-head chapter-head--pc" data-reveal>
+        <p class="chapter-n">04 <span>/ 05</span></p>
+        <h2 class="chapter-title" id="blogcito-title">Blogcito</h2>
+        <p class="chapter-kicker">Lo que tenemos ganas de contar</p>
+        <Image src={pc} alt="" width={300} class="chapter-pc" />
+      </header>
+
+      <article class="feature" data-reveal>
+        <img src={featured.image} alt="" class="feature-cover" width="1200" height="800" loading="lazy" />
+        <div class="feature-body">
+          <p class="post-meta"><span class="post-tag">{featured.tag}</span> {formatDate(featured.date)} · {featured.author}</p>
+          <h3 class="feature-title">{featured.title}</h3>
+          <p class="feature-excerpt">{featured.excerpt}</p>
+          <details class="post-more">
+            <summary><span class="when-closed">Leer la nota</span><span class="when-open">Cerrar</span> <span aria-hidden="true">↓</span></summary>
+            <div class="post-body">{paragraphs(featured.body).map((p) => <p>{p}</p>)}</div>
+          </details>
+        </div>
+      </article>
+
+      <ol class="posts">
+        {rest.map((p) => (
+          <li class="post" data-reveal>
+            <details>
+              <summary>
+                <span class="post-date">{formatDate(p.date)}</span>
+                <span class="post-tag">{p.tag}</span>
+                <span class="post-title">{p.title}</span>
+                <span class="post-author">{p.author}</span>
+                <span class="post-plus" aria-hidden="true"></span>
+              </summary>
+              <div class="post-body">
+                <p class="post-excerpt">{p.excerpt}</p>
+                {paragraphs(p.body).map((para) => <p>{para}</p>)}
+              </div>
+            </details>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- ═══ 05 CONTACTO ═══ -->
+    <section class="chapter chapter--mustard" id="contacto" aria-labelledby="contacto-title" data-chapter>
+      <header class="chapter-head" data-reveal>
+        <p class="chapter-n">05 <span>/ 05</span></p>
+        <p class="chapter-kicker">Contacto</p>
+      </header>
+      <h2 class="contact-title" id="contacto-title" data-reveal>¿Hablamos?</h2>
+      <ul class="contact">
+        <li data-reveal><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"><span class="contact-kind">WhatsApp</span><span class="contact-value">+54 9 264 582 7270</span><span class="contact-arrow" aria-hidden="true">→</span></a></li>
+        <li data-reveal><a href={`mailto:${CONTACT_EMAIL}`}><span class="contact-kind">Email</span><span class="contact-value">{CONTACT_EMAIL}</span><span class="contact-arrow" aria-hidden="true">→</span></a></li>
+        <li data-reveal><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"><span class="contact-kind">Instagram</span><span class="contact-value">{INSTAGRAM_HANDLE}</span><span class="contact-arrow" aria-hidden="true">→</span></a></li>
+        <li data-reveal><a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer"><span class="contact-kind">TikTok</span><span class="contact-value">{TIKTOK_HANDLE}</span><span class="contact-arrow" aria-hidden="true">→</span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- ═══ COLOFÓN ═══ -->
+  <footer class="colophon">
+    <div class="colophon-brand">
+      <Image src={logo} alt="Amine Social Media" width={260} class="colophon-logo" />
+      <p>Edición experimental del sitio de Amine. Diseño y desarrollo: Ignacio Colomé. Tipografías: Bebas Neue, Outfit y Courier Prime.</p>
+      <a href={MAIN_SITE} class="link-cta link-cta--light">Ir a espacioamine.com <span aria-hidden="true">→</span></a>
+    </div>
+    <nav aria-label="Índice del pie">
+      <p class="colophon-head">Índice</p>
+      <ul>{chapters.map((c) => <li><a href={`#${c.id}`}>{c.n} · {c.label}</a></li>)}</ul>
+    </nav>
+    <div>
+      <p class="colophon-head">Seguinos</p>
+      <ul>
+        <li><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">Instagram {INSTAGRAM_HANDLE}</a></li>
+        <li><a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">TikTok {TIKTOK_HANDLE}</a></li>
+        <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+      </ul>
+    </div>
+    <p class="colophon-legal">© 2026 Amine Social Media · San Juan, Argentina</p>
+  </footer>
+
+  <script>
+    const root = document.documentElement;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Aparición suave al entrar en pantalla (IntersectionObserver, nunca scroll listeners para esto).
+    const revealIO = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); revealIO.unobserve(e.target); }
+      }),
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    document.querySelectorAll('[data-reveal]').forEach((el) => revealIO.observe(el));
+
+    // Capítulo activo en el índice.
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav]');
+    const chapterIO = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        navLinks.forEach((a) => a.toggleAttribute('aria-current', a.dataset.nav === e.target.id));
+      }),
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    document.querySelectorAll('[data-chapter]').forEach((s) => chapterIO.observe(s));
+
+    // Frase central palabra por palabra + barra de progreso: un único listener throttled con rAF.
+    const tagline = document.querySelector<HTMLElement>('[data-tagline]');
+    const words = tagline ? [...tagline.querySelectorAll<HTMLElement>('.tw')] : [];
+    const bar = document.querySelector<HTMLElement>('[data-progress]');
+    const masthead = document.querySelector<HTMLElement>('[data-masthead]');
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const vh = window.innerHeight;
+      const max = root.scrollHeight - vh;
+      if (bar) bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+      masthead?.classList.toggle('is-scrolled', window.scrollY > 24);
+      if (tagline && words.length) {
+        const r = tagline.getBoundingClientRect();
+        const p = reduce ? 1 : Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (r.height * 0.55)));
+        const lit = Math.round(p * words.length);
+        words.forEach((w, i) => w.classList.toggle('is-lit', i < lit));
+      }
+    }
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    // Menú mobile.
+    const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menu = document.querySelector<HTMLElement>('[data-menu]');
+    function setMenu(open: boolean) {
+      if (!toggle || !menu) return;
+      toggle.setAttribute('aria-expanded', String(open));
+      root.classList.toggle('menu-open', open);
+      if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('is-open')); }
+      else { menu.classList.remove('is-open'); setTimeout(() => { if (!menu.classList.contains('is-open')) menu.hidden = true; }, 500); }
+    }
+    toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  </script>
+</Base>

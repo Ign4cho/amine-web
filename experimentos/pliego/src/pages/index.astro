@@ -1,0 +1,211 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import {
+  ABOUT, ALIADOS, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, MAIN_SITE, POSTS, SERVICES,
+  TAGLINE, TEAM, TIKTOK_HANDLE, TIKTOK_URL, WHATSAPP_URL, formatDate, paragraphs,
+} from '../data/site';
+import carpeta from '../assets/hero-carpeta-foto.png';
+import equipo from '../assets/fotoConGancho.png';
+import agus from '../assets/aliado-agus.png';
+import nacho from '../assets/aliado-nacho.png';
+import pc from '../assets/pc-blogcito.png';
+import estrella from '../assets/estrella.png';
+
+// Las imágenes solo se usan para imprimir los paneles en canvas: alcanza con
+// una versión liviana en WebP (conserva la transparencia).
+const img = async (src: ImageMetadata, width: number) => (await getImage({ src, width, format: 'webp', quality: 82 })).src;
+
+const WHATSAPP_NUMBER = '+54 9 264 582 7270';
+const posts = POSTS.slice(0, 3);
+
+const data = {
+  tagline: TAGLINE,
+  about: ABOUT,
+  team: TEAM,
+  services: SERVICES.map(({ name, detail }) => ({ name, detail })),
+  aliados: ALIADOS.map(({ name, area, studio, services }) => ({ name, area, studio, services })),
+  posts: posts.map((p) => ({ title: p.title, date: formatDate(p.date), tag: p.tag })),
+  whatsapp: WHATSAPP_NUMBER,
+  email: CONTACT_EMAIL,
+  instagram: INSTAGRAM_HANDLE,
+  tiktok: TIKTOK_HANDLE,
+  images: {
+    carpeta: await img(carpeta, 640),
+    equipo: await img(equipo, 420),
+    agus: await img(agus, 480),
+    nacho: await img(nacho, 480),
+    pc: await img(pc, 520),
+    estrella: await img(estrella, 240),
+  },
+};
+---
+
+<Base title="Amine · Pliego n.º 1">
+  <header class="masthead">
+    <a href="#pliego" class="brand" data-goto="0">AMÍNE <span>Pliego n.º 1</span></a>
+    <div class="masthead-right">
+      <span class="counter" data-counter aria-hidden="true">Portada</span>
+      <button class="light-btn" type="button" data-light hidden aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Encender la luz</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="pliego">
+    <div class="track" data-track>
+      <div class="stage" data-stage>
+        <div class="backdrop" aria-hidden="true">
+          <span class="ghost">AMÍNE</span>
+        </div>
+        <canvas class="gl" data-canvas aria-hidden="true"></canvas>
+
+        <section class="cap cap-hero on" data-cap="0" data-at="0" data-until="0.3" aria-labelledby="t0">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">Pliego n.º 1 · Impreso en dos tintas</p>
+            <h1 id="t0">Amine Social Media</h1>
+            <p class="lead">{TAGLINE}</p>
+            <p class="hint hint-3d"><span class="hint-desk">Mové el cursor: la luz te sigue. </span>Bajá para desplegar el pliego <span aria-hidden="true" class="arrow">↓</span></p>
+          </div>
+        </section>
+
+        <section class="cap" data-cap="1" data-at="1" aria-labelledby="t1">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">01 / 05 · Lo que hacemos</p>
+            <h2 id="t1">Servicios</h2>
+            <ol class="svc">
+              {SERVICES.map((s) => (
+                <li><strong>{s.name}</strong><span>{s.detail}</span></li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section class="cap" data-cap="2" data-at="2" aria-labelledby="t2">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">02 / 05 · Quiénes somos</p>
+            <h2 id="t2">El equipo</h2>
+            <p class="lead">{ABOUT}</p>
+            <ul class="names">{TEAM.map((n) => <li>{n}</li>)}</ul>
+          </div>
+        </section>
+
+        <section class="cap" data-cap="3" data-at="3" aria-labelledby="t3">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">03 / 05 · Red de aliados</p>
+            <h2 id="t3">Aliados</h2>
+            <div class="allies">
+              {ALIADOS.map((a) => (
+                <article class="ally">
+                  <h3>{a.name}</h3>
+                  <p class="ally-meta">{a.area} · {a.studio}</p>
+                  <p class="ally-svc">{a.services.join(' / ')}</p>
+                  <p class="ally-links">
+                    <a href={`mailto:${a.email}`}>Correo</a>
+                    <a href={a.portfolio} target="_blank" rel="noopener">Portfolio <span aria-hidden="true">↗</span></a>
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section class="cap" data-cap="4" data-at="4" aria-labelledby="t4">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">04 / 05 · Notas de la agencia</p>
+            <h2 id="t4">Blogcito</h2>
+            <ul class="notes">
+              {posts.map((p) => (
+                <li>
+                  <button type="button" data-note={p.id}>
+                    <span class="note-meta">{formatDate(p.date)} · {p.tag}</span>
+                    <span class="note-title">{p.title}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section class="cap" data-cap="5" data-at="5" data-until="5.8" aria-labelledby="t5">
+          <div class="proof" data-proof></div>
+          <div class="cap-body">
+            <p class="kicker">05 / 05 · Contacto</p>
+            <h2 id="t5">Escribinos</h2>
+            <dl class="contact">
+              <div><dt>WhatsApp</dt><dd><a href={WHATSAPP_URL} target="_blank" rel="noopener">{WHATSAPP_NUMBER}</a></dd></div>
+              <div><dt>Correo</dt><dd><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></dd></div>
+              <div><dt>Instagram</dt><dd><a href={INSTAGRAM_URL} target="_blank" rel="noopener">{INSTAGRAM_HANDLE}</a></dd></div>
+              <div><dt>TikTok</dt><dd><a href={TIKTOK_URL} target="_blank" rel="noopener">{TIKTOK_HANDLE}</a></dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="cap cap-end" data-cap="6" data-at="7.25" aria-labelledby="t6">
+          <div class="cap-body">
+            <p class="kicker">El pliego ya salió volando</p>
+            <h2 id="t6">¿Arrancamos?</h2>
+            <p class="lead">Contanos qué necesita tu marca y lo armamos juntos.</p>
+            <p class="end-actions">
+              <a class="btn" href={WHATSAPP_URL} target="_blank" rel="noopener">Escribinos por WhatsApp <span aria-hidden="true">↗</span></a>
+              <a class="btn-ghost" href="#pliego" data-goto="0">Volver a plegar <span aria-hidden="true">↑</span></a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="colophon">
+    <div class="colophon-in">
+      <p class="kicker">Colofón</p>
+      <p>
+        <strong>Pliego n.º 1</strong> de Amine Social Media. Impreso en dos tintas digitales, mostaza y negro,
+        sobre un papel que se genera en tu navegador. Se despliega con Three.js (WebGPU, o WebGL2 si tu
+        navegador no lo tiene), Astro y Lenis.
+      </p>
+      <p class="colophon-links">
+        <a href={MAIN_SITE}>espacioamine.com</a>
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener">WhatsApp</a>
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      </p>
+      <p class="small">© {new Date().getFullYear()} Amine Social Media · San Juan, Argentina</p>
+    </div>
+  </footer>
+
+  {posts.map((p) => (
+    <dialog class="note" id={`note-${p.id}`} aria-labelledby={`note-t-${p.id}`}>
+      <form method="dialog" class="note-close-form">
+        <button class="note-close" aria-label="Cerrar nota">Cerrar <span aria-hidden="true">×</span></button>
+      </form>
+      <p class="kicker">{formatDate(p.date)} · {p.tag} · {p.author}</p>
+      <h2 id={`note-t-${p.id}`}>{p.title}</h2>
+      {paragraphs(p.body).map((para) => <p>{para}</p>)}
+    </dialog>
+  ))}
+
+  <script type="application/json" id="pliego-data" set:html={JSON.stringify(data)} />
+
+  <script>
+    import '../scripts/pliego';
+
+    // Notas del Blogcito en <dialog>, con View Transition si el navegador la tiene.
+    const vt = (fn: () => void) => {
+      const d = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+      if (d.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.startViewTransition(fn);
+      else fn();
+    };
+    document.querySelectorAll<HTMLButtonElement>('[data-note]').forEach((btn) => {
+      const dlg = document.getElementById(`note-${btn.dataset.note}`) as HTMLDialogElement | null;
+      if (!dlg) return;
+      btn.addEventListener('click', () => vt(() => dlg.showModal()));
+      dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    });
+  </script>
+</Base>

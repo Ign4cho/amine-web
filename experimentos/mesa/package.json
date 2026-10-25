@@ -1,0 +1,24 @@
+{
+  "name": "amine-mesa",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "postbuild": "node scripts/check-build.mjs",
+    "shot": "node scripts/shot.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.18.2",
+    "gsap": "^3.15.0",
+    "sharp": "^0.35.5"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true,
+    "sharp@0.35.5": true,
+    "esbuild@0.27.7": true,
+    "esbuild@0.25.12": true
+  }
+}

@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import star from '../assets/star.png';
+---
+
+<Base title="Página no encontrada · Amine">
+  <main class="not-found" id="lista">
+    <Image src={star} alt="" width={160} class="not-found-star" />
+    <p class="content-kicker">Error 404</p>
+    <h1 class="list-title">Esto no está sobre la mesa</h1>
+    <p>El link que seguiste no existe o cambió de lugar.</p>
+    <a href="/" class="btn btn--mustard">Volver a la mesa</a>
+  </main>
+</Base>
+
+<style>
+  .not-found { min-height: 100svh; display: grid; align-content: center; justify-items: start; gap: 24px; padding: 96px clamp(16px, 4vw, 64px); color: var(--cream); }
+  .not-found .list-title { max-width: 12ch; }
+  .not-found p:not(.content-kicker) { font: 300 20px/28px var(--sans); color: rgba(249, 244, 234, 0.8); }
+  .not-found-star { width: 96px; rotate: -14deg; }
+</style>

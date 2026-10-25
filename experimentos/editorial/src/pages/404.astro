@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import star from '../assets/star.png';
+---
+
+<Base title="Página no encontrada · Amine">
+  <main id="contenido" class="chapter not-found">
+    <header class="chapter-head">
+      <p class="chapter-n">404</p>
+      <p class="chapter-kicker">Fe de erratas</p>
+    </header>
+    <h1 class="contact-title">Esta página no salió en la edición</h1>
+    <p class="cover-lead">El link que seguiste no existe o cambió de lugar.</p>
+    <p style="margin-top:32px"><a href="/" class="link-cta">Volver a la portada <span aria-hidden="true">→</span></a></p>
+    <Image src={star} alt="" width={120} class="not-found-star" />
+  </main>
+</Base>
+
+<style>
+  .not-found { min-height: 100vh; padding-top: 96px; }
+  .not-found .contact-title { font-size: clamp(60px, 12vw, 160px); max-width: 12ch; }
+  .not-found-star { width: 96px; margin-top: 48px; transform: rotate(-12deg); }
+</style>

@@ -1,0 +1,8 @@
+ErrorDocument 404 /404.html
+
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+  <FilesMatch "\.(webp|png|jpg|svg|mp4|css|js)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+</IfModule>

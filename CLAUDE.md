@@ -14,6 +14,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Ojo con la divergencia**: lo que está publicado en espacioamine.com sale de `preview-octubre`, pero `main` sigue en v1.0. Hasta que se mergee, `main` NO refleja producción.
 
+**Experimentos de diseño** en `experimentos/` (editorial, mesa, pliego): proyectos Astro independientes, cada uno con su `package.json` y su subdominio con `noindex`. No forman parte del build del sitio principal (excluidos en `tsconfig.json`). Ver `experimentos/README.md`.
+
 **Pendiente:** (1) **resubir `dist/` buildeado con `npm run build`** para sacar el noindex de producción; (2) review de la PO sobre lo que ya está publicado; (3) mergear `preview-octubre` → `main` para que la rama principal refleje producción; (4) reemplazar las 6 notas de ejemplo del Blogcito y sus covers por contenido real; (5) decidir si la autogestión del Blogcito pasa a backend (hoy el admin exporta un JSON que hay que subir a mano). El subdominio `preview.espacioamine.com` nunca llegó a crearse.
 
 ## Commands

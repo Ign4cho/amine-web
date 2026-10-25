@@ -1,0 +1,128 @@
+---
+// Contenido de cada objeto de la mesa. Se usa dos veces: dentro del panel
+// (<dialog>) que abre el objeto y en la versión en lista al pie de la página.
+import { Image } from 'astro:assets';
+import {
+  WHATSAPP_URL, CONTACT_EMAIL, INSTAGRAM_URL, INSTAGRAM_HANDLE, TIKTOK_URL, TIKTOK_HANDLE,
+  SERVICES, TEAM, ABOUT, ALIADOS, POSTS, formatDate, paragraphs,
+} from '../data/site';
+import teamA from '../assets/teama-logo.png';
+import clipboard from '../assets/fotoConGancho.png';
+import polaroidAgus from '../assets/aliado-agus.png';
+import polaroidNacho from '../assets/aliado-nacho.png';
+
+interface Props {
+  section: 'nosotros' | 'servicios' | 'equipo' | 'aliados' | 'blogcito' | 'contacto';
+  /** Prefijo para ids únicos (panel vs lista). */
+  scope: string;
+  /** En la lista el video no se precarga. */
+  lazy?: boolean;
+}
+
+const { section, scope, lazy = false } = Astro.props;
+const polaroids = { agustina: polaroidAgus, ignacio: polaroidNacho };
+const titleId = `${scope}-${section}-title`;
+---
+
+{section === 'nosotros' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">La carpeta</p>
+    <h2 class="content-title" id={titleId}>Quiénes somos</h2>
+    <video class="reel" src="/reel.mp4" poster="/reel-poster.jpg" muted loop playsinline controls preload={lazy ? 'none' : 'metadata'} width="1080" height="1080" aria-label="Reel de presentación de Amine: equipo y servicios"></video>
+    <p class="content-lead">
+      Somos una <strong>agencia de marketing digital</strong> con estructura <strong>freelancer</strong> profesional.
+      Trabajamos con marcas desde una estructura colaborativa, donde el <strong>trabajo en equipo</strong> potencia cada talento para generar impacto real.
+    </p>
+    <p>Impulsamos marcas con <strong>creatividad, orden y visión de crecimiento</strong>.</p>
+    <a class="cta" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">Hacé tu consulta por WhatsApp <span aria-hidden="true">→</span></a>
+  </div>
+)}
+
+{section === 'servicios' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">La lista</p>
+    <h2 class="content-title" id={titleId}>Our service</h2>
+    <ul class="services">
+      {SERVICES.map((s) => (
+        <li><span class="services-name"><span class="hash">#</span>{s.name}</span><span class="services-detail">{s.detail}</span></li>
+      ))}
+    </ul>
+    <a class="cta" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">Contanos qué necesitás <span aria-hidden="true">→</span></a>
+  </div>
+)}
+
+{section === 'equipo' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">La planilla</p>
+    <h2 class="content-title" id={titleId}>About us</h2>
+    <div class="team">
+      <Image src={clipboard} alt="Planilla con las fotos carnet del equipo" widths={[320, 520]} sizes="(max-width: 640px) 60vw, 260px" class="team-photo" loading="lazy" />
+      <div>
+        <p class="content-lead"><strong>{TEAM.slice(0, -1).join(', ')}</strong> e <strong>{TEAM.at(-1)}</strong>.</p>
+        <p>{ABOUT}</p>
+        <div class="team-badge">
+          <Image src={teamA} alt="Team A" width={300} class="team-badge-logo" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{section === 'aliados' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">Las polaroids</p>
+    <h2 class="content-title" id={titleId}>Aliados</h2>
+    <div class="aliados">
+      {ALIADOS.map((a) => (
+        <article class="aliado" id={`${scope}-aliado-${a.slug}`} aria-labelledby={`${scope}-aliado-${a.slug}-name`}>
+          <Image src={polaroids[a.slug as keyof typeof polaroids]} alt={`Polaroid de ${a.name}`} widths={[280, 480]} sizes="(max-width: 640px) 60vw, 240px" class="aliado-photo" loading="lazy" />
+          <div class="aliado-body">
+            <p class="content-kicker">Área {a.area}</p>
+            <h3 class="aliado-name" id={`${scope}-aliado-${a.slug}-name`}>{a.name}</h3>
+            <p>{a.description}</p>
+            <ul class="tags">{a.services.map((s) => <li>#{s}</li>)}</ul>
+            <p class="aliado-links">
+              <a class="cta" href={a.portfolio} target="_blank" rel="noopener noreferrer">Ver portfolio <span aria-hidden="true">→</span></a>
+              <a class="mono-link" href={`mailto:${a.email}`}>{a.email}</a>
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+)}
+
+{section === 'blogcito' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">La compu</p>
+    <h2 class="content-title" id={titleId}>Blogcito</h2>
+    <ol class="posts">
+      {POSTS.map((p) => (
+        <li>
+          <details>
+            <summary>
+              <span class="post-meta"><span class="tag">{p.tag}</span>{formatDate(p.date)} · {p.author}</span>
+              <span class="post-title">{p.title}</span>
+              <span class="post-excerpt">{p.excerpt}</span>
+              <span class="post-toggle"><span class="when-closed">Leer la nota</span><span class="when-open">Cerrar</span></span>
+            </summary>
+            <div class="post-body">{paragraphs(p.body).map((para) => <p>{para}</p>)}</div>
+          </details>
+        </li>
+      ))}
+    </ol>
+  </div>
+)}
+
+{section === 'contacto' && (
+  <div class="content" aria-labelledby={titleId}>
+    <p class="content-kicker">El post-it</p>
+    <h2 class="content-title" id={titleId}>¿Hablamos?</h2>
+    <ul class="contact">
+      <li><a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"><span>WhatsApp</span><strong>+54 9 264 582 7270</strong></a></li>
+      <li><a href={`mailto:${CONTACT_EMAIL}`}><span>Email</span><strong>{CONTACT_EMAIL}</strong></a></li>
+      <li><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"><span>Instagram</span><strong>{INSTAGRAM_HANDLE}</strong></a></li>
+      <li><a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer"><span>TikTok</span><strong>{TIKTOK_HANDLE}</strong></a></li>
+    </ul>
+  </div>
+)}

@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Página no encontrada · Amine">
+  <main id="pliego" class="not-found">
+    <p class="kicker">Fe de erratas</p>
+    <h1>Esta página no entró en el pliego</h1>
+    <p class="lead">El link que seguiste no existe o cambió de lugar.</p>
+    <p><a href="/" class="btn">Volver a la portada <span aria-hidden="true">→</span></a></p>
+  </main>
+</Base>
+
+<style>
+  .not-found { min-height: 100svh; display: grid; align-content: center; gap: 20px; padding: 96px var(--gutter); max-width: 900px; margin: 0 auto; }
+  .not-found h1 { font-family: var(--display); font-size: clamp(56px, 11vw, 140px); line-height: 0.9; }
+</style>

@@ -1,0 +1,265 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Content from '../components/Content.astro';
+import { WHATSAPP_URL, MAIN_SITE, INSTAGRAM_HANDLE, TIKTOK_HANDLE, SERVICES } from '../data/site';
+
+import logo from '../assets/amine-logo.png';
+import folder from '../assets/hero-carpeta-foto.png';
+import polaroidAgus from '../assets/aliado-agus.png';
+import polaroidNacho from '../assets/aliado-nacho.png';
+import clipboard from '../assets/fotoConGancho.png';
+import pc from '../assets/pc-blogcito.png';
+import ctaNote from '../assets/cta-con-firma.png';
+import postit from '../assets/home-footer-postit.png';
+import star from '../assets/star.png';
+import teamA from '../assets/teama-logo.png';
+
+type Section = 'nosotros' | 'servicios' | 'equipo' | 'aliados' | 'blogcito' | 'contacto';
+
+// Posición de reposo de cada objeto: x / y en % de la mesa, w = ancho, r = giro.
+// Prefijo m = mobile; mw se multiplica por --u (1vw acotado por el alto de pantalla).
+const items = [
+  { id: 'agus', img: polaroidAgus, label: 'Polaroid de Agustina Albarracín, aliada de diseño', open: 'aliados', focus: 'agustina', w: 'clamp(150px, 15vw, 260px)', x: 4, y: 14, r: -8, mw: 38, mx: 3, my: 9, mr: -7 },
+  { id: 'folder', img: folder, label: 'Carpeta del equipo: quiénes somos', open: 'nosotros', w: 'clamp(280px, 30vw, 520px)', x: 24, y: 9, r: -5, mw: 68, mx: 14, my: 31, mr: -4, z: 2 },
+  { id: 'services', label: 'Lista de servicios', open: 'servicios', w: 'clamp(200px, 17vw, 290px)', x: 57, y: 10, r: 3, mw: 43, mx: 2, my: 56, mr: -2 },
+  { id: 'nacho', img: polaroidNacho, label: 'Polaroid de Ignacio Colomé, aliado de desarrollo web', open: 'aliados', focus: 'ignacio', w: 'clamp(150px, 15vw, 260px)', x: 79, y: 16, r: 7, mw: 38, mx: 57, my: 8, mr: 6 },
+  { id: 'clipboard', img: clipboard, label: 'Planilla del equipo', open: 'equipo', w: 'clamp(110px, 10.5vw, 190px)', x: 8, y: 50, r: -3, mw: 21, mx: 6, my: 77, mr: -5 },
+  { id: 'pc', img: pc, label: 'Computadora del Blogcito: notas', open: 'blogcito', w: 'clamp(200px, 19vw, 330px)', x: 25, y: 60, r: 2, mw: 44, mx: 52, my: 61, mr: 3 },
+  { id: 'note', img: ctaNote, label: 'Hacé tu consulta por WhatsApp', href: WHATSAPP_URL, w: 'clamp(160px, 15vw, 260px)', x: 52, y: 52, r: 5, mw: 31, mx: 34, my: 79, mr: 4 },
+  { id: 'postit', img: postit, label: 'Post-it con nuestros contactos', open: 'contacto', w: 'clamp(170px, 15vw, 260px)', x: 73, y: 50, r: -4, mw: 32, mx: 66, my: 76, mr: -6 },
+] as const satisfies ReadonlyArray<{
+  id: string; label: string; open?: Section; focus?: string; href?: string; img?: ImageMetadata;
+  w: string; x: number; y: number; r: number; mw: number; mx: number; my: number; mr: number; z?: number;
+}>;
+
+const decor: Array<{ id: string; img: ImageMetadata; w: string; x: number; y: number; r: number; mw: number; mx: number; my: number; mr: number; z?: number }> = [
+  { id: 'star1', img: star, w: 'clamp(56px, 5vw, 90px)', x: 50, y: 6, r: -14, mw: 14, mx: 44, my: 4, mr: -10 },
+  { id: 'star2', img: star, w: 'clamp(40px, 3.6vw, 64px)', x: 92, y: 66, r: 20, mw: 10, mx: 88, my: 53, mr: 16 },
+  { id: 'star3', img: star, w: 'clamp(44px, 4vw, 70px)', x: 45, y: 86, r: 8, mw: 11, mx: 2, my: 52, mr: 8 },
+  { id: 'teama', img: teamA, w: 'clamp(150px, 12vw, 220px)', x: 82, y: 70, r: -6, mw: 30, mx: 60, my: 45, mr: -6, z: 3 },
+];
+
+const sections: Section[] = ['nosotros', 'servicios', 'equipo', 'aliados', 'blogcito', 'contacto'];
+
+const pos = (o: { w: string; x: number; y: number; r: number; mw: number; mx: number; my: number; mr: number; z?: number }) =>
+  `--w:${o.w};--x:${o.x}%;--y:${o.y}%;--r:${o.r}deg;--mw:${o.mw};--mx:${o.mx}%;--my:${o.my}%;--mr:${o.mr}deg;--z:${o.z ?? 1}`;
+---
+
+<Base title="Amine Social Media · La mesa">
+  <header class="topbar">
+    <a href="#mesa" class="topbar-brand" aria-label="Amine, volver a la mesa">
+      <Image src={logo} alt="" width={160} class="topbar-logo" loading="eager" />
+    </a>
+    <div class="topbar-actions">
+      <button type="button" class="btn btn--ghost" data-tidy>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M4 12a8 8 0 0 1 13.66-5.66L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.66 5.66L4 15.3M4 20v-4.7h4.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Ordenar<span class="hide-sm"> la mesa</span></span>
+      </button>
+      <a href="#lista" class="btn btn--ghost">Ver en lista</a>
+      <a href={WHATSAPP_URL} class="btn btn--mustard hide-sm" target="_blank" rel="noopener noreferrer">Hacé tu consulta</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="desk" id="mesa" aria-label="Mesa de trabajo de Amine: arrastrá los objetos y tocá uno para abrirlo" data-desk>
+      <h1 class="sr-only">Amine Social Media, agencia de marketing digital con estructura freelancer profesional</h1>
+
+      {decor.map((d) => (
+        <div class="item item--decor" style={pos(d)} data-item={d.id} aria-hidden="true">
+          <Image src={d.img} alt="" width={240} draggable="false" />
+        </div>
+      ))}
+
+      {items.map((it) => (
+        <button
+          type="button"
+          class:list={['item', `item--${it.id}`]}
+          style={pos(it)}
+          data-item={it.id}
+          data-open={'open' in it ? it.open : undefined}
+          data-focus={'focus' in it ? it.focus : undefined}
+          data-href={'href' in it ? it.href : undefined}
+          aria-label={it.label}
+          aria-haspopup={'open' in it ? 'dialog' : undefined}
+        >
+          {'img' in it && it.img ? (
+            <Image src={it.img} alt="" widths={[240, 400, 640]} sizes={it.w} draggable="false" loading="eager" />
+          ) : (
+            <span class="paper" aria-hidden="true">
+              <span class="paper-title">Our service</span>
+              {SERVICES.map((s) => <span class="paper-line"><b>#</b> {s.name}</span>)}
+            </span>
+          )}
+          {'href' in it && <span class="item-tag">WhatsApp ↗</span>}
+          {it.id === 'postit' && (
+            <span class="postit-text" aria-hidden="true"><span>Seguinos</span>IG {INSTAGRAM_HANDLE}<br />TikTok {TIKTOK_HANDLE}</span>
+          )}
+        </button>
+      ))}
+
+      <p class="desk-hint" data-hint>
+        <span class="hint-drag">Arrastrá<span class="hide-sm"> las cosas</span></span> · <span>tocá<span class="hide-sm"> una</span> para abrir</span>
+      </p>
+      <a href="#lista" class="desk-down" aria-label="Bajar a la versión en lista"><span aria-hidden="true">↓</span></a>
+    </section>
+
+    {sections.map((s) => (
+      <dialog class="panel" id={`panel-${s}`} data-panel={s} aria-labelledby={`panel-${s}-title`}>
+        <div class="panel-sheet">
+          <button type="button" class="panel-close" data-close aria-label="Cerrar y volver a la mesa">
+            <span aria-hidden="true"></span>
+          </button>
+          <Content section={s} scope="panel" />
+        </div>
+      </dialog>
+    ))}
+
+    <section class="list" id="lista" aria-labelledby="lista-title">
+      <header class="list-head">
+        <p class="content-kicker">Para los que prefieren leer de corrido</p>
+        <h2 id="lista-title" class="list-title">La mesa, ordenada</h2>
+      </header>
+      {sections.map((s) => (
+        <div class="list-block"><Content section={s} scope="lista" lazy /></div>
+      ))}
+    </section>
+  </main>
+
+  <footer class="footer">
+    <Image src={logo} alt="Amine Social Media" width={240} class="footer-logo" />
+    <p>Experimento interactivo del sitio de Amine. Diseño y desarrollo: Ignacio Colomé.</p>
+    <p class="footer-links">
+      <a href="#mesa">Volver a la mesa ↑</a>
+      <a href={MAIN_SITE}>Ir a espacioamine.com →</a>
+    </p>
+    <p class="footer-legal">© 2026 Amine Social Media · San Juan, Argentina</p>
+  </footer>
+
+  <script>
+    import { gsap } from 'gsap';
+    import { Draggable } from 'gsap/Draggable';
+    import { InertiaPlugin } from 'gsap/InertiaPlugin';
+
+    gsap.registerPlugin(Draggable, InertiaPlugin);
+
+    const desk = document.querySelector<HTMLElement>('[data-desk]')!;
+    const items = [...desk.querySelectorAll<HTMLElement>('[data-item]')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STORE = 'amine-mesa-posiciones';
+
+    // ── Paneles ────────────────────────────────────────────────
+    let lastTrigger: HTMLElement | null = null;
+    function openPanel(name: string, focus?: string, trigger?: HTMLElement) {
+      const dialog = document.querySelector<HTMLDialogElement>(`[data-panel="${name}"]`);
+      if (!dialog) return;
+      lastTrigger = trigger ?? null;
+      dialog.showModal();
+      document.documentElement.classList.add('panel-open');
+      const sheet = dialog.querySelector<HTMLElement>('.panel-sheet')!;
+      sheet.scrollTop = 0;
+      if (focus) document.getElementById(`panel-aliado-${focus}`)?.scrollIntoView({ block: 'start' });
+      dialog.querySelector<HTMLVideoElement>('video')?.play().catch(() => {});
+    }
+    function closePanel(dialog: HTMLDialogElement) {
+      dialog.classList.add('is-closing');
+      dialog.querySelector<HTMLVideoElement>('video')?.pause();
+      setTimeout(() => {
+        dialog.classList.remove('is-closing');
+        dialog.close();
+      }, reduce ? 0 : 320);
+    }
+    document.querySelectorAll<HTMLDialogElement>('dialog.panel').forEach((dialog) => {
+      dialog.addEventListener('close', () => {
+        document.documentElement.classList.remove('panel-open');
+        lastTrigger?.focus({ preventScroll: true });
+      });
+      dialog.addEventListener('cancel', (e) => { e.preventDefault(); closePanel(dialog); });
+      dialog.querySelector('[data-close]')?.addEventListener('click', () => closePanel(dialog));
+      // Click en el fondo oscuro cierra.
+      dialog.addEventListener('click', (e) => { if (e.target === dialog) closePanel(dialog); });
+    });
+
+    function activate(el: HTMLElement) {
+      if (el.dataset.href) window.open(el.dataset.href, '_blank', 'noopener');
+      else if (el.dataset.open) openPanel(el.dataset.open, el.dataset.focus, el);
+    }
+
+    // ── Arrastre ───────────────────────────────────────────────
+    let saved: Record<string, { x: number; y: number }> = {};
+    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch { saved = {}; }
+    function save() {
+      const data: Record<string, { x: number; y: number }> = {};
+      items.forEach((el) => { data[el.dataset.item!] = { x: +gsap.getProperty(el, 'x'), y: +gsap.getProperty(el, 'y') }; });
+      try { localStorage.setItem(STORE, JSON.stringify(data)); } catch { /* sin storage: no pasa nada */ }
+    }
+
+    let top = 10;
+    let justDragged = false;
+    const hint = document.querySelector<HTMLElement>('[data-hint]');
+
+    items.forEach((el) => {
+      const p = saved[el.dataset.item!];
+      if (p) gsap.set(el, { x: p.x, y: p.y });
+
+      Draggable.create(el, {
+        type: 'x,y',
+        bounds: desk,
+        inertia: true,
+        edgeResistance: 0.85,
+        dragClickables: true,
+        minimumMovement: 6,
+        onPress() {
+          el.style.zIndex = String(++top);
+          gsap.to(el, { scale: 1.06, duration: 0.35, ease: 'power3.out' });
+          el.classList.add('is-lifted');
+        },
+        onDrag() {
+          gsap.to(el, { rotation: gsap.utils.clamp(-12, 12, this.deltaX * 0.8), duration: 0.4, ease: 'power3.out' });
+        },
+        onDragStart() {
+          justDragged = true;
+          hint?.classList.add('is-done');
+        },
+        onRelease() {
+          gsap.to(el, { scale: 1, rotation: 0, duration: 0.9, ease: 'elastic.out(1, 0.5)' });
+          el.classList.remove('is-lifted');
+        },
+        onThrowComplete: save,
+        onDragEnd() {
+          save();
+          setTimeout(() => { justDragged = false; }, 60);
+        },
+      });
+
+      // Click real (mouse, toque o teclado): solo si no fue un arrastre.
+      el.addEventListener('click', () => { if (!justDragged) activate(el); });
+    });
+
+    // ── Ordenar ────────────────────────────────────────────────
+    document.querySelector('[data-tidy]')?.addEventListener('click', () => {
+      gsap.to(items, { x: 0, y: 0, rotation: 0, duration: reduce ? 0 : 0.9, ease: 'power3.inOut', stagger: 0.04 });
+      try { localStorage.removeItem(STORE); } catch { /* idem */ }
+    });
+
+    // ── Entrada: los objetos caen sobre la mesa ───────────────
+    if (!reduce) {
+      gsap.from(items, {
+        y: () => -window.innerHeight * 0.9,
+        rotation: () => gsap.utils.random(-30, 30),
+        opacity: 0,
+        duration: 1.1,
+        ease: 'back.out(1.1)',
+        stagger: { each: 0.07, from: 'random' },
+        clearProps: 'opacity',
+        onComplete() {
+          // Respetar posiciones guardadas después de la animación de entrada.
+          items.forEach((el) => {
+            const p = saved[el.dataset.item!];
+            gsap.set(el, p ? { x: p.x, y: p.y } : { x: 0, y: 0 });
+          });
+        },
+      });
+    }
+  </script>
+</Base>
