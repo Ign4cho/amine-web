@@ -321,9 +321,11 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
     const top = track.getBoundingClientRect().top;
     return clamp(-top / (view.h * SCROLL_PER_P), 0, P_MAX);
   };
-  const scrollToP = (p: number, duration = 1.4) => {
+  const easeInOut = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
+  const easeInOutSine = (x: number) => -(Math.cos(Math.PI * x) - 1) / 2;
+  const scrollToP = (p: number, duration = 1.4, easing?: (x: number) => number) => {
     const y = track.offsetTop + p * view.h * SCROLL_PER_P;
-    lenis.scrollTo(y, { duration });
+    lenis.scrollTo(y, { duration, easing });
   };
   const rawP = () => -track.getBoundingClientRect().top / (view.h * SCROLL_PER_P);
   const nextStop = (p: number, dir: 1 | -1) =>
@@ -343,7 +345,12 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
       const stop = lenis.direction < 0
         ? [...STOPS].reverse().find((s) => s <= p + 0.08) ?? 0
         : STOPS.find((s) => s >= p - 0.08) ?? STOPS[STOPS.length - 1];
-      if (Math.abs(stop - p) > 0.02) scrollToP(stop, Math.min(1.4, 0.5 + Math.abs(stop - p) * 0.6));
+      const dist = Math.abs(stop - p);
+      if (dist <= 0.02) return;
+      // arranque y frenada suaves; el final (repliegue + avión) lleva su propio tiempo
+      const ending = stop === STOPS[STOPS.length - 1] && p < 6.2;
+      if (ending) scrollToP(stop, 1.2 + (6.6 - p) * 2, easeInOutSine);
+      else scrollToP(stop, Math.min(2, 0.8 + dist * 1.1), easeInOut);
     }, 160);
   };
   addEventListener('touchstart', () => { touching = true; }, { passive: true });
@@ -448,7 +455,8 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
 
     const p = readP();
     const prev = pS;
-    pS += (p - pS) * (1 - Math.exp(-dt * 9));
+    // en mobile el pliego sigue al dedo con más inercia, así un deslizón fuerte no lo sacude
+    pS += (p - pS) * (1 - Math.exp(-dt * (vertical ? 4.5 : 9)));
     const vel = Math.abs(pS - prev) / Math.max(dt, 1e-3);
     misS += (Math.min(0.016, 0.0016 + vel * 0.012) - misS) * (1 - Math.exp(-dt * 6));
     mis.value = misS;
