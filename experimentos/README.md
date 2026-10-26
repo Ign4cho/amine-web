@@ -6,7 +6,7 @@ Versiones alternativas de espacioamine.com, con el mismo contenido y los mismos 
 |---|---|---|---|---|
 | `editorial/` | Amine como revista: capítulos numerados, portada a escala gigante | https://editorial.espacioamine.com | `public_html/editorial` | 4401 |
 | `mesa/` | Scrapbook interactivo con objetos arrastrables (GSAP) + reel de Remotion en `reel/` | https://mesa.espacioamine.com | `public_html/mesa` | 4402 |
-| `pliego/` | Fanzine risográfico que se despliega en 3D con el scroll (Three.js WebGPU) | https://fold.espacioamine.com | `public_html/fold` ❓ confirmar | 4403 |
+| `pliego/` | Fanzine risográfico que se despliega en 3D con el scroll (Three.js WebGPU) | https://fold.espacioamine.com | `public_html/fold` | 4403 |
 
 Online desde el 2026-10-25.
 
@@ -20,6 +20,28 @@ npm run build      # dist/ + check-build (verifica el noindex)
 ```
 
 ## Publicar en Hostinger
+
+### Con SSH (lo normal)
+
+```bash
+cd experimentos/<carpeta>
+npm run deploy     # build + check-build + subida + verificación (200 y X-Robots-Tag)
+```
+
+`deploy.mjs` sube `dist/` por SSH a `domains/espacioamine.com/public_html/<editorial|mesa|fold>`: lo extrae en una carpeta temporal y recién al final reemplaza la anterior, así que si algo falla queda online la versión previa. Solo acepta esas tres carpetas y exige que ya existan (nunca toca la raíz de `public_html`).
+
+Configuración, una sola vez por PC: activar SSH en hPanel → Avanzado → Acceso SSH, cargar ahí la clave pública `~/.ssh/amine_hostinger.pub` y agregar a `~/.ssh/config`:
+
+```
+Host amine-hostinger
+  HostName <IP de hPanel>
+  Port 65002
+  User <usuario de hPanel>
+  IdentityFile ~/.ssh/amine_hostinger
+  IdentitiesOnly yes
+```
+
+### A mano (si no hay SSH)
 
 El DNS de espacioamine.com es el de Hostinger: al crear el subdominio se crea solo el registro, no hay que tocar DNS aparte.
 

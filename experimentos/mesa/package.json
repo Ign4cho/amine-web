@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "postbuild": "node scripts/check-build.mjs",
-    "shot": "node scripts/shot.mjs"
+    "shot": "node scripts/shot.mjs",
+    "deploy": "npm run build && node ../deploy.mjs mesa"
   },
   "dependencies": {
     "astro": "^5.18.2",
