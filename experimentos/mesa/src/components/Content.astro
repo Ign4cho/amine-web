@@ -41,7 +41,7 @@ const titleId = `${scope}-${section}-title`;
 {section === 'servicios' && (
   <div class="content" aria-labelledby={titleId}>
     <p class="content-kicker">La lista</p>
-    <h2 class="content-title" id={titleId}>Our service</h2>
+    <h2 class="content-title" id={titleId}>Servicios</h2>
     <ul class="services">
       {SERVICES.map((s) => (
         <li><span class="services-name"><span class="hash">#</span>{s.name}</span><span class="services-detail">{s.detail}</span></li>
@@ -54,7 +54,7 @@ const titleId = `${scope}-${section}-title`;
 {section === 'equipo' && (
   <div class="content" aria-labelledby={titleId}>
     <p class="content-kicker">La planilla</p>
-    <h2 class="content-title" id={titleId}>About us</h2>
+    <h2 class="content-title" id={titleId}>El equipo</h2>
     <div class="team">
       <Image src={clipboard} alt="Planilla con las fotos carnet del equipo" widths={[320, 520]} sizes="(max-width: 640px) 60vw, 260px" class="team-photo" loading="lazy" />
       <div>

@@ -17,7 +17,7 @@ npm run build      # dist/ + check-build
 npm run preview -- --port 4403
 
 # capturas en distintos puntos del recorrido (con preview levantado en 4403)
-WAIT=4000 bash scripts/shots-p.sh 1440 900 d 0 1.3 3.3 5.3 7.4
+WAIT=4000 bash scripts/shots-p.sh 1440 900 d 0 1.2 3.2 5.2 6.6
 node scripts/shot.mjs --url http://localhost:4403/ --w 390 --h 844 --gpu real --out shots/x.png   # GPU real + WebGPU
 node scripts/shot.mjs --url http://localhost:4403/ --w 1440 --h 900 --reduced true --full true --out shots/flat.png
 ```

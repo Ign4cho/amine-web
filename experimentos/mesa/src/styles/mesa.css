@@ -273,7 +273,9 @@ html.panel-open .topbar { visibility: hidden; }
 /* Layout de mesa vertical: phones y tablets en vertical. --u es 1vw salvo
    que la pantalla sea más ancha de lo que su alto permite (tablets, phones bajos). */
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1100px) {
-  .desk { --u: min(1vw, 0.46svh); }
+  /* La mesa no ocupa toda la pantalla: abajo asoma la lista, una franja libre
+     donde deslizar el dedo baja la página en vez de arrastrar un objeto. */
+  .desk { height: 80svh; min-height: 520px; --u: min(1vw, 0.38svh); }
   .item { left: var(--mx); top: var(--my); width: calc(var(--mw) * var(--u)); rotate: var(--mr); }
   .paper { padding: calc(4 * var(--u)) calc(4 * var(--u)) calc(6 * var(--u)); gap: calc(1 * var(--u)); }
   .paper-title { font-size: calc(6 * var(--u)); }

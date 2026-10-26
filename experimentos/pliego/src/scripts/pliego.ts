@@ -16,8 +16,12 @@ type RawData = Omit<PrintData, 'images'> & { images: Record<keyof PrintData['ima
 const W = 1;
 const H = TH / TW;
 const CLOSED = Math.PI * 0.985;
-const P_MAX = 7.6; // ver la línea de tiempo en `timeline`
-const SCROLL_PER_P = 1.15; // pantallas de scroll por unidad de p
+const P_MAX = 6.9; // ver la línea de tiempo en `timeline`
+const SCROLL_PER_P = 0.8; // pantallas de scroll por unidad de p
+// Paradas de lectura: portada, cada panel abierto y el cierre. En mobile el
+// scroll se acomoda solo en la más cercana; en desktop las usan el clic en el
+// pliego y las flechas ← →.
+const STOPS = [0, 1.2, 2.2, 3.2, 4.2, 5.2, 6.6];
 
 const root = document.documentElement;
 const stage = document.querySelector<HTMLElement>('[data-stage]')!;
@@ -317,10 +321,61 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
     const top = track.getBoundingClientRect().top;
     return clamp(-top / (view.h * SCROLL_PER_P), 0, P_MAX);
   };
-  const scrollToP = (p: number) => {
+  const scrollToP = (p: number, duration = 1.4) => {
     const y = track.offsetTop + p * view.h * SCROLL_PER_P;
-    lenis.scrollTo(y, { duration: 1.4 });
+    lenis.scrollTo(y, { duration });
   };
+  const rawP = () => -track.getBoundingClientRect().top / (view.h * SCROLL_PER_P);
+  const nextStop = (p: number, dir: 1 | -1) =>
+    dir > 0 ? STOPS.find((s) => s > p + 0.05) : [...STOPS].reverse().find((s) => s < p - 0.05);
+
+  // Mobile: al soltar, el pliego se acomoda en la parada siguiente en el
+  // sentido del gesto (como un carrusel), así ningún panel queda a medio abrir
+  // y el repliegue con el avión se ve entero.
+  let touching = false;
+  let snapTimer = 0;
+  const queueSnap = () => {
+    if (!vertical) return;
+    clearTimeout(snapTimer);
+    snapTimer = window.setTimeout(() => {
+      const p = rawP();
+      if (touching || p < 0 || p > P_MAX - 0.05) return;
+      const stop = lenis.direction < 0
+        ? [...STOPS].reverse().find((s) => s <= p + 0.08) ?? 0
+        : STOPS.find((s) => s >= p - 0.08) ?? STOPS[STOPS.length - 1];
+      if (Math.abs(stop - p) > 0.02) scrollToP(stop, Math.min(1.4, 0.5 + Math.abs(stop - p) * 0.6));
+    }, 160);
+  };
+  addEventListener('touchstart', () => { touching = true; }, { passive: true });
+  addEventListener('touchend', () => { touching = false; queueSnap(); }, { passive: true });
+  lenis.on('scroll', queueSnap);
+
+  // Desktop: clic en el pliego o flechas ← → para pasar de sección sin la ruedita.
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  const overSheet = (e: MouseEvent) => {
+    ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    return raycaster.intersectObjects(meshes.filter((m) => m.visible), false).length > 0;
+  };
+  canvasEl.addEventListener('click', (e) => {
+    if (vertical || !overSheet(e)) return;
+    const stop = nextStop(rawP(), 1);
+    if (stop !== undefined) scrollToP(stop, 1.1);
+  });
+  canvasEl.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') canvasEl.style.cursor = !vertical && overSheet(e) && nextStop(rawP(), 1) !== undefined ? 'pointer' : '';
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    if (e.altKey || e.ctrlKey || e.metaKey || (e.target as HTMLElement).closest?.('input, textarea, dialog')) return;
+    const p = rawP();
+    if (p > P_MAX) return;
+    const stop = nextStop(p, e.key === 'ArrowRight' ? 1 : -1);
+    if (stop === undefined) return;
+    e.preventDefault();
+    scrollToP(stop, 1.1);
+  });
   document.querySelectorAll<HTMLElement>('[data-goto]').forEach((el) =>
     el.addEventListener('click', (e) => {
       e.preventDefault();
@@ -337,24 +392,25 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
   // ── Línea de tiempo ──────────────────────────────────────────
   //  0 – 1     portada
   //  i - .45 → i + .15   se abre el panel i (1…5); lectura hasta i + .55
-  //  5.8 – 6.4 se vuelve a plegar
-  //  6.35 – 6.7 se transforma en avión; 6.7 – 7.05 vuela; desde 7 el cierre
+  //  5.55 – 5.95 se vuelve a plegar (la cámara se recentra)
+  //  5.95 – 6.2 se transforma en avión; 6.2 – 6.5 vuela; desde 6.55 el cierre
   function timeline(p: number) {
     const open = pivots.map((_, i) => {
       if (i === 0) return 1;
       const o = smooth(i - 0.45, i + 0.15, p);
       // se repliega de a uno, del último al primero: cada pliegue termina
       // antes de que empiece el anterior (ver el cambio de lado en el loop)
-      const from = 5.8 + (PANEL_COUNT - 1 - i) * 0.11;
-      const c = smooth(from, from + 0.11, p);
+      const from = 5.55 + (PANEL_COUNT - 1 - i) * 0.08;
+      const c = smooth(from, from + 0.08, p);
       return o * (1 - c);
     });
     const unfolded = open.slice(1).reduce((s, o) => s + o, 0);
     return {
       open,
       focus: unfolded, // índice (fraccional) del panel que se mira
-      morph: smooth(6.35, 6.7, p),
-      fly: smooth(6.7, 7.05, p),
+      morph: smooth(5.95, 6.2, p),
+      fly: smooth(6.2, 6.5, p),
+      refold: smooth(5.55, 5.95, p),
       intro: smooth(0.15, 0.9, p), // de portada centrada a pliego con texto al lado
     };
   }
@@ -368,7 +424,7 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
       const until = Number(cap.dataset.until ?? (captions[i + 1] ? Number(captions[i + 1].dataset.at) - 0.25 : Infinity));
       if (p >= at - 0.25 && p < until) next = Number(cap.dataset.cap);
     });
-    const n = p < 0.75 ? 0 : p >= 6.9 ? 6 : Math.min(5, Math.floor(p + 0.25));
+    const n = p < 0.75 ? 0 : p >= 6.45 ? 6 : Math.min(5, Math.floor(p + 0.25));
     const label = n === 0 ? 'Portada' : n === 6 ? 'Fin' : `${String(n).padStart(2, '0')} / 05`;
     if (counter && counter.textContent !== label) counter.textContent = label;
     if (next === caption) return;
@@ -417,8 +473,9 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
     const focus = tl.focus;
     if (vertical) target.set(W / 2 - W / 2, -focus * H - H / 2, 0);
     else target.set(focus * W + W / 2, 0, 0);
-    // en desktop la portada arranca centrada y se corre para dejar lugar al texto
-    const intro = vertical ? 1 : tl.intro * (1 - tl.morph);
+    // en desktop la portada arranca centrada y se corre para dejar lugar al texto;
+    // al replegarse vuelve al centro para que el avión salga del medio
+    const intro = (vertical ? 1 : tl.intro) * (1 - tl.refold);
     const cx = target.x + view.offX * intro;
     const cy = target.y + view.offY * intro;
     camera.position.set(cx, cy, view.dist);
