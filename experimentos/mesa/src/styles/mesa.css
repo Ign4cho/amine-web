@@ -12,6 +12,7 @@
   --ink-soft: #5c5753;
   --mustard: #f0c14b;
   --amber: #e8b83d;
+  --amber-text: #8a6510; /* ámbar legible sobre crema (5,6:1) */
   --rule: rgba(45, 42, 41, 0.16);
 
   --display: 'Bebas Neue', 'Arial Narrow', sans-serif;
@@ -90,6 +91,11 @@ button { font: inherit; color: inherit; }
 .topbar-logo { width: 128px; filter: brightness(0) invert(0.95); }
 .topbar-actions { display: flex; gap: var(--s-75); }
 html.panel-open .topbar { visibility: hidden; }
+/* Fuera de la mesa la barra pasa a papel: logo oscuro y sin "Ordenar", que ahí no hace nada. */
+.topbar { transition: background-color 0.3s ease; }
+.topbar.is-past-desk { background: rgba(249, 244, 234, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(45, 42, 41, 0.12); }
+.topbar.is-past-desk .topbar-logo { filter: none; }
+.topbar.is-past-desk [data-tidy] { display: none; }
 
 /* ── Mesa ────────────────────────────────────────────────────── */
 .desk {
@@ -157,7 +163,7 @@ html.panel-open .topbar { visibility: hidden; }
 .desk-hint.is-done .hint-drag { text-decoration: line-through; text-decoration-color: var(--mustard); }
 .desk-down {
   position: absolute; right: var(--gutter); bottom: 12px; z-index: 1;
-  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px;
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
   border: 1px solid rgba(249, 244, 234, 0.4); color: var(--cream); text-decoration: none;
   transition: transform 0.6s var(--ease), background-color 0.6s var(--ease);
 }
@@ -194,7 +200,7 @@ html.panel-open .topbar { visibility: hidden; }
 
 /* ── Contenido (panel y lista) ───────────────────────────────── */
 .content { display: grid; gap: var(--s-300); }
-.content-kicker { font: 400 14px/20px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+.content-kicker { font: 400 14px/20px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber-text); }
 .content-title { font: 400 clamp(60px, 9vw, 96px)/0.9 var(--display); margin-top: calc(var(--s-200) * -1); }
 .content-lead { font: 300 20px/28px var(--sans); }
 .content strong { font-weight: 600; }
@@ -283,6 +289,8 @@ html.panel-open .topbar { visibility: hidden; }
   .desk::after { inset: calc(var(--topbar-h) + 4px) 8px 44px; background-size: 32px 32px; }
   .item-tag { font-size: 10px; padding: 2px var(--s-75); bottom: -10px; }
   .desk-hint { font-size: 12px; bottom: 12px; }
+  /* El sticker TEAM A (decorativo) no tapa la carpeta en mobile. */
+  .item[data-item="teama"] { z-index: 1; }
 
   .panel { align-items: flex-end; }
   .panel-sheet {

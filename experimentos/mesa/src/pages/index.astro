@@ -158,6 +158,8 @@ const pos = (o: { w: string; x: number; y: number; r: number; mw: number; mx: nu
       document.documentElement.classList.add('panel-open');
       const sheet = dialog.querySelector<HTMLElement>('.panel-sheet')!;
       sheet.scrollTop = 0;
+      // Las imágenes lazy no cargan solas dentro de un dialog recién abierto.
+      dialog.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => { img.loading = 'eager'; });
       if (focus) document.getElementById(`panel-aliado-${focus}`)?.scrollIntoView({ block: 'start' });
       dialog.querySelector<HTMLVideoElement>('video')?.play().catch(() => {});
     }
@@ -186,13 +188,25 @@ const pos = (o: { w: string; x: number; y: number; r: number; mw: number; mx: nu
     }
 
     // ── Arrastre ───────────────────────────────────────────────
-    let saved: Record<string, { x: number; y: number }> = {};
-    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch { saved = {}; }
+    // Las posiciones se guardan como fracción del tamaño de la mesa y por layout
+    // (mesa horizontal o vertical): así sobreviven a un resize o a girar el teléfono.
+    const vertical = window.matchMedia('(max-width: 760px), (orientation: portrait) and (max-width: 1100px)');
+    const layoutName = () => (vertical.matches ? 'vertical' : 'horizontal');
+    type Stored = { layout: string; pos: Record<string, { fx: number; fy: number }> };
+    const saved: Record<string, { x: number; y: number }> = {};
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORE) || 'null') as Stored | null;
+      if (raw?.layout === layoutName() && raw.pos) {
+        for (const [id, p] of Object.entries(raw.pos)) saved[id] = { x: p.fx * desk.clientWidth, y: p.fy * desk.clientHeight };
+      }
+    } catch { /* formato viejo o sin storage: arranca ordenada */ }
     function save() {
-      const data: Record<string, { x: number; y: number }> = {};
-      items.forEach((el) => { data[el.dataset.item!] = { x: +gsap.getProperty(el, 'x'), y: +gsap.getProperty(el, 'y') }; });
-      try { localStorage.setItem(STORE, JSON.stringify(data)); } catch { /* sin storage: no pasa nada */ }
+      const pos: Stored['pos'] = {};
+      items.forEach((el) => { pos[el.dataset.item!] = { fx: +gsap.getProperty(el, 'x') / desk.clientWidth, fy: +gsap.getProperty(el, 'y') / desk.clientHeight }; });
+      try { localStorage.setItem(STORE, JSON.stringify({ layout: layoutName(), pos })); } catch { /* sin storage: no pasa nada */ }
     }
+    // Ningún objeto puede quedar fuera de la mesa (bounds solo se aplica al arrastrar).
+    const keepInside = () => items.forEach((el) => Draggable.get(el)?.applyBounds(desk));
 
     let top = 10;
     let justDragged = false;
@@ -236,6 +250,30 @@ const pos = (o: { w: string; x: number; y: number; r: number; mw: number; mx: nu
       el.addEventListener('click', () => { if (!justDragged) activate(el); });
     });
 
+    if (reduce) keepInside();
+
+    let size = { w: desk.clientWidth, h: desk.clientHeight, layout: layoutName() };
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        const layout = layoutName();
+        items.forEach((el) => {
+          if (layout !== size.layout) gsap.set(el, { x: 0, y: 0 });
+          else gsap.set(el, { x: +gsap.getProperty(el, 'x') * desk.clientWidth / size.w, y: +gsap.getProperty(el, 'y') * desk.clientHeight / size.h });
+        });
+        keepInside();
+        if (layout === size.layout) save();
+        size = { w: desk.clientWidth, h: desk.clientHeight, layout };
+      }, 150);
+    });
+
+    // ── Barra superior: fondo claro cuando se deja la mesa ─────
+    const topbar = document.querySelector<HTMLElement>('.topbar');
+    new IntersectionObserver(([entry]) => {
+      topbar?.classList.toggle('is-past-desk', !entry.isIntersecting);
+    }, { rootMargin: '-64px 0px 0px 0px' }).observe(desk);
+
     // ── Ordenar ────────────────────────────────────────────────
     document.querySelector('[data-tidy]')?.addEventListener('click', () => {
       gsap.to(items, { x: 0, y: 0, rotation: 0, duration: reduce ? 0 : 0.9, ease: 'power3.inOut', stagger: 0.04 });
@@ -258,6 +296,7 @@ const pos = (o: { w: string; x: number; y: number; r: number; mw: number; mx: nu
             const p = saved[el.dataset.item!];
             gsap.set(el, p ? { x: p.x, y: p.y } : { x: 0, y: 0 });
           });
+          keepInside();
         },
       });
     }

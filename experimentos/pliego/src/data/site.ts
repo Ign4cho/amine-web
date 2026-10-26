@@ -3,7 +3,7 @@
 // lo mismo que el sitio original.
 import posts from './blogcito.json';
 
-export const WHATSAPP_URL = 'https://wa.me/5492645827270';
+export const WHATSAPP_URL = 'https://wa.me/5492645827270?text=' + encodeURIComponent('¡Hola Amine! Vi la web y quiero hacer una consulta.');
 export const CONTACT_EMAIL = 'espacioamine@gmail.com';
 export const INSTAGRAM_URL = 'https://www.instagram.com/guadasancheznph';
 export const INSTAGRAM_HANDLE = '@guadasancheznph';

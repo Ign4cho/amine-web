@@ -1,4 +1,4 @@
-// Chequeo post-build: noindex presente, robots.txt bloqueando y ninguna
+// Chequeo post-build: noindex presente, X-Robots-Tag en .htaccess y ninguna
 // referencia root-relative rota dentro de dist/.
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -27,7 +27,8 @@ for (const url of refs) {
   const target = join(dist, decodeURIComponent(url));
   if (!existsSync(target) && !existsSync(join(target, 'index.html'))) errors.push(`referencia rota: ${url}`);
 }
-if (!readFileSync(join(dist, 'robots.txt'), 'utf8').includes('Disallow: /')) errors.push('robots.txt no bloquea');
+// robots.txt no bloquea a propósito: así Google lee el noindex y WhatsApp/LinkedIn arman la vista previa.
+if (!readFileSync(join(dist, '.htaccess'), 'utf8').includes('X-Robots-Tag "noindex, nofollow"')) errors.push('.htaccess sin X-Robots-Tag');
 
 if (errors.length) { console.error('✗ check-build\n' + errors.join('\n')); process.exit(1); }
 console.log(`✓ check-build: ${pages.length} páginas, ${refs.size} referencias OK, noindex en todas`);

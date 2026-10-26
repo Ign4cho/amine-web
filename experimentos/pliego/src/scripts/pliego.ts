@@ -55,6 +55,8 @@ async function loadFonts() {
 }
 
 const isVertical = () => innerWidth <= 760 || (innerHeight > innerWidth && innerWidth <= 1100);
+// Teléfono acostado o ventanas muy bajas: el texto no entra al lado ni debajo del pliego.
+const tooShort = () => innerHeight < 520;
 
 async function main() {
   const raw: RawData = JSON.parse(document.getElementById('pliego-data')!.textContent!);
@@ -63,7 +65,8 @@ async function main() {
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let renderer: THREE.WebGPURenderer | null = null;
-  if (!reduced) {
+  const short = tooShort();
+  if (!reduced && !short) {
     try {
       renderer = new THREE.WebGPURenderer({ canvas: canvasEl, antialias: true, alpha: true });
       await renderer.init();
@@ -78,9 +81,20 @@ async function main() {
   const scale = clamp((panelPx * Math.min(devicePixelRatio, 2)) / TW, 0.7, 1.4);
   const printed = printPanels(data, renderer ? scale : 0.9);
 
-  if (!renderer) return flat(printed);
-  root.classList.add('is-3d');
-  scene3d(renderer, printed);
+  if (!renderer) {
+    flat(printed);
+    // si el teléfono se endereza, recargar para mostrar el 3D
+    if (short && !reduced) addEventListener('resize', () => { if (!tooShort()) location.reload(); });
+    return;
+  }
+  try {
+    root.classList.add('is-3d');
+    scene3d(renderer, printed);
+  } catch (e) {
+    console.error('Falló el 3D, se muestra el pliego abierto:', e instanceof Error ? e.message : e);
+    root.classList.remove('is-3d');
+    flat(printed);
+  }
 }
 
 // Versión sin 3D: el pliego se muestra abierto, panel por panel.
@@ -224,7 +238,8 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
     const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     let panelPxH: number;
     if (vertical) {
-      const panelPxW = Math.min(view.w * 0.8, (view.h * 0.46) / H);
+      // en pantallas bajas el panel se achica para dejarle lugar al texto
+      const panelPxW = Math.min(view.w * 0.8, (view.h * (view.h < 700 ? 0.36 : 0.46)) / H);
       panelPxH = panelPxW * H;
       view.visW = (W * view.w) / panelPxW;
       view.visH = view.visW / camera.aspect;
@@ -252,6 +267,7 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
   layout();
   let lastW = innerWidth;
   addEventListener('resize', () => {
+    if (tooShort()) return location.reload(); // pasa al pliego abierto (ver main)
     // en mobile la barra de direcciones cambia el alto: solo re-maquetar si cambia el ancho
     if (innerWidth === lastW && isVertical() === vertical && Math.abs(innerHeight - view.h) < 160) return;
     lastW = innerWidth;
@@ -274,19 +290,24 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
   };
   type DOE = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<string> };
   const DOEc = (window as { DeviceOrientationEvent?: DOE }).DeviceOrientationEvent;
-  if (DOEc && typeof DOEc.requestPermission === 'function' && matchMedia('(pointer: coarse)').matches) {
-    lightBtn?.removeAttribute('hidden');
-    lightBtn?.addEventListener('click', async () => {
-      try {
-        if ((await DOEc.requestPermission!()) === 'granted') {
-          addEventListener('deviceorientation', onTilt);
-          lightBtn.setAttribute('aria-pressed', 'true');
-          lightBtn.querySelector('span')!.textContent = 'Luz encendida';
-        }
-      } catch { /* sin permiso: sigue la luz automática */ }
-    });
-  } else if (DOEc) {
+  if (DOEc) {
     addEventListener('deviceorientation', onTilt);
+    // iOS no manda la inclinación hasta que se da permiso. Android y otros sí:
+    // el botón aparece solo si después de un segundo no llegó ningún dato.
+    if (typeof DOEc.requestPermission === 'function' && matchMedia('(pointer: coarse)').matches) {
+      setTimeout(() => {
+        if (pointer.last > 0) return;
+        lightBtn?.removeAttribute('hidden');
+        lightBtn?.addEventListener('click', async () => {
+          try {
+            if ((await DOEc.requestPermission!()) === 'granted') {
+              lightBtn.setAttribute('aria-pressed', 'true');
+              lightBtn.querySelector('span')!.textContent = 'Luz encendida';
+            }
+          } catch { /* sin permiso: sigue la luz automática */ }
+        });
+      }, 1000);
+    }
   }
 
   // ── Scroll ────────────────────────────────────────────────────
@@ -347,7 +368,7 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
       const until = Number(cap.dataset.until ?? (captions[i + 1] ? Number(captions[i + 1].dataset.at) - 0.25 : Infinity));
       if (p >= at - 0.25 && p < until) next = Number(cap.dataset.cap);
     });
-    const n = p < 0.75 ? 0 : p >= 5.8 ? 6 : Math.min(5, Math.floor(p + 0.25));
+    const n = p < 0.75 ? 0 : p >= 6.9 ? 6 : Math.min(5, Math.floor(p + 0.25));
     const label = n === 0 ? 'Portada' : n === 6 ? 'Fin' : `${String(n).padStart(2, '0')} / 05`;
     if (counter && counter.textContent !== label) counter.textContent = label;
     if (next === caption) return;
@@ -448,6 +469,6 @@ function scene3d(renderer: THREE.WebGPURenderer, printed: ReturnType<typeof prin
 }
 
 main().catch((e) => {
-  console.error(e);
+  console.error('No se pudo armar el pliego:', e instanceof Error ? e.message : e);
   root.classList.add('is-flat');
 });

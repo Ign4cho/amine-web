@@ -11,6 +11,7 @@
   --ink-soft: #5c5753;
   --mustard: #f0c14b;
   --amber: #e8b83d;
+  --amber-text: #8a6510; /* ámbar legible sobre papel (5,6:1) */
   --rule: rgba(45, 42, 41, 0.18);
   --rule-light: rgba(249, 244, 234, 0.2);
 
@@ -48,8 +49,9 @@ h1, h2, h3 { text-wrap: balance; font-weight: 400; }
 p { text-wrap: pretty; }
 mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mustard); }
 
-:focus-visible { outline: 3px solid var(--mustard); outline-offset: 3px; border-radius: 2px; }
-.chapter--mustard :focus-visible { outline-color: var(--ink); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+.chapter--ink :focus-visible, .colophon :focus-visible, .menu :focus-visible { outline-color: var(--mustard); }
+
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -87,7 +89,7 @@ mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mus
 .link-cta:hover { gap: var(--s-200); }
 .link-cta:active { transform: translateY(1px); }
 .link-cta--light { color: var(--cream); }
-.link-plain { font-family: var(--mono); font-size: 14px; line-height: 20px; color: var(--ink-soft); text-underline-offset: 4px; }
+.link-plain { display: inline-block; padding-block: 12px; font-family: var(--mono); font-size: 14px; line-height: 20px; color: var(--ink-soft); text-underline-offset: 4px; }
 .link-plain:hover { color: var(--ink); }
 
 /* ── Aparición (solo con JS activo) ─────────────────────────── */
@@ -152,6 +154,7 @@ mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mus
   color: var(--cream);
   opacity: 0; transition: opacity 0.6s var(--ease);
 }
+.menu[hidden] { display: none; }
 .menu.is-open { opacity: 1; }
 .menu-list { display: grid; gap: var(--s-75); }
 .menu-list li { overflow: hidden; }
@@ -355,7 +358,7 @@ mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mus
 .case-photo:active { transform: scale(0.98); }
 .case-photo img { width: 100%; filter: drop-shadow(0 20px 28px rgba(45, 42, 41, 0.22)); }
 .case-body { position: relative; display: grid; gap: var(--s-300); background: var(--paper); padding: var(--s-600); border: 1px solid var(--rule); border-radius: 4px; }
-.case-area { font: 400 14px/20px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); }
+.case-area { font: 400 14px/20px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber-text); }
 .case-name { font: 400 clamp(48px, 6vw, 96px)/0.9 var(--display); }
 .case-text { font: 300 18px/28px var(--sans); }
 .case-services { display: flex; flex-wrap: wrap; gap: var(--s-75); }
@@ -382,7 +385,7 @@ mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mus
   display: inline-flex; gap: var(--s-75); font: 400 24px/32px var(--display); letter-spacing: 0.04em;
   border-bottom: 2px solid var(--mustard);
 }
-.post-more summary:hover { color: var(--amber); }
+.post-more summary:hover { color: var(--amber-text); }
 .post-more .when-open, .post-more[open] .when-closed { display: none; }
 .post-more[open] .when-open { display: inline; }
 .post-body { display: grid; gap: var(--s-200); padding-top: var(--s-300); font: 400 18px/28px var(--sans); max-width: 62ch; }
@@ -432,8 +435,8 @@ mark { background: none; color: inherit; box-shadow: inset 0 -0.45em 0 var(--mus
 .colophon-logo { width: 200px; filter: brightness(0) invert(0.95); }
 .colophon-brand p { font: 300 16px/24px var(--sans); color: rgba(249, 244, 234, 0.75); }
 .colophon-head { font: 400 14px/20px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--mustard); margin-bottom: var(--s-200); }
-.colophon ul { display: grid; gap: var(--s-75); }
-.colophon ul a { text-decoration: none; font-weight: 300; }
+.colophon ul { display: grid; gap: 0; }
+.colophon ul a { display: inline-block; padding-block: 10px; text-decoration: none; font-weight: 300; }
 .colophon ul a:hover { color: var(--mustard); }
 .colophon-legal { grid-column: 1 / -1; padding-top: var(--s-300); border-top: 1px solid var(--rule-light); font: 400 12px/16px var(--mono); color: rgba(249, 244, 234, 0.6); }
 

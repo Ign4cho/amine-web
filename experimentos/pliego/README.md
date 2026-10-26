@@ -1,6 +1,6 @@
 # Amine · Pliego n.º 1
 
-Experimento del sitio de Amine: la home es un fanzine impreso en dos tintas (mostaza y negro, estilo risografía) que se despliega en 3D con el scroll. Al final se vuelve a plegar y sale volando como avión de papel hacia el contacto. Destino: `pliego.espacioamine.com`.
+Experimento del sitio de Amine: la home es un fanzine impreso en dos tintas (mostaza y negro, estilo risografía) que se despliega en 3D con el scroll. Al final se vuelve a plegar y sale volando como avión de papel hacia el contacto. Online en https://fold.espacioamine.com (carpeta `public_html/fold` en Hostinger).
 
 - Astro 5 + Three.js 0.186 (`WebGPURenderer`: WebGPU, o WebGL2 si el navegador no lo tiene) + Lenis.
 - Los paneles se **imprimen en el navegador** (`src/scripts/print.ts`): cada uno se dibuja en canvas como dos planchas (mostaza y tinta), con trama de puntos para las fotos. El shader (TSL) combina las planchas sobre el papel y las desfasa según la velocidad del scroll.
